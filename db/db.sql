@@ -8,8 +8,6 @@
 -- ============================================================================
 -- SECCIÓN 1: CATÁLOGOS DE ESTADO Y TIPO (reemplazo de ENUM)
 -- ============================================================================
-
-CREATE DATABASE IF NOT EXIST 
 -- Estados de usuario
 CREATE TABLE estados_usuario (
   id TINYINT PRIMARY KEY,
@@ -694,7 +692,7 @@ INSERT INTO operaciones_auditoria (id, codigo, nombre_mostrado) VALUES
 (1, 'INSERT', 'Inserción'),
 (2, 'UPDATE', 'Actualización'),
 (3, 'DELETE', 'Eliminación'),
-(4R, 'RESTORE', 'Restauración');
+(4, 'RESTORE', 'Restauración');
 
 -- Roles del sistema
 INSERT INTO roles (id, codigo, nombre_mostrado, descripcion) VALUES
