@@ -12,6 +12,7 @@ if (!empty($_SESSION['user_id'])) {
         exit;
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +31,10 @@ if (!empty($_SESSION['user_id'])) {
             if (isset($_GET['error'])) {
                 echo '<p class="error-message">' . htmlspecialchars($_GET['error']) . '</p>';
             }
+            
+$password = '12345';
+$hash = password_hash($password, PASSWORD_DEFAULT);
+echo "Hash generado: " . $hash;
         ?>
 
         <form action="login_process.php" method="POST">
