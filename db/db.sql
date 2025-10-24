@@ -9,6 +9,7 @@
 -- SECCIÓN 1: CATÁLOGOS DE ESTADO Y TIPO (reemplazo de ENUM)
 -- ============================================================================
 
+CREATE DATABASE IF NOT EXIST 
 -- Estados de usuario
 CREATE TABLE estados_usuario (
   id TINYINT PRIMARY KEY,
