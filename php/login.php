@@ -1,10 +1,16 @@
 <?php
-if (!empty($_SESSION['user_id'])){
-    if($_SESSION['user_id'] = 1){
-        header("Location = admin/index.php")
-    } else[
-        header("Location = usuario/index.php")
-    ]
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!empty($_SESSION['user_id'])) {
+    if ($_SESSION['role_id'] == 1) {
+        header("Location: php/admin/dashboard.php");
+        exit;
+    } else {
+        header("Location: login.php?error=Sección de usuario en construcción");
+        exit;
+    }
 }
 ?>
 
@@ -13,7 +19,7 @@ if (!empty($_SESSION['user_id'])){
 <head>
     <meta charset="UTF-8">
     <title>Iniciar Sesión - Sistema Deportivo</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="form-container">
@@ -35,7 +41,7 @@ if (!empty($_SESSION['user_id'])){
             
             <button type="submit">Entrar</button>
         </form>
-        <p class="form-link">¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>
+        <p class="form-link">¿No tienes cuenta? <a href="registro.php">Regístrate aquí</a></p>
     </div>
 </body>
 </html>
