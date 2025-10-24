@@ -2,7 +2,6 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Validar que tengamos el ID del equipo
 if (!isset($_GET['equipo_id'])) {
     header("Location: gestionar_equipos.php?error=No se especificó un equipo.");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_GET['equipo_id'])) {
 
 $equipo_id = (int)$_GET['equipo_id'];
 
-// 1. Obtener info del Equipo
 $stmt_equipo = $conn->prepare("SELECT nombre_mostrado FROM participantes WHERE id = ?");
 $stmt_equipo->bind_param("i", $equipo_id);
 $stmt_equipo->execute();
@@ -22,20 +20,17 @@ if ($equipo_result->num_rows == 0) {
 $equipo = $equipo_result->fetch_assoc();
 $nombre_equipo = $equipo['nombre_mostrado'];
 
-// 2. Encontrar el Plantel ID (asumimos el "principal" activo)
 $stmt_plantel = $conn->prepare("SELECT id FROM planteles_equipo WHERE participante_id = ? AND esta_activo = 1 LIMIT 1");
 $stmt_plantel->bind_param("i", $equipo_id);
 $stmt_plantel->execute();
 $plantel_result = $stmt_plantel->get_result();
 if ($plantel_result->num_rows == 0) {
-    // Esto no debería pasar si la lógica de 'equipo_process' funciona
     echo "Error: No se encontró un plantel activo para este equipo.";
     require_once 'admin_footer.php';
     exit;
 }
 $plantel_id = $plantel_result->fetch_assoc()['id'];
 
-// 3. Consultar los jugadores de ESE plantel
 $stmt_jugadores = $conn->prepare("SELECT * FROM miembros_plantel WHERE plantel_id = ? ORDER BY numero_camiseta, nombre_jugador");
 $stmt_jugadores->bind_param("i", $plantel_id);
 $stmt_jugadores->execute();

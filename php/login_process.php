@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $sql = "SELECT u.id, u.mail, u.hash_contrasena, u.estado_id, ur.rol_id 
+    $sql = "SELECT u.id, u.email, u.hash_contrasena, u.estado_id, ur.rol_id 
             FROM usuarios u
             LEFT JOIN usuario_roles ur ON u.id = ur.usuario_id
             WHERE u.email = ? AND u.estado_id = 1";
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user['hash_contrasena'])) {
             
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['mail'];
+            $_SESSION['user_name'] = $user['email'];
             $_SESSION['role_id'] = $user['rol_id'];
 
             if ($user['rol_id'] == 1) { 

@@ -1,8 +1,6 @@
 <?php
 require_once 'auth_admin.php';
 
-// --- Validación de Redirección ---
-// Necesitamos el 'equipo_id' para saber a dónde volver
 if (!isset($_REQUEST['equipo_id'])) {
     header("Location: gestionar_equipos.php?error=ID de equipo no especificado para la redirección.");
     exit;
@@ -11,10 +9,8 @@ $equipo_id = (int)$_REQUEST['equipo_id'];
 $redirect_url = "ver_plantel.php?equipo_id=$equipo_id";
 
 
-// --- Lógica de CREATE y UPDATE (POST) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     
-    // --- 1. Recolección de Datos ---
     $plantel_id = (int)$_POST['plantel_id'];
     $nombre = trim($_POST['nombre_jugador']);
     $posicion = trim($_POST['posicion']);
@@ -24,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
 
     $foto_path = $_POST['current_foto_path'] ?? '';
 
-    // --- 2. Lógica de Subida de Archivo (Foto) ---
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
         $upload_dir = '../../img/jugadores/';
         if (!is_dir($upload_dir)) {
@@ -48,10 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         }
     }
 
-    // --- 3. Ejecución de SQL ---
     try {
         if ($_POST['action'] == 'create') {
-            // --- Acción CREAR ---
             $sql = "INSERT INTO miembros_plantel (plantel_id, nombre_jugador, posicion, url_foto, edad, grado, numero_camiseta) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
@@ -60,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             header("Location: $redirect_url&success=Jugador agregado exitosamente.");
         
         } elseif ($_POST['action'] == 'update' && isset($_POST['jugador_id'])) {
-            // --- Acción ACTUALIZAR ---
             $jugador_id = (int)$_POST['jugador_id'];
             $sql = "UPDATE miembros_plantel SET nombre_jugador = ?, posicion = ?, url_foto = ?, edad = ?, grado = ?, numero_camiseta = ?
                     WHERE id = ? AND plantel_id = ?";
@@ -80,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     exit;
 }
 
-// --- Lógica de DELETE (GET) ---
 if (isset($_GET['delete_id'])) {
     $jugador_id = (int)$_GET['delete_id'];
     

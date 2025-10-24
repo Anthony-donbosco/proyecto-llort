@@ -1,12 +1,8 @@
 <?php
-// 1. Seguridad y Conexión
 require_once 'auth_admin.php';
-// db_connect.php ya está incluido en auth_admin.php
 
-// --- Lógica de CREATE y UPDATE ---
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     
-    // Datos comunes
     $nombre = trim($_POST['nombre']);
     $deporte_id = (int)$_POST['deporte_id'];
     $temporada_id = !empty($_POST['temporada_id']) ? (int)$_POST['temporada_id'] : NULL;
@@ -15,11 +11,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $fecha_fin = !empty($_POST['fecha_fin']) ? $_POST['fecha_fin'] : NULL;
     $max_participantes = (int)$_POST['max_participantes'];
     $estado_id = (int)$_POST['estado_id'];
-    $creado_por = (int)$_SESSION['user_id']; // ID del admin logueado
+    $creado_por = (int)$_SESSION['user_id']; 
 
     try {
         if ($_POST['action'] == 'create') {
-            // --- Acción CREAR ---
             $sql = "INSERT INTO torneos (nombre, deporte_id, temporada_id, descripcion, fecha_inicio, fecha_fin, max_participantes, estado_id, creado_por) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
@@ -28,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             header("Location: gestionar_torneos.php?success=Torneo creado exitosamente.");
         
         } elseif ($_POST['action'] == 'update' && isset($_POST['torneo_id'])) {
-            // --- Acción ACTUALIZAR ---
             $torneo_id = (int)$_POST['torneo_id'];
             $sql = "UPDATE torneos SET nombre = ?, deporte_id = ?, temporada_id = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, max_participantes = ?, estado_id = ?
                     WHERE id = ?";
@@ -41,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         $stmt->close();
         
     } catch (Exception $e) {
-        // Capturar errores (ej. nombre duplicado, etc.)
         header("Location: gestionar_torneos.php?error=Error al procesar la solicitud: " . $e->getMessage());
     }
     
@@ -49,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     exit;
 }
 
-// --- Lógica de DELETE ---
 if (isset($_GET['delete_id'])) {
     $torneo_id = (int)$_GET['delete_id'];
     
@@ -67,7 +59,6 @@ if (isset($_GET['delete_id'])) {
         $stmt->close();
         
     } catch (Exception $e) {
-        // Capturar error (ej. si tiene partidos asociados y la BD no deja borrar)
         header("Location: gestionar_torneos.php?error=No se pudo eliminar. Es posible que tenga partidos u otros datos asociados.");
     }
 
@@ -75,7 +66,6 @@ if (isset($_GET['delete_id'])) {
     exit;
 }
 
-// Si se accede al script sin una acción, redirigir
 header("Location: gestionar_torneos.php");
 exit;
-?>
+?

@@ -19,7 +19,6 @@
                 <a href="gestionar_jugadores.php">Jugadores</a>
             </nav>
             <div class="user-info">
-                <span>Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                 <a href="../logout.php" class="logout-button">Cerrar Sesión</a>
             </div>
         </div>

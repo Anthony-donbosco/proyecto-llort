@@ -2,13 +2,12 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// --- Lógica de Edición vs Creación ---
 $is_edit = false;
 $equipo = [
     'nombre_mostrado' => '',
     'nombre_corto' => '',
     'deporte_id' => '',
-    'tipo_participante_id' => 1, // '1' = Equipo por defecto
+    'tipo_participante_id' => 1,
     'url_logo' => ''
 ];
 $logo_preview = '../img/logos/default.png';
@@ -33,9 +32,7 @@ if (isset($_GET['edit_id'])) {
     $stmt->close();
 }
 
-// --- Obtener datos para los <select> ---
 $deportes = $conn->query("SELECT id, nombre_mostrado FROM deportes WHERE es_por_equipos = 1 ORDER BY nombre_mostrado");
-// Asumimos que solo crearemos "Equipos" (ID 1) y no "Individual" (ID 2)
 $tipos = $conn->query("SELECT id, nombre_mostrado FROM tipos_participante WHERE id = 1"); 
 
 ?>

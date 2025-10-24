@@ -2,14 +2,12 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Validar que tengamos el ID del equipo para volver
 if (!isset($_GET['equipo_id'])) {
      header("Location: gestionar_equipos.php?error=ID de equipo no especificado.");
      exit;
 }
 $equipo_id = (int)$_GET['equipo_id'];
 
-// --- Lógica de Edición vs Creación ---
 $is_edit = false;
 $jugador = [
     'nombre_jugador' => '',
@@ -24,7 +22,6 @@ $foto_preview = '../img/jugadores/default.png';
 $page_title = 'Agregar Jugador';
 
 if (isset($_GET['edit_id'])) {
-    // --- MODO EDICIÓN ---
     $is_edit = true;
     $jugador_id = (int)$_GET['edit_id'];
     $page_title = 'Editar Jugador';
@@ -45,8 +42,6 @@ if (isset($_GET['edit_id'])) {
     $stmt->close();
     
 } else {
-    // --- MODO CREACIÓN ---
-    // Necesitamos el ID del plantel al que se va a agregar
     if (!isset($_GET['plantel_id'])) {
         header("Location: ver_plantel.php?equipo_id=$equipo_id&error=ID de plantel no especificado.");
         exit;

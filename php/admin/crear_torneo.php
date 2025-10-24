@@ -2,7 +2,6 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// --- Lógica de Edición vs Creación ---
 $is_edit = false;
 $torneo_id = null;
 $torneo = [
@@ -27,14 +26,12 @@ if (isset($_GET['edit_id'])) {
     if ($result->num_rows > 0) {
         $torneo = $result->fetch_assoc();
     } else {
-        // Si no se encuentra el ID, redirigir
         header("Location: gestionar_torneos.php?error=Torneo no encontrado.");
         exit;
     }
     $stmt->close();
 }
 
-// --- Obtener datos para los <select> ---
 $deportes = $conn->query("SELECT id, nombre_mostrado FROM deportes ORDER BY nombre_mostrado");
 $temporadas = $conn->query("SELECT id, nombre FROM temporadas ORDER BY ano DESC");
 $estados = $conn->query("SELECT id, nombre_mostrado FROM estados_torneo ORDER BY orden");

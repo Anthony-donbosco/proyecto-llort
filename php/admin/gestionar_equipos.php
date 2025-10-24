@@ -2,7 +2,6 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Consultar todos los participantes (equipos)
 $sql = "SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo, d.nombre_mostrado AS deporte
         FROM participantes p
         JOIN deportes d ON p.deporte_id = d.id
@@ -40,8 +39,7 @@ $result = $conn->query($sql);
                 <?php
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
-                        // Usar un logo por defecto si no existe
-                        $logo_url = !empty($row['url_logo']) ? '../' . htmlspecialchars($row['url_logo']) : '../img/logos/default.png';
+                        $logo_url = !empty($row['url_logo']) ? htmlspecialchars($row['url_logo']) : '../../img/logos/default.png';
                 ?>
                     <tr>
                         <td><img src="<?php echo $logo_url; ?>" alt="Logo" class="table-logo"></td>

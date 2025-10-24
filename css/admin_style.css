@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f7f6;
     margin: 0;
-    padding-top: 60px; /* Espacio para el header fijo */
+    padding-top: 60px; 
 }
 .admin-content {
     padding: 2rem;
@@ -11,9 +11,8 @@ body {
     margin: 0 auto;
 }
 
-/* Header */
 .admin-header {
-    background-color: #1a237e; /* Azul oscuro */
+    background-color: #1a237e;
     color: white;
     padding: 0 2rem;
     position: fixed;
@@ -45,7 +44,7 @@ body {
     transition: color 0.2s;
 }
 .admin-nav a:hover {
-    color: #9fa8da; /* Azul claro */
+    color: #9fa8da;
 }
 .user-info {
     display: flex;
@@ -55,7 +54,7 @@ body {
     margin-right: 1rem;
 }
 .logout-button {
-    background-color: #c62828; /* Rojo */
+    background-color: #c62828; 
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -67,7 +66,6 @@ body {
     background-color: #ad1457;
 }
 
-/* Footer */
 .admin-footer {
     text-align: center;
     padding: 1.5rem;
@@ -76,7 +74,6 @@ body {
     margin-top: 2rem;
 }
 
-/* Dashboard */
 .dashboard h1 {
     color: #333;
 }
@@ -109,7 +106,6 @@ body {
 .widget a:hover {
     background-color: #303f9f;
 }
-/* --- Estilos para Páginas de Gestión (Tablas, Formularios) --- */
 .admin-page {
     width: 100%;
 }
@@ -127,8 +123,6 @@ body {
     margin: 0;
     color: #333;
 }
-
-/* --- Botones --- */
 .btn {
     text-decoration: none;
     color: white;
@@ -140,33 +134,32 @@ body {
     border: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem; /* Espacio entre icono y texto */
+    gap: 0.5rem; 
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .btn:hover {
     transform: translateY(-2px);
 }
 .btn-primary {
-    background-color: #1a237e; /* Azul Admin */
+    background-color: #1a237e; 
 }
 .btn-primary:hover {
     background-color: #303f9f;
 }
 .btn-secondary {
-    background-color: #546e7a; /* Gris */
+    background-color: #546e7a;
 }
 .btn-secondary:hover {
     background-color: #607d8b;
 }
 .btn-danger {
-    background-color: #c62828; /* Rojo */
+    background-color: #c62828; 
 }
 .btn-danger:hover {
     background-color: #e53935;
 }
 
 
-/* --- Alertas --- */
 .alert {
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -184,12 +177,11 @@ body {
     border: 1px solid #ffcdd2;
 }
 
-/* --- Contenedor de Tabla --- */
 .table-container {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    overflow-x: auto; /* Para responsive en tablas anchas */
+    overflow-x: auto; 
 }
 
 .admin-table {
@@ -222,10 +214,10 @@ body {
     font-weight: bold;
     color: white;
 }
-.status-activo, .status-inscripción { background-color: #43a047; } /* Verde */
-.status-borrador { background-color: #757575; } /* Gris */
-.status-finalizado { background-color: #1e88e5; } /* Azul */
-.status-cancelado { background-color: #c62828; } /* Rojo */
+.status-activo, .status-inscripción { background-color: #43a047; } 
+.status-borrador { background-color: #757575; } 
+.status-finalizado { background-color: #1e88e5; }
+.status-cancelado { background-color: #c62828; }
 
 .action-buttons {
     display: flex;
@@ -235,8 +227,6 @@ body {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
 }
-
-/* --- Formularios de Admin --- */
 .form-container-admin {
     background-color: #ffffff;
     padding: 2rem;
@@ -264,7 +254,7 @@ body {
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 5px;
-    box-sizing: border-box; /* Clave */
+    box-sizing: border-box; 
     font-size: 1rem;
     font-family: Arial, sans-serif;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -289,7 +279,6 @@ body {
     border-top: 1px solid #eee;
     padding-top: 1.5rem;
 }
-/* --- Botón Info (Azul claro) --- */
 .btn-info {
     background-color: #0288d1;
 }
@@ -297,22 +286,20 @@ body {
     background-color: #039be5;
 }
 
-/* --- Estilos de Tabla para Fotos --- */
 .table-logo {
     width: 60px;
     height: 60px;
-    object-fit: contain; /* Para que el logo no se deforme */
+    object-fit: contain;
     background-color: #f0f0f0;
     border-radius: 4px;
 }
 .table-avatar {
     width: 50px;
     height: 50px;
-    object-fit: cover; /* Para fotos de personas */
-    border-radius: 50%; /* Círculo */
+    object-fit: cover;
+    border-radius: 50%; 
 }
 
-/* --- Estilos de Formulario para Fotos --- */
 .form-input-file {
     font-size: 0.9rem;
     padding: 0.5rem;
@@ -332,5 +319,31 @@ body {
 .form-image-preview img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 'cover' para fotos, 'contain' para logos */
+    object-fit: cover;
+}
+.search-bar {
+    background-color: #ffffff;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-bar form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.search-bar .btn {
+    margin: 0;
+    flex-shrink: 0;
 }

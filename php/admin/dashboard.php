@@ -2,10 +2,6 @@
 require_once 'auth_admin.php';
 
 require_once 'admin_header.php';
-
-// (Aquí irá la lógica para obtener estadísticas, ej: contar torneos, usuarios, etc.)
-// $total_torneos = $conn->query("SELECT COUNT(*) FROM torneos")->fetch_row()[0];
-// $total_jugadores = $conn->query("SELECT COUNT(*) FROM miembros_plantel")->fetch_row()[0];
 ?>
 
 <main class="dashboard">
