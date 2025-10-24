@@ -10,78 +10,78 @@
 -- ============================================================================
 
 -- Estados de usuario
-CREATE TABLE user_statuses (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL
+CREATE TABLE estados_usuario (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tipos de participante
-CREATE TABLE participant_types (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL
+CREATE TABLE tipos_participante (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Estados de torneo
-CREATE TABLE tournament_statuses (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL,
-  sort_order TINYINT DEFAULT 0
+CREATE TABLE estados_torneo (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL,
+  orden TINYINT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tipos de fase (league, quarterfinal, semifinal, final, etc)
-CREATE TABLE stage_types (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL,
-  allows_draws BOOLEAN DEFAULT FALSE,
-  sort_order TINYINT DEFAULT 0
+CREATE TABLE tipos_fase (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL,
+  permite_empates BOOLEAN DEFAULT FALSE,
+  orden TINYINT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Estados de partido
-CREATE TABLE match_statuses (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL,
-  is_final_state BOOLEAN DEFAULT FALSE,
-  sort_order TINYINT DEFAULT 0
+CREATE TABLE estados_partido (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL,
+  es_estado_final BOOLEAN DEFAULT FALSE,
+  orden TINYINT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tipos de evento de calendario
-CREATE TABLE calendar_event_types (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(48) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL,
-  icon VARCHAR(64) NULL
+CREATE TABLE tipos_evento_calendario (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(48) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL,
+  icono VARCHAR(64) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Slots de bracket (home/away para enlaces de eliminación directa)
-CREATE TABLE bracket_slots (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(16) UNIQUE NOT NULL,
-  display_name VARCHAR(32) NOT NULL
+CREATE TABLE posiciones_bracket (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(16) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tipos de condición de bracket (NEW: reemplazo de texto libre)
-CREATE TABLE bracket_condition_types (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(16) UNIQUE NOT NULL,
-  display_name VARCHAR(32) NOT NULL
+CREATE TABLE tipos_condicion_bracket (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(16) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Operaciones de auditoría
-CREATE TABLE audit_operations (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(16) UNIQUE NOT NULL,
-  display_name VARCHAR(32) NOT NULL
+CREATE TABLE operaciones_auditoria (
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(16) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -90,554 +90,554 @@ CREATE TABLE audit_operations (
 
 -- Roles del sistema
 CREATE TABLE roles (
-  id TINYINT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  description VARCHAR(255) NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id TINYINT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  descripcion VARCHAR(255) NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Usuarios
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(80) NOT NULL,
-  email VARCHAR(120) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  status_id TINYINT NOT NULL DEFAULT 1,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  last_login DATETIME NULL,
-  CONSTRAINT fk_users_status FOREIGN KEY (status_id) 
-    REFERENCES user_statuses(id)
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(80) NOT NULL,
+  email VARCHAR(120) NOT NULL UNIQUE,
+  hash_contrasena VARCHAR(255) NOT NULL,
+  estado_id TINYINT NOT NULL DEFAULT 1,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  ultimo_inicio_sesion DATETIME NULL,
+  CONSTRAINT fk_usuarios_estado FOREIGN KEY (estado_id) 
+    REFERENCES estados_usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_status ON users(status_id);
+CREATE INDEX idx_usuarios_email ON usuarios(email);
+CREATE INDEX idx_usuarios_estado ON usuarios(estado_id);
 
 -- Tabla de unión usuarios-roles (muchos a muchos)
-CREATE TABLE user_roles (
-  user_id INT NOT NULL,
-  role_id TINYINT NOT NULL,
-  assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  assigned_by INT NULL,
-  PRIMARY KEY (user_id, role_id),
-  CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) 
-    REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) 
-    REFERENCES roles(id) ON DELETE CASCADE,
-  CONSTRAINT fk_user_roles_assigner FOREIGN KEY (assigned_by) 
-    REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE usuario_roles (
+  usuario_id INT NOT NULL,
+  rol_id TINYINT NOT NULL,
+  asignado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  asignado_por INT NULL,
+  PRIMARY KEY (usuario_id, rol_id),
+  CONSTRAINT fk_usuario_roles_usuario FOREIGN KEY (usuario_id) 
+    REFERENCES usuarios(id) ON DELETE CASCADE,
+  CONSTRAINT fk_usuario_roles_rol FOREIGN KEY (rol_id) 
+    REFERENCES roles(id) ON DELETE CASCADE,
+  CONSTRAINT fk_usuario_roles_asignador FOREIGN KEY (asignado_por) 
+    REFERENCES usuarios(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_user_roles_role ON user_roles(role_id);
+CREATE INDEX idx_usuario_roles_rol ON usuario_roles(rol_id);
 
 -- ============================================================================
 -- SECCIÓN 3: DOMINIO DEPORTIVO - ESTRUCTURA BASE
 -- ============================================================================
 
 -- Deportes disponibles
-CREATE TABLE sports (
-  id TINYINT AUTO_INCREMENT PRIMARY KEY,
-  code VARCHAR(32) UNIQUE NOT NULL,
-  display_name VARCHAR(64) NOT NULL,
-  is_team_based BOOLEAN NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE deportes (
+  id TINYINT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(32) UNIQUE NOT NULL,
+  nombre_mostrado VARCHAR(64) NOT NULL,
+  es_por_equipos BOOLEAN NOT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Reglas de puntuación por deporte
-CREATE TABLE sport_scoring_rules (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  sport_id TINYINT NOT NULL,
-  points_for_win TINYINT NOT NULL DEFAULT 3,
-  points_for_draw TINYINT NOT NULL DEFAULT 1,
-  points_for_loss TINYINT NOT NULL DEFAULT 0,
-  uses_goals BOOLEAN DEFAULT FALSE,
-  uses_sets BOOLEAN DEFAULT FALSE,
-  uses_points BOOLEAN DEFAULT FALSE,
-  tiebreaker_priority VARCHAR(255) NULL COMMENT 'JSON: orden de desempate',
-  CONSTRAINT fk_scoring_sport FOREIGN KEY (sport_id) 
-    REFERENCES sports(id) ON DELETE CASCADE
+CREATE TABLE reglas_puntuacion_deporte (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  deporte_id TINYINT NOT NULL,
+  puntos_victoria TINYINT NOT NULL DEFAULT 3,
+  puntos_empate TINYINT NOT NULL DEFAULT 1,
+  puntos_derrota TINYINT NOT NULL DEFAULT 0,
+  usa_goles BOOLEAN DEFAULT FALSE,
+  usa_sets BOOLEAN DEFAULT FALSE,
+  usa_puntos BOOLEAN DEFAULT FALSE,
+  prioridad_desempate VARCHAR(255) NULL COMMENT 'JSON: orden de desempate',
+  CONSTRAINT fk_puntuacion_deporte FOREIGN KEY (deporte_id) 
+    REFERENCES deportes(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE UNIQUE INDEX idx_scoring_sport ON sport_scoring_rules(sport_id);
+CREATE UNIQUE INDEX idx_puntuacion_deporte ON reglas_puntuacion_deporte(deporte_id);
 
 -- Participantes (equipos o individuales)
-CREATE TABLE participants (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  sport_id TINYINT NOT NULL,
-  participant_type_id TINYINT NOT NULL,
-  display_name VARCHAR(120) NOT NULL,
-  short_name VARCHAR(32) NULL,
-  logo_url VARCHAR(255) NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_participants_sport FOREIGN KEY (sport_id) 
-    REFERENCES sports(id),
-  CONSTRAINT fk_participants_type FOREIGN KEY (participant_type_id) 
-    REFERENCES participant_types(id),
-  CONSTRAINT uk_participant_sport_name UNIQUE (sport_id, display_name)
+CREATE TABLE participantes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  deporte_id TINYINT NOT NULL,
+  tipo_participante_id TINYINT NOT NULL,
+  nombre_mostrado VARCHAR(120) NOT NULL,
+  nombre_corto VARCHAR(32) NULL,
+  url_logo VARCHAR(255) NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_participantes_deporte FOREIGN KEY (deporte_id) 
+    REFERENCES deportes(id),
+  CONSTRAINT fk_participantes_tipo FOREIGN KEY (tipo_participante_id) 
+    REFERENCES tipos_participante(id),
+  CONSTRAINT uk_participante_deporte_nombre UNIQUE (deporte_id, nombre_mostrado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_participants_sport ON participants(sport_id);
-CREATE INDEX idx_participants_type ON participants(participant_type_id);
-CREATE INDEX idx_participants_name ON participants(display_name);
+CREATE INDEX idx_participantes_deporte ON participantes(deporte_id);
+CREATE INDEX idx_participantes_tipo ON participantes(tipo_participante_id);
+CREATE INDEX idx_participantes_nombre ON participantes(nombre_mostrado);
 
 -- Temporadas (para agrupar torneos por año/periodo)
-CREATE TABLE seasons (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(64) NOT NULL,
-  year YEAR NOT NULL,
-  start_date DATE NOT NULL,
-  end_date DATE NOT NULL,
-  is_current BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE temporadas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(64) NOT NULL,
+  ano YEAR NOT NULL,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  es_actual BOOLEAN DEFAULT FALSE,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_seasons_year ON seasons(year);
-CREATE INDEX idx_seasons_current ON seasons(is_current);
+CREATE INDEX idx_temporadas_ano ON temporadas(ano);
+CREATE INDEX idx_temporadas_actual ON temporadas(es_actual);
 
 -- Sedes/Canchas
-CREATE TABLE venues (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(120) NOT NULL,
-  location VARCHAR(160) NULL,
-  address VARCHAR(255) NULL,
-  capacity SMALLINT NULL,
-  timezone VARCHAR(40) NULL COMMENT 'Ej: America/El_Salvador para conversión horaria',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE sedes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(120) NOT NULL,
+  ubicacion VARCHAR(160) NULL,
+  direccion VARCHAR(255) NULL,
+  capacidad SMALLINT NULL,
+  zona_horaria VARCHAR(40) NULL COMMENT 'Ej: America/El_Salvador para conversión horaria',
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_venues_name ON venues(name);
+CREATE INDEX idx_sedes_nombre ON sedes(nombre);
 
 -- ============================================================================
 -- SECCIÓN 4: TORNEOS Y FASES
 -- ============================================================================
 
 -- Torneos
-CREATE TABLE tournaments (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  sport_id TINYINT NOT NULL,
-  season_id INT NULL,
-  name VARCHAR(120) NOT NULL,
-  description TEXT NULL,
-  start_date DATE NOT NULL,
-  end_date DATE NULL,
-  second_leg BOOLEAN DEFAULT FALSE COMMENT 'Si tiene ida y vuelta',
-  status_id TINYINT NOT NULL DEFAULT 1,
-  max_participants SMALLINT NOT NULL,
-  created_by INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_tournaments_sport FOREIGN KEY (sport_id) 
-    REFERENCES sports(id),
-  CONSTRAINT fk_tournaments_season FOREIGN KEY (season_id) 
-    REFERENCES seasons(id) ON DELETE SET NULL,
-  CONSTRAINT fk_tournaments_status FOREIGN KEY (status_id) 
-    REFERENCES tournament_statuses(id),
-  CONSTRAINT fk_tournaments_creator FOREIGN KEY (created_by) 
-    REFERENCES users(id)
+CREATE TABLE torneos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  deporte_id TINYINT NOT NULL,
+  temporada_id INT NULL,
+  nombre VARCHAR(120) NOT NULL,
+  descripcion TEXT NULL,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NULL,
+  ida_y_vuelta BOOLEAN DEFAULT FALSE COMMENT 'Si tiene ida y vuelta',
+  estado_id TINYINT NOT NULL DEFAULT 1,
+  max_participantes SMALLINT NOT NULL,
+  creado_por INT NOT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_torneos_deporte FOREIGN KEY (deporte_id) 
+    REFERENCES deportes(id),
+  CONSTRAINT fk_torneos_temporada FOREIGN KEY (temporada_id) 
+    REFERENCES temporadas(id) ON DELETE SET NULL,
+  CONSTRAINT fk_torneos_estado FOREIGN KEY (estado_id) 
+    REFERENCES estados_torneo(id),
+  CONSTRAINT fk_torneos_creador FOREIGN KEY (creado_por) 
+    REFERENCES usuarios(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_tournaments_sport ON tournaments(sport_id);
-CREATE INDEX idx_tournaments_season ON tournaments(season_id);
-CREATE INDEX idx_tournaments_status ON tournaments(status_id);
-CREATE INDEX idx_tournaments_dates ON tournaments(start_date, end_date);
+CREATE INDEX idx_torneos_deporte ON torneos(deporte_id);
+CREATE INDEX idx_torneos_temporada ON torneos(temporada_id);
+CREATE INDEX idx_torneos_estado ON torneos(estado_id);
+CREATE INDEX idx_torneos_fechas ON torneos(fecha_inicio, fecha_fin);
 
 -- Participantes inscritos en torneos (tabla de unión)
-CREATE TABLE tournament_participants (
-  tournament_id INT NOT NULL,
-  participant_id INT NOT NULL,
-  seed SMALLINT NULL COMMENT 'Orden de clasificación/sorteo',
-  enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (tournament_id, participant_id),
-  CONSTRAINT fk_tourn_part_tournament FOREIGN KEY (tournament_id) 
-    REFERENCES tournaments(id) ON DELETE CASCADE,
-  CONSTRAINT fk_tourn_part_participant FOREIGN KEY (participant_id) 
-    REFERENCES participants(id) ON DELETE RESTRICT
+CREATE TABLE torneo_participantes (
+  torneo_id INT NOT NULL,
+  participante_id INT NOT NULL,
+  semilla SMALLINT NULL COMMENT 'Orden de clasificación/sorteo',
+  inscrito_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (torneo_id, participante_id),
+  CONSTRAINT fk_torneo_part_torneo FOREIGN KEY (torneo_id) 
+    REFERENCES torneos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_torneo_part_participante FOREIGN KEY (participante_id) 
+    REFERENCES participantes(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_tourn_part_participant ON tournament_participants(participant_id);
-CREATE INDEX idx_tourn_part_seed ON tournament_participants(tournament_id, seed);
+CREATE INDEX idx_torneo_part_participante ON torneo_participantes(participante_id);
+CREATE INDEX idx_torneo_part_semilla ON torneo_participantes(torneo_id, semilla);
 
 -- Grupos de torneo (para fase de grupos)
-CREATE TABLE tournament_groups (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tournament_id INT NOT NULL,
-  name VARCHAR(16) NOT NULL COMMENT 'Grupo A, B, C, etc',
-  sort_order TINYINT DEFAULT 0,
-  CONSTRAINT fk_tourn_groups_tournament FOREIGN KEY (tournament_id) 
-    REFERENCES tournaments(id) ON DELETE CASCADE,
-  UNIQUE KEY uk_tournament_group (tournament_id, name)
+CREATE TABLE torneo_grupos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  torneo_id INT NOT NULL,
+  nombre VARCHAR(16) NOT NULL COMMENT 'Grupo A, B, C, etc',
+  orden TINYINT DEFAULT 0,
+  CONSTRAINT fk_torneo_grupos_torneo FOREIGN KEY (torneo_id) 
+    REFERENCES torneos(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_torneo_grupo (torneo_id, nombre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Miembros de grupos (tabla de unión)
-CREATE TABLE group_members (
-  group_id INT NOT NULL,
-  participant_id INT NOT NULL,
-  seed_in_group TINYINT NULL,
-  PRIMARY KEY (group_id, participant_id),
-  CONSTRAINT fk_group_members_group FOREIGN KEY (group_id) 
-    REFERENCES tournament_groups(id) ON DELETE CASCADE,
-  CONSTRAINT fk_group_members_participant FOREIGN KEY (participant_id) 
-    REFERENCES participants(id) ON DELETE CASCADE
+CREATE TABLE miembros_grupo (
+  grupo_id INT NOT NULL,
+  participante_id INT NOT NULL,
+  semilla_en_grupo TINYINT NULL,
+  PRIMARY KEY (grupo_id, participante_id),
+  CONSTRAINT fk_miembros_grupo_grupo FOREIGN KEY (grupo_id) 
+    REFERENCES torneo_grupos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_miembros_grupo_participante FOREIGN KEY (participante_id) 
+    REFERENCES participantes(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_group_members_participant ON group_members(participant_id);
+CREATE INDEX idx_miembros_grupo_participante ON miembros_grupo(participante_id);
 
 -- Fases del torneo (liga, cuartos, semifinal, final)
-CREATE TABLE stages (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tournament_id INT NOT NULL,
-  stage_type_id TINYINT NOT NULL,
-  group_id INT NULL COMMENT 'Si es fase de grupos, referencia al grupo',
-  stage_order TINYINT NOT NULL,
-  name VARCHAR(64) NULL COMMENT 'Nombre personalizado de la fase',
-  start_date DATE NULL,
-  end_date DATE NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_stages_tournament FOREIGN KEY (tournament_id) 
-    REFERENCES tournaments(id) ON DELETE CASCADE,
-  CONSTRAINT fk_stages_type FOREIGN KEY (stage_type_id) 
-    REFERENCES stage_types(id),
-  CONSTRAINT fk_stages_group FOREIGN KEY (group_id) 
-    REFERENCES tournament_groups(id) ON DELETE CASCADE
+CREATE TABLE fases (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  torneo_id INT NOT NULL,
+  tipo_fase_id TINYINT NOT NULL,
+  grupo_id INT NULL COMMENT 'Si es fase de grupos, referencia al grupo',
+  orden_fase TINYINT NOT NULL,
+  nombre VARCHAR(64) NULL COMMENT 'Nombre personalizado de la fase',
+  fecha_inicio DATE NULL,
+  fecha_fin DATE NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_fases_torneo FOREIGN KEY (torneo_id) 
+    REFERENCES torneos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_fases_tipo FOREIGN KEY (tipo_fase_id) 
+    REFERENCES tipos_fase(id),
+  CONSTRAINT fk_fases_grupo FOREIGN KEY (grupo_id) 
+    REFERENCES torneo_grupos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_stages_tournament ON stages(tournament_id);
-CREATE INDEX idx_stages_type ON stages(stage_type_id);
-CREATE INDEX idx_stages_order ON stages(tournament_id, stage_order);
+CREATE INDEX idx_fases_torneo ON fases(torneo_id);
+CREATE INDEX idx_fases_tipo ON fases(tipo_fase_id);
+CREATE INDEX idx_fases_orden ON fases(torneo_id, orden_fase);
 
 -- Jornadas (rounds) dentro de una fase
-CREATE TABLE rounds (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  stage_id INT NOT NULL,
-  round_number SMALLINT NOT NULL,
-  round_date DATE NOT NULL,
-  name VARCHAR(64) NULL COMMENT 'Jornada 1, Fecha 2, etc',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_rounds_stage FOREIGN KEY (stage_id) 
-    REFERENCES stages(id) ON DELETE CASCADE
+CREATE TABLE jornadas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  fase_id INT NOT NULL,
+  numero_jornada SMALLINT NOT NULL,
+  fecha_jornada DATE NOT NULL,
+  nombre VARCHAR(64) NULL COMMENT 'Jornada 1, Fecha 2, etc',
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_jornadas_fase FOREIGN KEY (fase_id) 
+    REFERENCES fases(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_rounds_stage ON rounds(stage_id);
-CREATE INDEX idx_rounds_date ON rounds(round_date);
-CREATE INDEX idx_rounds_number ON rounds(stage_id, round_number);
+CREATE INDEX idx_jornadas_fase ON jornadas(fase_id);
+CREATE INDEX idx_jornadas_fecha ON jornadas(fecha_jornada);
+CREATE INDEX idx_jornadas_numero ON jornadas(fase_id, numero_jornada);
 
 -- ============================================================================
 -- SECCIÓN 5: PARTIDOS Y RESULTADOS
 -- ============================================================================
 
 -- Partidos
-CREATE TABLE matches (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tournament_id INT NOT NULL,
-  stage_id INT NOT NULL,
-  round_id INT NULL,
-  venue_id INT NULL,
-  home_participant_id INT NOT NULL,
-  away_participant_id INT NOT NULL,
-  kickoff DATETIME NOT NULL,
-  match_date DATE GENERATED ALWAYS AS (DATE(kickoff)) STORED,
-  match_time TIME GENERATED ALWAYS AS (TIME(kickoff)) STORED,
-  status_id TINYINT NOT NULL DEFAULT 1,
-  home_score SMALLINT DEFAULT 0,
-  away_score SMALLINT DEFAULT 0,
-  home_score_sets TINYINT NULL COMMENT 'Para voleibol',
-  away_score_sets TINYINT NULL,
-  notes TEXT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_matches_tournament FOREIGN KEY (tournament_id) 
-    REFERENCES tournaments(id) ON DELETE CASCADE,
-  CONSTRAINT fk_matches_stage FOREIGN KEY (stage_id) 
-    REFERENCES stages(id) ON DELETE CASCADE,
-  CONSTRAINT fk_matches_round FOREIGN KEY (round_id) 
-    REFERENCES rounds(id) ON DELETE SET NULL,
-  CONSTRAINT fk_matches_venue FOREIGN KEY (venue_id) 
-    REFERENCES venues(id) ON DELETE SET NULL,
-  CONSTRAINT fk_matches_home FOREIGN KEY (home_participant_id) 
-    REFERENCES participants(id),
-  CONSTRAINT fk_matches_away FOREIGN KEY (away_participant_id) 
-    REFERENCES participants(id),
-  CONSTRAINT fk_matches_status FOREIGN KEY (status_id) 
-    REFERENCES match_statuses(id),
-  CONSTRAINT chk_different_participants CHECK (home_participant_id != away_participant_id),
-  CONSTRAINT uk_matches_round UNIQUE (stage_id, round_id, home_participant_id, away_participant_id),
-  CONSTRAINT uk_matches_timed UNIQUE (tournament_id, match_date, home_participant_id, away_participant_id)
+CREATE TABLE partidos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  torneo_id INT NOT NULL,
+  fase_id INT NOT NULL,
+  jornada_id INT NULL,
+  sede_id INT NULL,
+  participante_local_id INT NOT NULL,
+  participante_visitante_id INT NOT NULL,
+  inicio_partido DATETIME NOT NULL,
+  fecha_partido DATE GENERATED ALWAYS AS (DATE(inicio_partido)) STORED,
+  hora_partido TIME GENERATED ALWAYS AS (TIME(inicio_partido)) STORED,
+  estado_id TINYINT NOT NULL DEFAULT 1,
+  marcador_local SMALLINT DEFAULT 0,
+  marcador_visitante SMALLINT DEFAULT 0,
+  marcador_local_sets TINYINT NULL COMMENT 'Para voleibol',
+  marcador_visitante_sets TINYINT NULL,
+  notas TEXT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_partidos_torneo FOREIGN KEY (torneo_id) 
+    REFERENCES torneos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_partidos_fase FOREIGN KEY (fase_id) 
+    REFERENCES fases(id) ON DELETE CASCADE,
+  CONSTRAINT fk_partidos_jornada FOREIGN KEY (jornada_id) 
+    REFERENCES jornadas(id) ON DELETE SET NULL,
+  CONSTRAINT fk_partidos_sede FOREIGN KEY (sede_id) 
+    REFERENCES sedes(id) ON DELETE SET NULL,
+  CONSTRAINT fk_partidos_local FOREIGN KEY (participante_local_id) 
+    REFERENCES participantes(id),
+  CONSTRAINT fk_partidos_visitante FOREIGN KEY (participante_visitante_id) 
+    REFERENCES participantes(id),
+  CONSTRAINT fk_partidos_estado FOREIGN KEY (estado_id) 
+    REFERENCES estados_partido(id),
+  CONSTRAINT chk_participantes_diferentes CHECK (participante_local_id != participante_visitante_id),
+  CONSTRAINT uk_partidos_jornada UNIQUE (fase_id, jornada_id, participante_local_id, participante_visitante_id),
+  CONSTRAINT uk_partidos_tiempo UNIQUE (torneo_id, fecha_partido, participante_local_id, participante_visitante_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_matches_tournament ON matches(tournament_id);
-CREATE INDEX idx_matches_stage ON matches(stage_id);
-CREATE INDEX idx_matches_round ON matches(round_id);
-CREATE INDEX idx_matches_venue ON matches(venue_id);
-CREATE INDEX idx_matches_home ON matches(home_participant_id);
-CREATE INDEX idx_matches_away ON matches(away_participant_id);
-CREATE INDEX idx_matches_status ON matches(status_id);
-CREATE INDEX idx_matches_kickoff ON matches(kickoff);
-CREATE INDEX idx_matches_date ON matches(match_date);
-CREATE INDEX idx_matches_date_status ON matches(match_date, status_id);
-CREATE INDEX idx_matches_tourn_status ON matches(tournament_id, status_id, match_date);
+CREATE INDEX idx_partidos_torneo ON partidos(torneo_id);
+CREATE INDEX idx_partidos_fase ON partidos(fase_id);
+CREATE INDEX idx_partidos_jornada ON partidos(jornada_id);
+CREATE INDEX idx_partidos_sede ON partidos(sede_id);
+CREATE INDEX idx_partidos_local ON partidos(participante_local_id);
+CREATE INDEX idx_partidos_visitante ON partidos(participante_visitante_id);
+CREATE INDEX idx_partidos_estado ON partidos(estado_id);
+CREATE INDEX idx_partidos_inicio ON partidos(inicio_partido);
+CREATE INDEX idx_partidos_fecha ON partidos(fecha_partido);
+CREATE INDEX idx_partidos_fecha_estado ON partidos(fecha_partido, estado_id);
+CREATE INDEX idx_partidos_torneo_estado ON partidos(torneo_id, estado_id, fecha_partido);
 
 -- Detalle de sets (para voleibol)
-CREATE TABLE match_set_scores (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  match_id INT NOT NULL,
-  set_number TINYINT NOT NULL,
-  home_points TINYINT NOT NULL DEFAULT 0,
-  away_points TINYINT NOT NULL DEFAULT 0,
-  CONSTRAINT fk_set_scores_match FOREIGN KEY (match_id) 
-    REFERENCES matches(id) ON DELETE CASCADE,
-  UNIQUE KEY uk_match_set (match_id, set_number)
+CREATE TABLE resultados_set_partido (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  partido_id INT NOT NULL,
+  numero_set TINYINT NOT NULL,
+  puntos_local TINYINT NOT NULL DEFAULT 0,
+  puntos_visitante TINYINT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_resultados_set_partido FOREIGN KEY (partido_id) 
+    REFERENCES partidos(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_partido_set (partido_id, numero_set)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Detalle de periodos (para baloncesto)
-CREATE TABLE match_period_scores (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  match_id INT NOT NULL,
-  period_number TINYINT NOT NULL,
-  home_points TINYINT NOT NULL DEFAULT 0,
-  away_points TINYINT NOT NULL DEFAULT 0,
-  CONSTRAINT fk_period_scores_match FOREIGN KEY (match_id) 
-    REFERENCES matches(id) ON DELETE CASCADE,
-  UNIQUE KEY uk_match_period (match_id, period_number)
+CREATE TABLE resultados_periodo_partido (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  partido_id INT NOT NULL,
+  numero_periodo TINYINT NOT NULL,
+  puntos_local TINYINT NOT NULL DEFAULT 0,
+  puntos_visitante TINYINT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_resultados_periodo_partido FOREIGN KEY (partido_id) 
+    REFERENCES partidos(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_partido_periodo (partido_id, numero_periodo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Enlaces de bracket (para eliminación directa)
-CREATE TABLE bracket_links (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  from_match_id INT NOT NULL COMMENT 'Partido origen',
-  to_match_id INT NOT NULL COMMENT 'Partido destino',
-  to_slot_id TINYINT NOT NULL COMMENT '1=home, 2=away',
-  condition_type_id TINYINT NOT NULL DEFAULT 1 COMMENT 'winner/loser/specific',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_bracket_from FOREIGN KEY (from_match_id) 
-    REFERENCES matches(id) ON DELETE CASCADE,
-  CONSTRAINT fk_bracket_to FOREIGN KEY (to_match_id) 
-    REFERENCES matches(id) ON DELETE CASCADE,
-  CONSTRAINT fk_bracket_slot FOREIGN KEY (to_slot_id) 
-    REFERENCES bracket_slots(id),
-  CONSTRAINT fk_bracket_cond FOREIGN KEY (condition_type_id) 
-    REFERENCES bracket_condition_types(id),
-  CONSTRAINT uk_bracket_slot UNIQUE (to_match_id, to_slot_id)
+CREATE TABLE enlaces_bracket (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  partido_origen_id INT NOT NULL COMMENT 'Partido origen',
+  partido_destino_id INT NOT NULL COMMENT 'Partido destino',
+  posicion_destino_id TINYINT NOT NULL COMMENT '1=local, 2=visitante',
+  tipo_condicion_id TINYINT NOT NULL DEFAULT 1 COMMENT 'ganador/perdedor/específico',
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bracket_origen FOREIGN KEY (partido_origen_id) 
+    REFERENCES partidos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_bracket_destino FOREIGN KEY (partido_destino_id) 
+    REFERENCES partidos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_bracket_posicion FOREIGN KEY (posicion_destino_id) 
+    REFERENCES posiciones_bracket(id),
+  CONSTRAINT fk_bracket_condicion FOREIGN KEY (tipo_condicion_id) 
+    REFERENCES tipos_condicion_bracket(id),
+  CONSTRAINT uk_bracket_posicion UNIQUE (partido_destino_id, posicion_destino_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_bracket_from ON bracket_links(from_match_id);
-CREATE INDEX idx_bracket_to ON bracket_links(to_match_id);
+CREATE INDEX idx_bracket_origen ON enlaces_bracket(partido_origen_id);
+CREATE INDEX idx_bracket_destino ON enlaces_bracket(partido_destino_id);
 
 -- ============================================================================
 -- SECCIÓN 6: TABLA DE POSICIONES
 -- ============================================================================
 
 -- Tabla de posiciones genérica (soporta múltiples deportes)
-CREATE TABLE standings (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tournament_id INT NOT NULL,
-  participant_id INT NOT NULL,
-  stage_id INT NULL COMMENT 'Posiciones por fase si aplica',
-  group_id INT NULL COMMENT 'Posiciones por grupo si aplica',
-  stage_key INT GENERATED ALWAYS AS (COALESCE(stage_id,0)) STORED,
-  group_key INT GENERATED ALWAYS AS (COALESCE(group_id,0)) STORED,
-  played SMALLINT DEFAULT 0,
-  won SMALLINT DEFAULT 0,
-  drawn SMALLINT DEFAULT 0,
-  lost SMALLINT DEFAULT 0,
-  goals_for SMALLINT NULL COMMENT 'Para fútbol',
-  goals_against SMALLINT NULL,
-  goal_difference SMALLINT NULL,
-  sets_for SMALLINT NULL COMMENT 'Para voleibol',
-  sets_against SMALLINT NULL,
-  set_difference SMALLINT NULL,
-  points_for SMALLINT NULL COMMENT 'Para baloncesto',
-  points_against SMALLINT NULL,
-  point_difference SMALLINT NULL,
-  points SMALLINT DEFAULT 0 COMMENT 'Puntos de tabla',
-  position TINYINT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_standings_tournament FOREIGN KEY (tournament_id) 
-    REFERENCES tournaments(id) ON DELETE CASCADE,
-  CONSTRAINT fk_standings_participant FOREIGN KEY (participant_id) 
-    REFERENCES participants(id) ON DELETE CASCADE,
-  CONSTRAINT fk_standings_stage FOREIGN KEY (stage_id) 
-    REFERENCES stages(id) ON DELETE CASCADE,
-  CONSTRAINT fk_standings_group FOREIGN KEY (group_id) 
-    REFERENCES tournament_groups(id) ON DELETE CASCADE,
-  CONSTRAINT uk_standing_norm UNIQUE (tournament_id, participant_id, stage_key, group_key)
+CREATE TABLE tabla_posiciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  torneo_id INT NOT NULL,
+  participante_id INT NOT NULL,
+  fase_id INT NULL COMMENT 'Posiciones por fase si aplica',
+  grupo_id INT NULL COMMENT 'Posiciones por grupo si aplica',
+  clave_fase INT GENERATED ALWAYS AS (COALESCE(fase_id,0)) STORED,
+  clave_grupo INT GENERATED ALWAYS AS (COALESCE(grupo_id,0)) STORED,
+  jugados SMALLINT DEFAULT 0,
+  ganados SMALLINT DEFAULT 0,
+  empatados SMALLINT DEFAULT 0,
+  perdidos SMALLINT DEFAULT 0,
+  goles_favor SMALLINT NULL COMMENT 'Para fútbol',
+  goles_contra SMALLINT NULL,
+  diferencia_goles SMALLINT NULL,
+  sets_favor SMALLINT NULL COMMENT 'Para voleibol',
+  sets_contra SMALLINT NULL,
+  diferencia_sets SMALLINT NULL,
+  puntos_favor SMALLINT NULL COMMENT 'Para baloncesto',
+  puntos_contra SMALLINT NULL,
+  diferencia_puntos SMALLINT NULL,
+  puntos SMALLINT DEFAULT 0 COMMENT 'Puntos de tabla',
+  posicion TINYINT NULL,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_posiciones_torneo FOREIGN KEY (torneo_id) 
+    REFERENCES torneos(id) ON DELETE CASCADE,
+  CONSTRAINT fk_posiciones_participante FOREIGN KEY (participante_id) 
+    REFERENCES participantes(id) ON DELETE CASCADE,
+  CONSTRAINT fk_posiciones_fase FOREIGN KEY (fase_id) 
+    REFERENCES fases(id) ON DELETE CASCADE,
+  CONSTRAINT fk_posiciones_grupo FOREIGN KEY (grupo_id) 
+    REFERENCES torneo_grupos(id) ON DELETE CASCADE,
+  CONSTRAINT uk_posicion_norm UNIQUE (torneo_id, participante_id, clave_fase, clave_grupo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_standings_tournament ON standings(tournament_id);
-CREATE INDEX idx_standings_participant ON standings(participant_id);
-CREATE INDEX idx_standings_stage ON standings(stage_id);
-CREATE INDEX idx_standings_group ON standings(group_id);
-CREATE INDEX idx_standings_position ON standings(tournament_id, stage_id, group_id, position);
-CREATE INDEX idx_standings_rank ON standings(tournament_id, stage_key, group_key, points DESC, COALESCE(goal_difference, set_difference, point_difference, 0) DESC);
+CREATE INDEX idx_posiciones_torneo ON tabla_posiciones(torneo_id);
+CREATE INDEX idx_posiciones_participante ON tabla_posiciones(participante_id);
+CREATE INDEX idx_posiciones_fase ON tabla_posiciones(fase_id);
+CREATE INDEX idx_posiciones_grupo ON tabla_posiciones(grupo_id);
+CREATE INDEX idx_posiciones_posicion ON tabla_posiciones(torneo_id, fase_id, grupo_id, posicion);
+CREATE INDEX idx_posiciones_ranking ON tabla_posiciones(torneo_id, clave_fase, clave_grupo, puntos DESC, COALESCE(diferencia_goles, diferencia_sets, diferencia_puntos, 0) DESC);
 
 -- ============================================================================
 -- SECCIÓN 7: PARTIDOS DE SELECCIÓN
 -- ============================================================================
 
 -- Partidos de la Selección Nacional (módulo independiente)
-CREATE TABLE selection_matches (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  sport_id TINYINT NOT NULL,
-  opponent VARCHAR(120) NOT NULL,
-  match_date DATE NOT NULL,
-  match_time TIME NOT NULL,
-  venue_id INT NULL,
-  our_score SMALLINT NULL COMMENT 'NULL si no se ha jugado',
-  opponent_score SMALLINT NULL COMMENT 'NULL si no se ha jugado',
-  status_id TINYINT NOT NULL DEFAULT 1,
-  competition_name VARCHAR(120) NULL COMMENT 'Copa Oro, Clasificatorias, etc',
-  is_home BOOLEAN DEFAULT TRUE,
-  notes TEXT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_selection_sport FOREIGN KEY (sport_id) 
-    REFERENCES sports(id),
-  CONSTRAINT fk_selection_venue FOREIGN KEY (venue_id) 
-    REFERENCES venues(id) ON DELETE SET NULL,
-  CONSTRAINT fk_selection_status FOREIGN KEY (status_id) 
-    REFERENCES match_statuses(id),
-  CONSTRAINT chk_scores_when_finished CHECK (
-    (status_id <> 5) OR 
-    (status_id = 5 AND our_score IS NOT NULL AND opponent_score IS NOT NULL)
-  )
+CREATE TABLE partidos_seleccion (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  deporte_id TINYINT NOT NULL,
+  oponente VARCHAR(120) NOT NULL,
+  fecha_partido DATE NOT NULL,
+  hora_partido TIME NOT NULL,
+  sede_id INT NULL,
+  marcador_nuestro SMALLINT NULL COMMENT 'NULL si no se ha jugado',
+  marcador_oponente SMALLINT NULL COMMENT 'NULL si no se ha jugado',
+  estado_id TINYINT NOT NULL DEFAULT 1,
+  nombre_competicion VARCHAR(120) NULL COMMENT 'Copa Oro, Clasificatorias, etc',
+  es_local BOOLEAN DEFAULT TRUE,
+  notas TEXT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_seleccion_deporte FOREIGN KEY (deporte_id) 
+    REFERENCES deportes(id),
+  CONSTRAINT fk_seleccion_sede FOREIGN KEY (sede_id) 
+    REFERENCES sedes(id) ON DELETE SET NULL,
+  CONSTRAINT fk_seleccion_estado FOREIGN KEY (estado_id) 
+    REFERENCES estados_partido(id),
+  CONSTRAINT chk_marcadores_al_finalizar CHECK (
+    (estado_id <> 5) OR 
+    (estado_id = 5 AND marcador_nuestro IS NOT NULL AND marcador_oponente IS NOT NULL)
+  )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_selection_sport ON selection_matches(sport_id);
-CREATE INDEX idx_selection_date ON selection_matches(match_date);
-CREATE INDEX idx_selection_status ON selection_matches(status_id);
+CREATE INDEX idx_seleccion_deporte ON partidos_seleccion(deporte_id);
+CREATE INDEX idx_seleccion_fecha ON partidos_seleccion(fecha_partido);
+CREATE INDEX idx_seleccion_estado ON partidos_seleccion(estado_id);
 
 -- ============================================================================
 -- SECCIÓN 8: CALENDARIO (VISTA UNIFICADA)
 -- ============================================================================
 
 -- Eventos de calendario (proyección de partidos y jornadas)
-CREATE TABLE calendar_events (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  event_date DATE NOT NULL,
-  event_time TIME NULL,
-  title VARCHAR(180) NOT NULL,
-  description TEXT NULL,
-  event_type_id TINYINT NOT NULL,
-  source_id INT NOT NULL COMMENT 'ID del partido o jornada',
-  status_id TINYINT NOT NULL,
-  sport_id TINYINT NULL,
-  venue_id INT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_calendar_type FOREIGN KEY (event_type_id) 
-    REFERENCES calendar_event_types(id),
-  CONSTRAINT fk_calendar_status FOREIGN KEY (status_id) 
-    REFERENCES match_statuses(id),
-  CONSTRAINT fk_calendar_sport FOREIGN KEY (sport_id) 
-    REFERENCES sports(id) ON DELETE SET NULL,
-  CONSTRAINT fk_calendar_venue FOREIGN KEY (venue_id) 
-    REFERENCES venues(id) ON DELETE SET NULL,
-  CONSTRAINT uk_calendar_source UNIQUE (event_type_id, source_id)
+CREATE TABLE eventos_calendario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  fecha_evento DATE NOT NULL,
+  hora_evento TIME NULL,
+  titulo VARCHAR(180) NOT NULL,
+  descripcion TEXT NULL,
+  tipo_evento_id TINYINT NOT NULL,
+  origen_id INT NOT NULL COMMENT 'ID del partido o jornada',
+  estado_id TINYINT NOT NULL,
+  deporte_id TINYINT NULL,
+  sede_id INT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_calendario_tipo FOREIGN KEY (tipo_evento_id) 
+    REFERENCES tipos_evento_calendario(id),
+  CONSTRAINT fk_calendario_estado FOREIGN KEY (estado_id) 
+    REFERENCES estados_partido(id),
+  CONSTRAINT fk_calendario_deporte FOREIGN KEY (deporte_id) 
+    REFERENCES deportes(id) ON DELETE SET NULL,
+  CONSTRAINT fk_calendario_sede FOREIGN KEY (sede_id) 
+    REFERENCES sedes(id) ON DELETE SET NULL,
+  CONSTRAINT uk_calendario_origen UNIQUE (tipo_evento_id, origen_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_calendar_date ON calendar_events(event_date);
-CREATE INDEX idx_calendar_type ON calendar_events(event_type_id);
-CREATE INDEX idx_calendar_status ON calendar_events(status_id);
-CREATE INDEX idx_calendar_source ON calendar_events(event_type_id, source_id);
-CREATE INDEX idx_calendar_sport ON calendar_events(sport_id);
-CREATE INDEX idx_calendar_range ON calendar_events(event_date, event_time);
-CREATE INDEX idx_calendar_date_status ON calendar_events(event_date, status_id);
+CREATE INDEX idx_calendario_fecha ON eventos_calendario(fecha_evento);
+CREATE INDEX idx_calendario_tipo ON eventos_calendario(tipo_evento_id);
+CREATE INDEX idx_calendario_estado ON eventos_calendario(estado_id);
+CREATE INDEX idx_calendario_origen ON eventos_calendario(tipo_evento_id, origen_id);
+CREATE INDEX idx_calendario_deporte ON eventos_calendario(deporte_id);
+CREATE INDEX idx_calendario_rango ON eventos_calendario(fecha_evento, hora_evento);
+CREATE INDEX idx_calendario_fecha_estado ON eventos_calendario(fecha_evento, estado_id);
 
 -- ============================================================================
 -- SECCIÓN 9: AUDITORÍA
 -- ============================================================================
 
 -- Encabezado de auditoría
-CREATE TABLE audit_log_header (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  table_name VARCHAR(128) NOT NULL,
-  row_pk VARCHAR(128) NOT NULL COMMENT 'Valor de la PK del registro afectado',
-  operation_id TINYINT NOT NULL,
-  changed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  user_id INT NULL,
-  ip_address VARCHAR(45) NULL,
-  user_agent VARCHAR(255) NULL,
-  CONSTRAINT fk_audit_operation FOREIGN KEY (operation_id) 
-    REFERENCES audit_operations(id),
-  CONSTRAINT fk_audit_user FOREIGN KEY (user_id) 
-    REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE auditoria_encabezado (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  nombre_tabla VARCHAR(128) NOT NULL,
+  pk_fila VARCHAR(128) NOT NULL COMMENT 'Valor de la PK del registro afectado',
+  operacion_id TINYINT NOT NULL,
+  modificado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  usuario_id INT NULL,
+  direccion_ip VARCHAR(45) NULL,
+  user_agent VARCHAR(255) NULL,
+  CONSTRAINT fk_auditoria_operacion FOREIGN KEY (operacion_id) 
+    REFERENCES operaciones_auditoria(id),
+  CONSTRAINT fk_auditoria_usuario FOREIGN KEY (usuario_id) 
+    REFERENCES usuarios(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_audit_table ON audit_log_header(table_name);
-CREATE INDEX idx_audit_user ON audit_log_header(user_id);
-CREATE INDEX idx_audit_date ON audit_log_header(changed_at);
-CREATE INDEX idx_audit_operation ON audit_log_header(operation_id);
+CREATE INDEX idx_auditoria_tabla ON auditoria_encabezado(nombre_tabla);
+CREATE INDEX idx_auditoria_usuario ON auditoria_encabezado(usuario_id);
+CREATE INDEX idx_auditoria_fecha ON auditoria_encabezado(modificado_en);
+CREATE INDEX idx_auditoria_operacion ON auditoria_encabezado(operacion_id);
 
 -- Detalle de auditoría (cambios campo por campo)
-CREATE TABLE audit_log_detail (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  audit_id BIGINT NOT NULL,
-  column_name VARCHAR(128) NOT NULL,
-  old_value TEXT NULL,
-  new_value TEXT NULL,
-  CONSTRAINT fk_audit_detail_header FOREIGN KEY (audit_id) 
-    REFERENCES audit_log_header(id) ON DELETE CASCADE
+CREATE TABLE auditoria_detalle (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  auditoria_id BIGINT NOT NULL,
+  nombre_columna VARCHAR(128) NOT NULL,
+  valor_antiguo TEXT NULL,
+  valor_nuevo TEXT NULL,
+  CONSTRAINT fk_auditoria_detalle_encabezado FOREIGN KEY (auditoria_id) 
+    REFERENCES auditoria_encabezado(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_audit_detail_header ON audit_log_detail(audit_id);
-CREATE INDEX idx_audit_detail_column ON audit_log_detail(column_name);
+CREATE INDEX idx_auditoria_detalle_encabezado ON auditoria_detalle(auditoria_id);
+CREATE INDEX idx_auditoria_detalle_columna ON auditoria_detalle(nombre_columna);
 
 -- ============================================================================
 -- SECCIÓN 10: ROSTER DE EQUIPOS (OPCIONAL - PARA FUTURA GESTIÓN DE JUGADORES)
 -- ============================================================================
 
 -- Roster de equipos (si se desea gestionar jugadores por equipo)
-CREATE TABLE team_rosters (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  participant_id INT NOT NULL COMMENT 'Debe ser un equipo',
-  season_id INT NULL,
-  name VARCHAR(64) NOT NULL COMMENT 'Plantel 2025, etc',
-  is_active BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_roster_participant FOREIGN KEY (participant_id) 
-    REFERENCES participants(id) ON DELETE CASCADE,
-  CONSTRAINT fk_roster_season FOREIGN KEY (season_id) 
-    REFERENCES seasons(id) ON DELETE SET NULL
+CREATE TABLE planteles_equipo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  participante_id INT NOT NULL COMMENT 'Debe ser un equipo',
+  temporada_id INT NULL,
+  nombre VARCHAR(64) NOT NULL COMMENT 'Plantel 2025, etc',
+  esta_activo BOOLEAN DEFAULT TRUE,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_plantel_participante FOREIGN KEY (participante_id) 
+    REFERENCES participantes(id) ON DELETE CASCADE,
+  CONSTRAINT fk_plantel_temporada FOREIGN KEY (temporada_id) 
+    REFERENCES temporadas(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_roster_participant ON team_rosters(participant_id);
-CREATE INDEX idx_roster_season ON team_rosters(season_id);
+CREATE INDEX idx_plantel_participante ON planteles_equipo(participante_id);
+CREATE INDEX idx_plantel_temporada ON planteles_equipo(temporada_id);
 
 -- Miembros del roster (jugadores)
-CREATE TABLE roster_members (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  roster_id INT NOT NULL,
-  player_name VARCHAR(120) NOT NULL,
-  jersey_number TINYINT NULL,
-  position VARCHAR(32) NULL,
-  is_captain BOOLEAN DEFAULT FALSE,
-  joined_at DATE NULL,
-  left_at DATE NULL,
-  CONSTRAINT fk_roster_members_roster FOREIGN KEY (roster_id) 
-    REFERENCES team_rosters(id) ON DELETE CASCADE
+CREATE TABLE miembros_plantel (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  plantel_id INT NOT NULL,
+  nombre_jugador VARCHAR(120) NOT NULL,
+  numero_camiseta TINYINT NULL,
+  posicion VARCHAR(32) NULL,
+  es_capitan BOOLEAN DEFAULT FALSE,
+  unido_en DATE NULL,
+  salio_en DATE NULL,
+  CONSTRAINT fk_miembros_plantel_plantel FOREIGN KEY (plantel_id) 
+    REFERENCES planteles_equipo(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_roster_members_roster ON roster_members(roster_id);
-CREATE INDEX idx_roster_members_player ON roster_members(player_name);
+CREATE INDEX idx_miembros_plantel_plantel ON miembros_plantel(plantel_id);
+CREATE INDEX idx_miembros_plantel_jugador ON miembros_plantel(nombre_jugador);
 
 -- ============================================================================
 -- SECCIÓN 11: DATOS SEMILLA (CATÁLOGOS)
 -- ============================================================================
 
 -- Estados de usuario
-INSERT INTO user_statuses (id, code, display_name, description) VALUES
+INSERT INTO estados_usuario (id, codigo, nombre_mostrado, descripcion) VALUES
 (1, 'active', 'Activo', 'Usuario activo en el sistema'),
 (2, 'blocked', 'Bloqueado', 'Usuario bloqueado temporalmente'),
 (3, 'suspended', 'Suspendido', 'Usuario suspendido por violación de normas'),
 (4, 'inactive', 'Inactivo', 'Usuario inactivo (sin uso prolongado)');
 
 -- Tipos de participante
-INSERT INTO participant_types (id, code, display_name, description) VALUES
+INSERT INTO tipos_participante (id, codigo, nombre_mostrado, descripcion) VALUES
 (1, 'team', 'Equipo', 'Participante tipo equipo'),
 (2, 'individual', 'Individual', 'Participante tipo jugador individual');
 
 -- Estados de torneo
-INSERT INTO tournament_statuses (id, code, display_name, description, sort_order) VALUES
+INSERT INTO estados_torneo (id, codigo, nombre_mostrado, descripcion, orden) VALUES
 (1, 'draft', 'Borrador', 'Torneo en preparación', 1),
 (2, 'registration', 'Inscripción', 'Periodo de inscripción abierto', 2),
 (3, 'active', 'Activo', 'Torneo en curso', 3),
@@ -646,7 +646,7 @@ INSERT INTO tournament_statuses (id, code, display_name, description, sort_order
 (6, 'cancelled', 'Cancelado', 'Torneo cancelado', 6);
 
 -- Tipos de fase
-INSERT INTO stage_types (id, code, display_name, description, allows_draws, sort_order) VALUES
+INSERT INTO tipos_fase (id, codigo, nombre_mostrado, descripcion, permite_empates, orden) VALUES
 (1, 'league', 'Liga/Jornadas', 'Fase de liga con sistema round-robin', TRUE, 1),
 (2, 'group', 'Fase de Grupos', 'Fase de grupos previa a eliminación', TRUE, 2),
 (3, 'round_32', 'Dieciseisavos', 'Ronda de 32 equipos', FALSE, 3),
@@ -657,7 +657,7 @@ INSERT INTO stage_types (id, code, display_name, description, allows_draws, sort
 (8, 'final', 'Final', 'Partido final del torneo', FALSE, 8);
 
 -- Estados de partido
-INSERT INTO match_statuses (id, code, display_name, description, is_final_state, sort_order) VALUES
+INSERT INTO estados_partido (id, codigo, nombre_mostrado, descripcion, es_estado_final, orden) VALUES
 (1, 'not_started', 'No Iniciado', 'Partido pendiente de iniciar', FALSE, 1),
 (2, 'scheduled', 'Programado', 'Partido programado con fecha confirmada', FALSE, 2),
 (3, 'live', 'En Vivo', 'Partido en curso', FALSE, 3),
@@ -669,7 +669,7 @@ INSERT INTO match_statuses (id, code, display_name, description, is_final_state,
 (9, 'awarded', 'WO/Adjudicado', 'Resultado por walkover o decisión administrativa', TRUE, 9);
 
 -- Tipos de evento de calendario
-INSERT INTO calendar_event_types (id, code, display_name, description, icon) VALUES
+INSERT INTO tipos_evento_calendario (id, codigo, nombre_mostrado, descripcion, icono) VALUES
 (1, 'tournament_start', 'Inicio de Torneo', 'Fecha de inicio de un torneo', 'trophy'),
 (2, 'tournament_round', 'Jornada de Torneo', 'Fecha de una jornada/ronda', 'calendar'),
 (3, 'tournament_match', 'Partido de Torneo', 'Partido individual de torneo', 'whistle'),
@@ -678,32 +678,32 @@ INSERT INTO calendar_event_types (id, code, display_name, description, icon) VAL
 (6, 'tournament_end', 'Cierre de Torneo', 'Fecha de finalización de torneo', 'check-circle');
 
 -- Slots de bracket
-INSERT INTO bracket_slots (id, code, display_name) VALUES
+INSERT INTO posiciones_bracket (id, codigo, nombre_mostrado) VALUES
 (1, 'home', 'Local'),
 (2, 'away', 'Visitante');
 
 -- Tipos de condición de bracket (NEW)
-INSERT INTO bracket_condition_types (id, code, display_name) VALUES
+INSERT INTO tipos_condicion_bracket (id, codigo, nombre_mostrado) VALUES
 (1, 'winner', 'Ganador'),
 (2, 'loser', 'Perdedor'),
 (3, 'specific', 'Específico');
 
 -- Operaciones de auditoría
-INSERT INTO audit_operations (id, code, display_name) VALUES
+INSERT INTO operaciones_auditoria (id, codigo, nombre_mostrado) VALUES
 (1, 'INSERT', 'Inserción'),
 (2, 'UPDATE', 'Actualización'),
 (3, 'DELETE', 'Eliminación'),
-(4, 'RESTORE', 'Restauración');
+(4R, 'RESTORE', 'Restauración');
 
 -- Roles del sistema
-INSERT INTO roles (id, code, display_name, description) VALUES
+INSERT INTO roles (id, codigo, nombre_mostrado, descripcion) VALUES
 (1, 'admin', 'Administrador', 'Acceso completo al sistema'),
 (2, 'user', 'Usuario', 'Acceso de solo lectura'),
 (3, 'moderator', 'Moderador', 'Puede gestionar contenido pero no usuarios'),
 (4, 'coordinator', 'Coordinador Deportivo', 'Gestiona torneos y partidos de su deporte');
 
 -- Deportes (ejemplos base)
-INSERT INTO sports (id, code, display_name, is_team_based) VALUES
+INSERT INTO deportes (id, codigo, nombre_mostrado, es_por_equipos) VALUES
 (1, 'football', 'Fútbol', TRUE),
 (2, 'volleyball', 'Voleibol', TRUE),
 (3, 'basketball', 'Baloncesto', TRUE),
@@ -711,7 +711,7 @@ INSERT INTO sports (id, code, display_name, is_team_based) VALUES
 (5, 'chess', 'Ajedrez', FALSE);
 
 -- Reglas de puntuación por deporte
-INSERT INTO sport_scoring_rules (sport_id, points_for_win, points_for_draw, points_for_loss, uses_goals, uses_sets, uses_points, tiebreaker_priority) VALUES
+INSERT INTO reglas_puntuacion_deporte (deporte_id, puntos_victoria, puntos_empate, puntos_derrota, usa_goles, usa_sets, usa_puntos, prioridad_desempate) VALUES
 (1, 3, 1, 0, TRUE, FALSE, FALSE, '["points","goal_difference","goals_for","head_to_head"]'),
 (2, 3, 0, 0, FALSE, TRUE, TRUE, '["points","set_difference","sets_for","head_to_head"]'),
 (3, 2, 0, 0, FALSE, FALSE, TRUE, '["points","point_difference","points_for","head_to_head"]'),
@@ -719,14 +719,12 @@ INSERT INTO sport_scoring_rules (sport_id, points_for_win, points_for_draw, poin
 (5, 1, 0, 0, FALSE, FALSE, FALSE, '["wins","head_to_head","performance_rating"]');
 
 -- Usuario administrador inicial
--- NOTA: El password_hash debe generarse en PHP con: password_hash('ModAdmin17', PASSWORD_BCRYPT)
--- Ejemplo de hash: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi (para 'password')
-INSERT INTO users (name, email, password_hash, status_id) VALUES
-('Administrador del Sistema', 'ownermodlogic@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
+INSERT INTO usuarios (nombre, email, hash_contrasena, estado_id) VALUES
+('Administrador del Sistema', 'admin@gmail.com', '12345', 1);
 
 -- Asignar rol de admin al usuario inicial
-INSERT INTO user_roles (user_id, role_id, assigned_at) 
-SELECT id, 1, CURRENT_TIMESTAMP FROM users WHERE email = 'ownermodlogic@gmail.com';
+INSERT INTO usuario_roles (usuario_id, rol_id, asignado_en) 
+SELECT id, 1, CURRENT_TIMESTAMP FROM usuarios WHERE email = 'admin@gmail.com';
 
 -- ============================================================================
 -- SECCIÓN 12: VISTAS ÚTILES
