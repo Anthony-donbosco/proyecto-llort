@@ -1,0 +1,133 @@
+<?php
+require_once 'auth_admin.php';
+require_once 'admin_header.php';
+
+// Validar que tengamos el ID del equipo para volver
+if (!isset($_GET['equipo_id'])) {
+     header("Location: gestionar_equipos.php?error=ID de equipo no especificado.");
+     exit;
+}
+$equipo_id = (int)$_GET['equipo_id'];
+
+// --- Lógica de Edición vs Creación ---
+$is_edit = false;
+$jugador = [
+    'nombre_jugador' => '',
+    'posicion' => '',
+    'url_foto' => '',
+    'edad' => '',
+    'grado' => '',
+    'numero_camiseta' => '',
+    'plantel_id' => ''
+];
+$foto_preview = '../img/jugadores/default.png';
+$page_title = 'Agregar Jugador';
+
+if (isset($_GET['edit_id'])) {
+    // --- MODO EDICIÓN ---
+    $is_edit = true;
+    $jugador_id = (int)$_GET['edit_id'];
+    $page_title = 'Editar Jugador';
+    
+    $stmt = $conn->prepare("SELECT * FROM miembros_plantel WHERE id = ?");
+    $stmt->bind_param("i", $jugador_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $jugador = $result->fetch_assoc();
+        if (!empty($jugador['url_foto'])) {
+            $foto_preview = '../' . htmlspecialchars($jugador['url_foto']);
+        }
+    } else {
+        header("Location: ver_plantel.php?equipo_id=$equipo_id&error=Jugador no encontrado.");
+        exit;
+    }
+    $stmt->close();
+    
+} else {
+    // --- MODO CREACIÓN ---
+    // Necesitamos el ID del plantel al que se va a agregar
+    if (!isset($_GET['plantel_id'])) {
+        header("Location: ver_plantel.php?equipo_id=$equipo_id&error=ID de plantel no especificado.");
+        exit;
+    }
+    $jugador['plantel_id'] = (int)$_GET['plantel_id'];
+}
+?>
+
+<main class="admin-page">
+    <div class="page-header">
+        <h1><?php echo $page_title; ?></h1>
+        <a href="ver_plantel.php?equipo_id=<?php echo $equipo_id; ?>" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Plantel
+        </a>
+    </div>
+
+    <div class="form-container-admin">
+        <form action="jugador_process.php" method="POST" class="admin-form" enctype="multipart/form-data">
+            
+            <input type="hidden" name="action" value="<?php echo $is_edit ? 'update' : 'create'; ?>">
+            <input type="hidden" name="plantel_id" value="<?php echo $jugador['plantel_id']; ?>">
+            <input type="hidden" name="equipo_id" value="<?php echo $equipo_id; ?>"> <?php if ($is_edit): ?>
+                <input type="hidden" name="jugador_id" value="<?php echo $jugador['id']; ?>">
+                <input type="hidden" name="current_foto_path" value="<?php echo htmlspecialchars($jugador['url_foto']); ?>">
+            <?php endif; ?>
+
+            <div class="form-group">
+                <label for="nombre_jugador">Nombre Completo del Jugador:</label>
+                <input type="text" id="nombre_jugador" name="nombre_jugador" value="<?php echo htmlspecialchars($jugador['nombre_jugador']); ?>" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="posicion">Posición:</label>
+                    <input type="text" id="posicion" name="posicion" value="<?php echo htmlspecialchars($jugador['posicion']); ?>" placeholder="Ej: Delantero, Defensa">
+                </div>
+                <div class="form-group">
+                    <label for="numero_camiseta">Número de Camiseta:</label>
+                    <input type="number" id="numero_camiseta" name="numero_camiseta" value="<?php echo htmlspecialchars($jugador['numero_camiseta']); ?>" min="0">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" id="edad" name="edad" value="<?php echo htmlspecialchars($jugador['edad']); ?>" min="10">
+                </div>
+                <div class="form-group">
+                    <label for="grado">Grado:</label>
+                    <input type="text" id="grado" name="grado" value="<?php echo htmlspecialchars($jugador['grado']); ?>" placeholder="Ej: 9°A, 2°B">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="foto">Foto del Jugador:</label>
+                <input type="file" id="foto" name="foto" class="form-input-file" accept="image/png, image/jpeg, image/webp">
+                <div class="form-image-preview">
+                    <img src="<?php echo $foto_preview; ?>" alt="Foto Preview" id="foto-preview-img">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> <?php echo $is_edit ? 'Actualizar Jugador' : 'Guardar Jugador'; ?>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+document.getElementById('foto').addEventListener('change', function(event) {
+    var reader = new FileReader();
+    reader.onload = function(){
+        var output = document.getElementById('foto-preview-img');
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
+</script>
+
+<?php
+require_once 'admin_footer.php';
+?>

@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
             }
         ?>
 
-        <form action="php/login_process.php" method="POST">
+        <form action="login_process.php" method="POST">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
             
