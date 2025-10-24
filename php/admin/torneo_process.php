@@ -68,4 +68,4 @@ if (isset($_GET['delete_id'])) {
 
 header("Location: gestionar_torneos.php");
 exit;
-?
+?>

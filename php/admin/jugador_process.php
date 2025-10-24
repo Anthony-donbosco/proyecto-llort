@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         }
 
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            $foto_path = 'img/jugadores/' . $file_name;
+            $foto_path = '../../img/jugadores/' . $file_name;
         } else {
             header("Location: $redirect_url&error=Error al subir la foto.");
             exit;
