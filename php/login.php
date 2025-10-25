@@ -5,7 +5,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 if (!empty($_SESSION['user_id'])) {
     if ($_SESSION['role_id'] == 1) {
-        header("Location: php/admin/dashboard.php");
+        header("Location: admin/dashboard.php");
         exit;
     } else {
         header("Location: login.php?error=Sección de usuario en construcción");
