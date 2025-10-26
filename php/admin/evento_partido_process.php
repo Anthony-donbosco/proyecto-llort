@@ -65,8 +65,15 @@ function recalcularMarcadores($conn, $partido_id) {
 // Agregar gol
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
     $jugador_id = (int)$_POST['jugador_id'];
+    $asistencia_id = !empty($_POST['asistencia_id']) ? (int)$_POST['asistencia_id'] : NULL;
     $minuto = !empty($_POST['minuto']) ? trim($_POST['minuto']) : NULL;
     $tipo_evento = $_POST['tipo_evento'];
+
+    // Validar que el asistente no sea el mismo que el anotador
+    if ($asistencia_id !== NULL && $asistencia_id == $jugador_id) {
+        header("Location: editar_partido.php?partido_id=$partido_id&error=El jugador que asiste no puede ser el mismo que anota.");
+        exit;
+    }
 
     // Validar formato de minuto (45 o 90+2)
     if ($minuto !== NULL && !preg_match('/^([0-9]{1,3}|[0-9]{1,3}\+[0-9]{1,2})$/', $minuto)) {
@@ -75,20 +82,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
     }
 
     try {
-        $sql = "INSERT INTO eventos_partido (partido_id, miembro_plantel_id, tipo_evento, minuto)
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO eventos_partido (partido_id, miembro_plantel_id, asistencia_miembro_plantel_id, tipo_evento, minuto)
+                VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iiss", $partido_id, $jugador_id, $tipo_evento, $minuto);
+        $stmt->bind_param("iiiss", $partido_id, $jugador_id, $asistencia_id, $tipo_evento, $minuto);
         $stmt->execute();
         $stmt->close();
 
-        // Actualizar estadísticas del jugador
+        // Actualizar estadísticas del jugador (goles)
         if ($tipo_evento == 'gol' || $tipo_evento == 'penal_anotado') {
             $sql_update = "UPDATE miembros_plantel SET goles = goles + 1 WHERE id = ?";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bind_param("i", $jugador_id);
             $stmt_update->execute();
             $stmt_update->close();
+        }
+
+        // Actualizar estadísticas del jugador (asistencias)
+        if ($asistencia_id !== NULL) {
+            $sql_asist = "UPDATE miembros_plantel SET asistencias = asistencias + 1 WHERE id = ?";
+            $stmt_asist = $conn->prepare($sql_asist);
+            $stmt_asist->bind_param("i", $asistencia_id);
+            $stmt_asist->execute();
+            $stmt_asist->close();
         }
 
         // Recalcular marcadores del partido
@@ -106,7 +122,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
 
     try {
         // Obtener información del evento antes de eliminarlo
-        $sql_get = "SELECT miembro_plantel_id, tipo_evento FROM eventos_partido WHERE id = ?";
+        $sql_get = "SELECT miembro_plantel_id, asistencia_miembro_plantel_id, tipo_evento FROM eventos_partido WHERE id = ?";
         $stmt_get = $conn->prepare($sql_get);
         $stmt_get->bind_param("i", $evento_id);
         $stmt_get->execute();
@@ -121,13 +137,22 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
             $stmt_delete->execute();
             $stmt_delete->close();
 
-            // Actualizar estadísticas del jugador
+            // Actualizar estadísticas del jugador (goles)
             if ($evento['tipo_evento'] == 'gol' || $evento['tipo_evento'] == 'penal_anotado') {
                 $sql_update = "UPDATE miembros_plantel SET goles = GREATEST(goles - 1, 0) WHERE id = ?";
                 $stmt_update = $conn->prepare($sql_update);
                 $stmt_update->bind_param("i", $evento['miembro_plantel_id']);
                 $stmt_update->execute();
                 $stmt_update->close();
+            }
+
+            // Actualizar estadísticas del jugador (asistencias)
+            if ($evento['asistencia_miembro_plantel_id']) {
+                $sql_asist = "UPDATE miembros_plantel SET asistencias = GREATEST(asistencias - 1, 0) WHERE id = ?";
+                $stmt_asist = $conn->prepare($sql_asist);
+                $stmt_asist->bind_param("i", $evento['asistencia_miembro_plantel_id']);
+                $stmt_asist->execute();
+                $stmt_asist->close();
             }
 
             // Recalcular marcadores del partido

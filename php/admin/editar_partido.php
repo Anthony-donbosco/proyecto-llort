@@ -62,10 +62,13 @@ $stmt_visitante->execute();
 $jugadores_visitante = $stmt_visitante->get_result();
 
 // Obtener eventos (goles) del partido
-$sql_eventos = "SELECT ep.*, mp.nombre_jugador, mp.numero_camiseta, mp.posicion, pe.participante_id
+$sql_eventos = "SELECT ep.*,
+                mp.nombre_jugador, mp.numero_camiseta, mp.posicion, pe.participante_id,
+                mp_asist.nombre_jugador AS asistencia_nombre, mp_asist.numero_camiseta AS asistencia_numero
                 FROM eventos_partido ep
                 JOIN miembros_plantel mp ON ep.miembro_plantel_id = mp.id
                 JOIN planteles_equipo pe ON mp.plantel_id = pe.id
+                LEFT JOIN miembros_plantel mp_asist ON ep.asistencia_miembro_plantel_id = mp_asist.id
                 WHERE ep.partido_id = ?
                 ORDER BY ep.minuto ASC, ep.id ASC";
 $stmt_eventos = $conn->prepare($sql_eventos);
@@ -241,6 +244,12 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                                     <div class="jugador-datos">
                                         <strong><?php echo htmlspecialchars($gol['nombre_jugador']); ?></strong>
                                         <small><?php echo htmlspecialchars($gol['posicion']); ?></small>
+                                        <?php if (!empty($gol['asistencia_nombre'])): ?>
+                                            <small class="asistencia-info">
+                                                <i class="fas fa-hands-helping"></i>
+                                                Asist: <?php echo htmlspecialchars($gol['asistencia_nombre']); ?> (#<?php echo $gol['asistencia_numero']; ?>)
+                                            </small>
+                                        <?php endif; ?>
                                     </div>
                                     <?php if ($gol['minuto']): ?>
                                         <span class="gol-minuto"><?php echo $gol['minuto']; ?>'</span>
@@ -278,6 +287,12 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                                     <div class="jugador-datos">
                                         <strong><?php echo htmlspecialchars($gol['nombre_jugador']); ?></strong>
                                         <small><?php echo htmlspecialchars($gol['posicion']); ?></small>
+                                        <?php if (!empty($gol['asistencia_nombre'])): ?>
+                                            <small class="asistencia-info">
+                                                <i class="fas fa-hands-helping"></i>
+                                                Asist: <?php echo htmlspecialchars($gol['asistencia_nombre']); ?> (#<?php echo $gol['asistencia_numero']; ?>)
+                                            </small>
+                                        <?php endif; ?>
                                     </div>
                                     <?php if ($gol['minuto']): ?>
                                         <span class="gol-minuto"><?php echo $gol['minuto']; ?>'</span>
@@ -386,10 +401,18 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                 <input type="hidden" id="equipoTipo" name="equipo_tipo" value="">
 
                 <div class="form-group">
-                    <label for="jugador_id">Jugador *</label>
+                    <label for="jugador_id">Jugador (Anotador) *</label>
                     <select id="jugador_id" name="jugador_id" class="form-input" required>
                         <option value="">Seleccione un jugador</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="asistencia_id">Asistencia (Opcional)</label>
+                    <select id="asistencia_id" name="asistencia_id" class="form-input">
+                        <option value="">Sin asistencia</option>
+                    </select>
+                    <small class="form-hint">Jugador que dio el pase para el gol</small>
                 </div>
 
                 <div class="form-group">
@@ -449,7 +472,6 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                     </label>
                     <div class="marcador-display">
                         <div class="marcador-calculado"><?php echo $marcador_local_calculado; ?></div>
-                        <small>Calculado automáticamente</small>
                     </div>
                     <input type="hidden" name="marcador_local" value="<?php echo $marcador_local_calculado; ?>">
                 </div>
@@ -465,7 +487,6 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                     </label>
                     <div class="marcador-display">
                         <div class="marcador-calculado"><?php echo $marcador_visitante_calculado; ?></div>
-                        <small>Calculado automáticamente</small>
                     </div>
                     <input type="hidden" name="marcador_visitante" value="<?php echo $marcador_visitante_calculado; ?>">
                 </div>
@@ -1040,6 +1061,19 @@ $marcador_visitante_calculado = $contador_goles_visitante;
     color: #666;
 }
 
+.asistencia-info {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #1a237e !important;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.asistencia-info i {
+    font-size: 0.75rem;
+}
+
 .gol-minuto {
     background: #28a745;
     color: white;
@@ -1353,22 +1387,32 @@ const jugadoresVisitante = <?php echo json_encode($jugadores_visitante->fetch_al
 function abrirModalGol(tipo) {
     const modal = document.getElementById('modalGol');
     const select = document.getElementById('jugador_id');
+    const selectAsistencia = document.getElementById('asistencia_id');
     const equipoTipo = document.getElementById('equipoTipo');
     const modalTitle = document.getElementById('modalTitle');
 
     // Limpiar opciones anteriores
     select.innerHTML = '<option value="">Seleccione un jugador</option>';
+    selectAsistencia.innerHTML = '<option value="">Sin asistencia</option>';
 
     // Determinar jugadores según equipo
     const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
     const nombreEquipo = tipo === 'local' ? '<?php echo addslashes($partido['equipo_local']); ?>' : '<?php echo addslashes($partido['equipo_visitante']); ?>';
 
-    // Llenar select con jugadores
+    // Llenar select con jugadores (anotador)
     jugadores.forEach(jugador => {
         const option = document.createElement('option');
         option.value = jugador.id;
         option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
         select.appendChild(option);
+    });
+
+    // Llenar select con jugadores (asistencia) - mismo equipo
+    jugadores.forEach(jugador => {
+        const option = document.createElement('option');
+        option.value = jugador.id;
+        option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
+        selectAsistencia.appendChild(option);
     });
 
     equipoTipo.value = tipo;

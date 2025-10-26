@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE sistema_deportivo; DESCRIBE cronometro_partido;\")",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\":*)"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\":*)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE sistema_deportivo; ALTER TABLE eventos_partido ADD COLUMN asistencia_miembro_plantel_id INT NULL AFTER miembro_plantel_id, ADD FOREIGN KEY (asistencia_miembro_plantel_id) REFERENCES miembros_plantel(id) ON DELETE SET NULL;\")"
     ],
     "deny": [],
     "ask": []

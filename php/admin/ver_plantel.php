@@ -287,26 +287,26 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .stat-content {
-    padding: 2.5rem 2rem 2rem;
+    padding: 2rem 1.25rem 1.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
     background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
 }
 
 .jugador-foto-container {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .jugador-foto-stat {
-    width: 130px;
-    height: 130px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     overflow: hidden;
-    border: 5px solid #fff;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 0 8px rgba(26, 35, 126, 0.1);
+    border: 6px solid #fff;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25), 0 0 0 10px rgba(26, 35, 126, 0.08);
     transition: all 0.3s ease;
     position: relative;
     z-index: 2;
@@ -314,15 +314,15 @@ $mvp = $mvp_result->fetch_assoc();
 
 .stat-card:hover .jugador-foto-stat {
     transform: scale(1.05);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.25), 0 0 0 8px rgba(26, 35, 126, 0.15);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.3), 0 0 0 10px rgba(26, 35, 126, 0.12);
 }
 
 .mvp-card .jugador-foto-stat {
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3), 0 0 0 8px rgba(255, 215, 0, 0.1);
+    box-shadow: 0 10px 35px rgba(255, 215, 0, 0.35), 0 0 0 10px rgba(255, 215, 0, 0.08);
 }
 
 .mvp-card:hover .jugador-foto-stat {
-    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4), 0 0 0 8px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 15px 45px rgba(255, 215, 0, 0.45), 0 0 0 10px rgba(255, 215, 0, 0.12);
 }
 
 .jugador-foto-stat img {
@@ -332,58 +332,60 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .jugador-numero-stat {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
     background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
+    font-size: 1.85rem;
     font-weight: 900;
-    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.4);
+    box-shadow: 0 8px 25px rgba(26, 35, 126, 0.5);
     position: absolute;
-    bottom: -10px;
-    right: -10px;
-    border: 4px solid white;
+    bottom: -5px;
+    right: -5px;
+    border: 5px solid white;
     z-index: 3;
 }
 
 .goleador-card .jugador-numero-stat {
     background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
-    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+    box-shadow: 0 8px 25px rgba(0, 200, 83, 0.5);
 }
 
 .mvp-card .jugador-numero-stat {
     background: linear-gradient(135deg, #ffd700 0%, #ffa000 100%);
     color: #333;
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
 }
 
 .jugador-info-stat {
     width: 100%;
     text-align: center;
+    padding: 0 0.5rem;
 }
 
 .jugador-info-stat h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
+    margin: 0 0 0.4rem 0;
+    font-size: 1.4rem;
     font-weight: 700;
     color: #1a237e;
     letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .badge-title {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
     background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(100, 221, 23, 0.1) 100%);
     border: 2px solid rgba(0, 200, 83, 0.3);
     border-radius: 20px;
-    margin-bottom: 1.5rem;
-    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #00c853;
     text-transform: uppercase;
@@ -392,7 +394,7 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .badge-title i {
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .stat-card:hover .badge-title {
@@ -413,19 +415,19 @@ $mvp = $mvp_result->fetch_assoc();
 .stat-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 0.7rem;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .stat-item {
     background: white;
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 0.75rem 0.6rem;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
     text-align: center;
     transition: all 0.2s ease;
 }
@@ -438,7 +440,7 @@ $mvp = $mvp_result->fetch_assoc();
 .stat-item.destacado {
     grid-column: 1 / -1;
     background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-    padding: 1.5rem;
+    padding: 1.25rem 1rem;
     box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
 }
 
@@ -455,13 +457,14 @@ $mvp = $mvp_result->fetch_assoc();
 .stat-label {
     font-weight: 600;
     color: #666;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .stat-item.destacado .stat-label {
     color: rgba(255,255,255,0.9);
+    font-size: 0.75rem;
 }
 
 .mvp-card .stat-item.destacado .stat-label {
@@ -471,12 +474,13 @@ $mvp = $mvp_result->fetch_assoc();
 .stat-value {
     font-weight: 700;
     color: #1a237e;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.1;
 }
 
 .stat-item.destacado .stat-value {
     color: white;
-    font-size: 2rem;
+    font-size: 2.25rem;
 }
 
 .mvp-card .stat-item.destacado .stat-value {
@@ -578,39 +582,47 @@ $mvp = $mvp_result->fetch_assoc();
     }
 
     .stat-content {
-        padding: 2rem 1.5rem 1.5rem;
+        padding: 1.75rem 1.25rem 1.5rem;
     }
 
     .badge-title {
-        font-size: 0.8rem;
-        padding: 0.35rem 0.85rem;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
     }
 
     .jugador-foto-stat {
-        width: 110px;
-        height: 110px;
+        width: 150px;
+        height: 150px;
     }
 
     .jugador-numero-stat {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
+        width: 55px;
+        height: 55px;
+        font-size: 1.6rem;
     }
 
     .jugador-info-stat h4 {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
     }
 
     .stat-details {
-        gap: 0.75rem;
+        gap: 0.6rem;
     }
 
     .stat-item {
-        padding: 0.75rem;
+        padding: 0.65rem 0.5rem;
     }
 
     .stat-item.destacado {
-        padding: 1.25rem;
+        padding: 1.1rem 0.85rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    .stat-item.destacado .stat-value {
+        font-size: 2rem;
     }
 }
 </style>
