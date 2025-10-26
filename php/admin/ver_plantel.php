@@ -146,10 +146,6 @@ $mvp = $mvp_result->fetch_assoc();
         <div class="estadisticas-equipo">
             <!-- Cuadro del Goleador -->
             <div class="stat-card goleador-card">
-                <div class="stat-header">
-                    <i class="fas fa-futbol"></i>
-                    <h3>Máximo Goleador</h3>
-                </div>
                 <?php if ($goleador && $goleador['total_goles'] > 0): ?>
                     <div class="stat-content">
                         <div class="jugador-foto-container">
@@ -163,6 +159,10 @@ $mvp = $mvp_result->fetch_assoc();
                         </div>
                         <div class="jugador-info-stat">
                             <h4><?php echo htmlspecialchars($goleador['nombre_jugador']); ?></h4>
+                            <div class="badge-title">
+                                <i class="fas fa-futbol"></i>
+                                <span>Máximo Goleador</span>
+                            </div>
                             <div class="stat-details">
                                 <div class="stat-item">
                                     <span class="stat-label">Posición</span>
@@ -185,18 +185,17 @@ $mvp = $mvp_result->fetch_assoc();
                     </div>
                 <?php else: ?>
                     <div class="stat-empty">
-                        <i class="fas fa-futbol"></i>
-                        <p>Aún no hay goles registrados</p>
+                        <div class="empty-badge">
+                            <i class="fas fa-futbol"></i>
+                            <span>Máximo Goleador</span>
+                        </div>
+                        <p>Aún no hay goles registrados en este equipo</p>
                     </div>
                 <?php endif; ?>
             </div>
 
             <!-- Cuadro del MVP -->
             <div class="stat-card mvp-card">
-                <div class="stat-header mvp-header">
-                    <i class="fas fa-trophy"></i>
-                    <h3>MVP del Equipo</h3>
-                </div>
                 <?php if ($mvp): ?>
                     <div class="stat-content">
                         <div class="jugador-foto-container">
@@ -210,6 +209,10 @@ $mvp = $mvp_result->fetch_assoc();
                         </div>
                         <div class="jugador-info-stat">
                             <h4><?php echo htmlspecialchars($mvp['nombre_jugador']); ?></h4>
+                            <div class="badge-title mvp-badge">
+                                <i class="fas fa-trophy"></i>
+                                <span>MVP del Equipo</span>
+                            </div>
                             <div class="stat-details">
                                 <div class="stat-item">
                                     <span class="stat-label">Posición</span>
@@ -236,8 +239,11 @@ $mvp = $mvp_result->fetch_assoc();
                     </div>
                 <?php else: ?>
                     <div class="stat-empty">
-                        <i class="fas fa-trophy"></i>
-                        <p>Aún no hay MVP seleccionado</p>
+                        <div class="empty-badge mvp-empty-badge">
+                            <i class="fas fa-trophy"></i>
+                            <span>MVP del Equipo</span>
+                        </div>
+                        <p>Aún no hay MVP seleccionado en este equipo</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -275,57 +281,13 @@ $mvp = $mvp_result->fetch_assoc();
     position: relative;
 }
 
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #1a237e 0%, #3f51b5 100%);
-}
-
 .stat-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.18), 0 8px 15px rgba(0,0,0,0.12);
 }
 
-.goleador-card::before {
-    background: linear-gradient(90deg, #00c853 0%, #64dd17 100%);
-}
-
-.mvp-card::before {
-    background: linear-gradient(90deg, #ffd700 0%, #ffa000 100%);
-}
-
-.stat-header {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    color: #1a237e;
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 2px solid rgba(0,0,0,0.05);
-}
-
-.stat-header h3 {
-    margin: 0;
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.stat-header i {
-    font-size: 2rem;
-    color: #00c853;
-}
-
-.mvp-header i {
-    color: #ffd700;
-}
-
 .stat-content {
-    padding: 2rem;
+    padding: 2.5rem 2rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -405,11 +367,47 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .jugador-info-stat h4 {
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     font-weight: 700;
     color: #1a237e;
     letter-spacing: -0.5px;
+}
+
+.badge-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(100, 221, 23, 0.1) 100%);
+    border: 2px solid rgba(0, 200, 83, 0.3);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #00c853;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.badge-title i {
+    font-size: 1rem;
+}
+
+.stat-card:hover .badge-title {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.2);
+}
+
+.mvp-badge {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 160, 0, 0.15) 100%);
+    border-color: rgba(255, 215, 0, 0.4);
+    color: #f57c00;
+}
+
+.stat-card:hover .mvp-badge {
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
 }
 
 .stat-details {
@@ -493,30 +491,47 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .stat-empty {
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     text-align: center;
     color: #999;
     background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
-.stat-empty i {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.2;
-}
-
-.goleador-card .stat-empty i {
+.empty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(0, 200, 83, 0.08);
+    border: 2px dashed rgba(0, 200, 83, 0.3);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: #00c853;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.mvp-card .stat-empty i {
-    color: #ffd700;
+.empty-badge i {
+    font-size: 1.2rem;
+    opacity: 0.6;
+}
+
+.mvp-empty-badge {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.3);
+    color: #f57c00;
 }
 
 .stat-empty p {
-    margin: 0;
-    font-size: 1rem;
+    margin: 0.5rem 0 0 0;
+    font-size: 0.95rem;
     font-weight: 500;
+    color: #999;
 }
 
 /* Animación de aparición */
@@ -562,20 +577,13 @@ $mvp = $mvp_result->fetch_assoc();
         gap: 1.5rem;
     }
 
-    .stat-header {
-        padding: 1.25rem 1.5rem;
-    }
-
-    .stat-header h3 {
-        font-size: 1.15rem;
-    }
-
-    .stat-header i {
-        font-size: 1.75rem;
-    }
-
     .stat-content {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .badge-title {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.85rem;
     }
 
     .jugador-foto-stat {
