@@ -35,11 +35,41 @@ $stmt_jugadores = $conn->prepare("SELECT * FROM miembros_plantel WHERE plantel_i
 $stmt_jugadores->bind_param("i", $plantel_id);
 $stmt_jugadores->execute();
 $jugadores = $stmt_jugadores->get_result();
+
+// Obtener el goleador del equipo (máximo goleador)
+$stmt_goleador = $conn->prepare("SELECT mp.*, COUNT(ep.id) as total_goles
+                                 FROM miembros_plantel mp
+                                 LEFT JOIN eventos_partido ep ON mp.id = ep.miembro_plantel_id
+                                    AND ep.tipo_evento IN ('gol', 'penal_anotado')
+                                 JOIN planteles_equipo pe ON mp.plantel_id = pe.id
+                                 WHERE pe.participante_id = ?
+                                 GROUP BY mp.id
+                                 ORDER BY total_goles DESC
+                                 LIMIT 1");
+$stmt_goleador->bind_param("i", $equipo_id);
+$stmt_goleador->execute();
+$goleador_result = $stmt_goleador->get_result();
+$goleador = $goleador_result->fetch_assoc();
+
+// Obtener el MVP más reciente del equipo
+$stmt_mvp = $conn->prepare("SELECT mp.*, COUNT(p.id) as veces_mvp,
+                            MAX(p.inicio_partido) as ultimo_partido
+                            FROM miembros_plantel mp
+                            JOIN partidos p ON mp.id = p.mvp_miembro_plantel_id
+                            JOIN planteles_equipo pe ON mp.plantel_id = pe.id
+                            WHERE pe.participante_id = ?
+                            GROUP BY mp.id
+                            ORDER BY veces_mvp DESC, ultimo_partido DESC
+                            LIMIT 1");
+$stmt_mvp->bind_param("i", $equipo_id);
+$stmt_mvp->execute();
+$mvp_result = $stmt_mvp->get_result();
+$mvp = $mvp_result->fetch_assoc();
 ?>
 
 <main class="admin-page">
     <div class="page-header">
-        <h1>Plantel de "<?php echo htmlspecialchars($nombre_equipo); ?>"</h1>
+        <h1 style="color: black">Plantel de "<?php echo htmlspecialchars($nombre_equipo); ?>"</h1>
         <div>
             <a href="crear_jugador.php?plantel_id=<?php echo $plantel_id; ?>&equipo_id=<?php echo $equipo_id; ?>" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Agregar Jugador
@@ -57,7 +87,10 @@ $jugadores = $stmt_jugadores->get_result();
         <div class="alert alert-error"><?php echo htmlspecialchars($_GET['error']); ?></div>
     <?php endif; ?>
 
-    <div class="table-container">
+    <div class="plantel-layout">
+        <!-- Columna izquierda: Tabla de jugadores -->
+        <div class="tabla-jugadores">
+            <div class="table-container">
         <table class="admin-table">
             <thead>
                 <tr>
@@ -67,6 +100,9 @@ $jugadores = $stmt_jugadores->get_result();
                     <th>Posición</th>
                     <th>Edad</th>
                     <th>Grado</th>
+                    <th>Goles</th>
+                    <th>Asist.</th>
+                    <th>P. Cero</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -83,6 +119,9 @@ $jugadores = $stmt_jugadores->get_result();
                         <td><?php echo htmlspecialchars($row['posicion']); ?></td>
                         <td><?php echo htmlspecialchars($row['edad']); ?></td>
                         <td><?php echo htmlspecialchars($row['grado']); ?></td>
+                        <td><?php echo isset($row['goles']) ? htmlspecialchars($row['goles']) : '0'; ?></td>
+                        <td><?php echo isset($row['asistencias']) ? htmlspecialchars($row['asistencias']) : '0'; ?></td>
+                        <td><?php echo isset($row['porterias_cero']) ? htmlspecialchars($row['porterias_cero']) : '0'; ?></td>
                         <td class="action-buttons">
                             <a href="crear_jugador.php?edit_id=<?php echo $row['id']; ?>&equipo_id=<?php echo $equipo_id; ?>" class="btn btn-secondary">
                                 <i class="fas fa-edit"></i> Editar
@@ -95,17 +134,484 @@ $jugadores = $stmt_jugadores->get_result();
                 <?php
                     }
                 } else {
-                    echo "<tr><td colspan='7'>Este equipo aún no tiene jugadores en su plantel.</td></tr>";
+                    echo "<tr><td colspan='10'>Este equipo aún no tiene jugadores en su plantel.</td></tr>";
                 }
                 ?>
             </tbody>
         </table>
     </div>
+        </div>
+
+        <!-- Columna derecha: Estadísticas -->
+        <div class="estadisticas-equipo">
+            <!-- Cuadro del Goleador -->
+            <div class="stat-card goleador-card">
+                <div class="stat-header">
+                    <i class="fas fa-futbol"></i>
+                    <h3>Máximo Goleador</h3>
+                </div>
+                <?php if ($goleador && $goleador['total_goles'] > 0): ?>
+                    <div class="stat-content">
+                        <div class="jugador-foto-container">
+                            <div class="jugador-foto-stat">
+                                <?php
+                                $foto_url = !empty($goleador['url_foto']) ? htmlspecialchars($goleador['url_foto']) : '../../img/jugadores/default.png';
+                                ?>
+                                <img src="<?php echo $foto_url; ?>" alt="Foto">
+                            </div>
+                            <div class="jugador-numero-stat"><?php echo htmlspecialchars($goleador['numero_camiseta']); ?></div>
+                        </div>
+                        <div class="jugador-info-stat">
+                            <h4><?php echo htmlspecialchars($goleador['nombre_jugador']); ?></h4>
+                            <div class="stat-details">
+                                <div class="stat-item">
+                                    <span class="stat-label">Posición</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($goleador['posicion']); ?></span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Grado</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($goleador['grado']); ?></span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Edad</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($goleador['edad']); ?> años</span>
+                                </div>
+                                <div class="stat-item destacado">
+                                    <span class="stat-label">Total Goles</span>
+                                    <span class="stat-value goles-count"><?php echo $goleador['total_goles']; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="stat-empty">
+                        <i class="fas fa-futbol"></i>
+                        <p>Aún no hay goles registrados</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Cuadro del MVP -->
+            <div class="stat-card mvp-card">
+                <div class="stat-header mvp-header">
+                    <i class="fas fa-trophy"></i>
+                    <h3>MVP del Equipo</h3>
+                </div>
+                <?php if ($mvp): ?>
+                    <div class="stat-content">
+                        <div class="jugador-foto-container">
+                            <div class="jugador-foto-stat">
+                                <?php
+                                $foto_url = !empty($mvp['url_foto']) ? htmlspecialchars($mvp['url_foto']) : '../../img/jugadores/default.png';
+                                ?>
+                                <img src="<?php echo $foto_url; ?>" alt="Foto">
+                            </div>
+                            <div class="jugador-numero-stat"><?php echo htmlspecialchars($mvp['numero_camiseta']); ?></div>
+                        </div>
+                        <div class="jugador-info-stat">
+                            <h4><?php echo htmlspecialchars($mvp['nombre_jugador']); ?></h4>
+                            <div class="stat-details">
+                                <div class="stat-item">
+                                    <span class="stat-label">Posición</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($mvp['posicion']); ?></span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Grado</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($mvp['grado']); ?></span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Edad</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($mvp['edad']); ?> años</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Goles</span>
+                                    <span class="stat-value"><?php echo htmlspecialchars($mvp['goles'] ?? 0); ?></span>
+                                </div>
+                                <div class="stat-item destacado">
+                                    <span class="stat-label">Veces MVP</span>
+                                    <span class="stat-value mvp-count"><?php echo $mvp['veces_mvp']; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="stat-empty">
+                        <i class="fas fa-trophy"></i>
+                        <p>Aún no hay MVP seleccionado</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </main>
+
+<style>
+.plantel-layout {
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    gap: 2.5rem;
+    margin-top: 1rem;
+    align-items: start;
+}
+
+.tabla-jugadores {
+    min-width: 0;
+}
+
+.estadisticas-equipo {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: sticky;
+    top: 20px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #1a237e 0%, #3f51b5 100%);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.18), 0 8px 15px rgba(0,0,0,0.12);
+}
+
+.goleador-card::before {
+    background: linear-gradient(90deg, #00c853 0%, #64dd17 100%);
+}
+
+.mvp-card::before {
+    background: linear-gradient(90deg, #ffd700 0%, #ffa000 100%);
+}
+
+.stat-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #1a237e;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+}
+
+.stat-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.stat-header i {
+    font-size: 2rem;
+    color: #00c853;
+}
+
+.mvp-header i {
+    color: #ffd700;
+}
+
+.stat-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.jugador-foto-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.jugador-foto-stat {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #fff;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 0 8px rgba(26, 35, 126, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card:hover .jugador-foto-stat {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25), 0 0 0 8px rgba(26, 35, 126, 0.15);
+}
+
+.mvp-card .jugador-foto-stat {
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3), 0 0 0 8px rgba(255, 215, 0, 0.1);
+}
+
+.mvp-card:hover .jugador-foto-stat {
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4), 0 0 0 8px rgba(255, 215, 0, 0.15);
+}
+
+.jugador-foto-stat img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.jugador-numero-stat {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.4);
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    border: 4px solid white;
+    z-index: 3;
+}
+
+.goleador-card .jugador-numero-stat {
+    background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+}
+
+.mvp-card .jugador-numero-stat {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa000 100%);
+    color: #333;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.jugador-info-stat {
+    width: 100%;
+    text-align: center;
+}
+
+.jugador-info-stat h4 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a237e;
+    letter-spacing: -0.5px;
+}
+
+.stat-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.stat-item.destacado {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
+}
+
+.goleador-card .stat-item.destacado {
+    background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.3);
+}
+
+.mvp-card .stat-item.destacado {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa000 100%);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+.stat-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-item.destacado .stat-label {
+    color: rgba(255,255,255,0.9);
+}
+
+.mvp-card .stat-item.destacado .stat-label {
+    color: rgba(0,0,0,0.7);
+}
+
+.stat-value {
+    font-weight: 700;
+    color: #1a237e;
+    font-size: 1.1rem;
+}
+
+.stat-item.destacado .stat-value {
+    color: white;
+    font-size: 2rem;
+}
+
+.mvp-card .stat-item.destacado .stat-value {
+    color: #333;
+}
+
+.goles-count, .mvp-count {
+    font-size: 2.5rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+}
+
+.stat-empty {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #999;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.stat-empty i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.2;
+}
+
+.goleador-card .stat-empty i {
+    color: #00c853;
+}
+
+.mvp-card .stat-empty i {
+    color: #ffd700;
+}
+
+.stat-empty p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Animación de aparición */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.goleador-card {
+    animation-delay: 0.1s;
+}
+
+.mvp-card {
+    animation-delay: 0.2s;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .plantel-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .estadisticas-equipo {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+        display: grid;
+    }
+}
+
+@media (max-width: 768px) {
+    .estadisticas-equipo {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .stat-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .stat-header h3 {
+        font-size: 1.15rem;
+    }
+
+    .stat-header i {
+        font-size: 1.75rem;
+    }
+
+    .stat-content {
+        padding: 1.5rem;
+    }
+
+    .jugador-foto-stat {
+        width: 110px;
+        height: 110px;
+    }
+
+    .jugador-numero-stat {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .jugador-info-stat h4 {
+        font-size: 1.25rem;
+    }
+
+    .stat-details {
+        gap: 0.75rem;
+    }
+
+    .stat-item {
+        padding: 0.75rem;
+    }
+
+    .stat-item.destacado {
+        padding: 1.25rem;
+    }
+}
+</style>
 
 <?php
 $stmt_equipo->close();
 $stmt_plantel->close();
 $stmt_jugadores->close();
+$stmt_goleador->close();
+$stmt_mvp->close();
 require_once 'admin_footer.php';
 ?>

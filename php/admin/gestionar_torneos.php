@@ -58,6 +58,27 @@ $result = $conn->query($sql);
                             </span>
                         </td>
                         <td class="action-buttons">
+                            <?php
+                            $estado_lower = strtolower($row['estado']);
+                            if ($estado_lower == 'inscripción' || $estado_lower == 'inscripcion'):
+                            ?>
+                                <a href="inscribir_equipos.php?torneo_id=<?php echo $row['id']; ?>" class="btn btn-success">
+                                    <i class="fas fa-user-plus"></i> Inscribir Equipos
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($estado_lower == 'activo'): ?>
+                                <a href="gestionar_jornadas.php?torneo_id=<?php echo $row['id']; ?>" class="btn btn-info">
+                                    <i class="fas fa-calendar-alt"></i> Jornadas
+                                </a>
+                                <a href="gestionar_partidos.php?torneo_id=<?php echo $row['id']; ?>" class="btn btn-info">
+                                    <i class="fas fa-futbol"></i> Partidos
+                                </a>
+                                <a href="asignar_llaves.php?torneo_id=<?php echo $row['id']; ?>" class="btn btn-warning">
+                                    <i class="fas fa-sitemap"></i> Asignar Llaves
+                                </a>
+                            <?php endif; ?>
+
                             <a href="crear_torneo.php?edit_id=<?php echo $row['id']; ?>" class="btn btn-secondary">
                                 <i class="fas fa-edit"></i> Editar
                             </a>

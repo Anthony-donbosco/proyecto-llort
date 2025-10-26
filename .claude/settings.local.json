@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE sistema_deportivo; DESCRIBE cronometro_partido;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\":*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

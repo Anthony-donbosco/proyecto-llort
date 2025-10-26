@@ -17,6 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $edad = !empty($_POST['edad']) ? (int)$_POST['edad'] : NULL;
     $grado = trim($_POST['grado']);
     $numero = !empty($_POST['numero_camiseta']) ? (int)$_POST['numero_camiseta'] : NULL;
+    $goles = !empty($_POST['goles']) ? (int)$_POST['goles'] : 0;
+    $asistencias = !empty($_POST['asistencias']) ? (int)$_POST['asistencias'] : 0;
+    $porterias_cero = !empty($_POST['porterias_cero']) ? (int)$_POST['porterias_cero'] : 0;
 
     $foto_path = $_POST['current_foto_path'] ?? '';
 
@@ -45,19 +48,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
 
     try {
         if ($_POST['action'] == 'create') {
-            $sql = "INSERT INTO miembros_plantel (plantel_id, nombre_jugador, posicion, url_foto, edad, grado, numero_camiseta) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO miembros_plantel (plantel_id, nombre_jugador, posicion, url_foto, edad, grado, numero_camiseta, goles, asistencias, porterias_cero)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssisi", $plantel_id, $nombre, $posicion, $foto_path, $edad, $grado, $numero);
+            $stmt->bind_param("isssiisiii", $plantel_id, $nombre, $posicion, $foto_path, $edad, $grado, $numero, $goles, $asistencias, $porterias_cero);
             $stmt->execute();
             header("Location: $redirect_url&success=Jugador agregado exitosamente.");
-        
+
         } elseif ($_POST['action'] == 'update' && isset($_POST['jugador_id'])) {
             $jugador_id = (int)$_POST['jugador_id'];
-            $sql = "UPDATE miembros_plantel SET nombre_jugador = ?, posicion = ?, url_foto = ?, edad = ?, grado = ?, numero_camiseta = ?
+            $sql = "UPDATE miembros_plantel SET nombre_jugador = ?, posicion = ?, url_foto = ?, edad = ?, grado = ?, numero_camiseta = ?, goles = ?, asistencias = ?, porterias_cero = ?
                     WHERE id = ? AND plantel_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssisiii", $nombre, $posicion, $foto_path, $edad, $grado, $numero, $jugador_id, $plantel_id);
+            $stmt->bind_param("sssisiiiiii", $nombre, $posicion, $foto_path, $edad, $grado, $numero, $goles, $asistencias, $porterias_cero, $jugador_id, $plantel_id);
             $stmt->execute();
             header("Location: $redirect_url&success=Jugador actualizado exitosamente.");
         }

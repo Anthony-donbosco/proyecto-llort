@@ -11,23 +11,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $fecha_fin = !empty($_POST['fecha_fin']) ? $_POST['fecha_fin'] : NULL;
     $max_participantes = (int)$_POST['max_participantes'];
     $estado_id = (int)$_POST['estado_id'];
+    $tipo_torneo = trim($_POST['tipo_torneo']);
+    $fase_actual = trim($_POST['fase_actual']);
+    $ida_y_vuelta = isset($_POST['ida_y_vuelta']) ? 1 : 0;
     $creado_por = (int)$_SESSION['user_id']; 
 
     try {
         if ($_POST['action'] == 'create') {
-            $sql = "INSERT INTO torneos (nombre, deporte_id, temporada_id, descripcion, fecha_inicio, fecha_fin, max_participantes, estado_id, creado_por) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO torneos (nombre, deporte_id, temporada_id, descripcion, fecha_inicio, fecha_fin, max_participantes, estado_id, creado_por, tipo_torneo, fase_actual, ida_y_vuelta)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("siisssiii", $nombre, $deporte_id, $temporada_id, $descripcion, $fecha_inicio, $fecha_fin, $max_participantes, $estado_id, $creado_por);
+            $stmt->bind_param("siisssiiissi", $nombre, $deporte_id, $temporada_id, $descripcion, $fecha_inicio, $fecha_fin, $max_participantes, $estado_id, $creado_por, $tipo_torneo, $fase_actual, $ida_y_vuelta);
             $stmt->execute();
             header("Location: gestionar_torneos.php?success=Torneo creado exitosamente.");
-        
+
         } elseif ($_POST['action'] == 'update' && isset($_POST['torneo_id'])) {
             $torneo_id = (int)$_POST['torneo_id'];
-            $sql = "UPDATE torneos SET nombre = ?, deporte_id = ?, temporada_id = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, max_participantes = ?, estado_id = ?
+            $sql = "UPDATE torneos SET nombre = ?, deporte_id = ?, temporada_id = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, max_participantes = ?, estado_id = ?, tipo_torneo = ?, fase_actual = ?, ida_y_vuelta = ?
                     WHERE id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("siisssiii", $nombre, $deporte_id, $temporada_id, $descripcion, $fecha_inicio, $fecha_fin, $max_participantes, $estado_id, $torneo_id);
+            $stmt->bind_param("siisssiiissi", $nombre, $deporte_id, $temporada_id, $descripcion, $fecha_inicio, $fecha_fin, $max_participantes, $estado_id, $tipo_torneo, $fase_actual, $ida_y_vuelta, $torneo_id);
             $stmt->execute();
             header("Location: gestionar_torneos.php?success=Torneo actualizado exitosamente.");
         }

@@ -16,7 +16,10 @@ $jugador = [
     'edad' => '',
     'grado' => '',
     'numero_camiseta' => '',
-    'plantel_id' => ''
+    'plantel_id' => '',
+    'goles' => 0,
+    'asistencias' => 0,
+    'porterias_cero' => 0
 ];
 $foto_preview = '../img/jugadores/default.png';
 $page_title = 'Agregar Jugador';
@@ -76,7 +79,17 @@ if (isset($_GET['edit_id'])) {
             <div class="form-row">
                 <div class="form-group">
                     <label for="posicion">Posición:</label>
-                    <input type="text" id="posicion" name="posicion" value="<?php echo htmlspecialchars($jugador['posicion']); ?>" placeholder="Ej: Delantero, Defensa">
+                    <select id="posicion" name="posicion" required>
+                        <option value="">Seleccione una posición</option>
+                        <option value="Portero" <?php echo ($jugador['posicion'] == 'Portero') ? 'selected' : ''; ?>>Portero</option>
+                        <option value="Defensa" <?php echo ($jugador['posicion'] == 'Defensa') ? 'selected' : ''; ?>>Defensa</option>
+                        <option value="Mediocampista" <?php echo ($jugador['posicion'] == 'Mediocampista') ? 'selected' : ''; ?>>Mediocampista</option>
+                        <option value="Delantero" <?php echo ($jugador['posicion'] == 'Delantero') ? 'selected' : ''; ?>>Delantero</option>
+                        <option value="Suplente Portero" <?php echo ($jugador['posicion'] == 'Suplente Portero') ? 'selected' : ''; ?>>Suplente Portero</option>
+                        <option value="Suplente Defensa" <?php echo ($jugador['posicion'] == 'Suplente Defensa') ? 'selected' : ''; ?>>Suplente Defensa</option>
+                        <option value="Suplente Mediocampista" <?php echo ($jugador['posicion'] == 'Suplente Mediocampista') ? 'selected' : ''; ?>>Suplente Mediocampista</option>
+                        <option value="Suplente Delantero" <?php echo ($jugador['posicion'] == 'Suplente Delantero') ? 'selected' : ''; ?>>Suplente Delantero</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="numero_camiseta">Número de Camiseta:</label>
@@ -93,6 +106,27 @@ if (isset($_GET['edit_id'])) {
                     <label for="grado">Grado:</label>
                     <input type="text" id="grado" name="grado" value="<?php echo htmlspecialchars($jugador['grado']); ?>" placeholder="Ej: 9°A, 2°B">
                 </div>
+            </div>
+
+            <div class="form-section-title">
+                <h3>Estadísticas del Jugador</h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="goles">Goles:</label>
+                    <input type="number" id="goles" name="goles" value="<?php echo htmlspecialchars($jugador['goles']); ?>" min="0" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label for="asistencias">Asistencias:</label>
+                    <input type="number" id="asistencias" name="asistencias" value="<?php echo htmlspecialchars($jugador['asistencias']); ?>" min="0" placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="porterias_cero">Porterías a Cero (Solo Porteros):</label>
+                <input type="number" id="porterias_cero" name="porterias_cero" value="<?php echo htmlspecialchars($jugador['porterias_cero']); ?>" min="0" placeholder="0">
+                <small>Este campo es solo para porteros</small>
             </div>
             
             <div class="form-group">

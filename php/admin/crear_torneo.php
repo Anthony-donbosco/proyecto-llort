@@ -102,6 +102,34 @@ $estados = $conn->query("SELECT id, nombre_mostrado FROM estados_torneo ORDER BY
 
             <div class="form-row">
                 <div class="form-group">
+                    <label for="tipo_torneo">Tipo de Torneo:</label>
+                    <select id="tipo_torneo" name="tipo_torneo" required>
+                        <option value="liga" <?php echo ($torneo['tipo_torneo'] == 'liga') ? 'selected' : ''; ?>>Liga (Inicia como liga)</option>
+                        <option value="bracket" <?php echo ($torneo['tipo_torneo'] == 'bracket') ? 'selected' : ''; ?>>Bracket (Inicia en eliminatoria)</option>
+                    </select>
+                    <small>Ajedrez debe ser 'Bracket'. Fútbol/Baloncesto deben ser 'Liga'.</small>
+                </div>
+                <div class="form-group">
+                    <label for="fase_actual">Fase Inicial:</label>
+                    <select id="fase_actual" name="fase_actual" required>
+                        <option value="liga" <?php echo ($torneo['fase_actual'] == 'liga') ? 'selected' : ''; ?>>Liga</option>
+                        <option value="cuartos" <?php echo ($torneo['fase_actual'] == 'cuartos') ? 'selected' : ''; ?>>Cuartos de Final</option>
+                        <option value="semis" <?php echo ($torneo['fase_actual'] == 'semis') ? 'selected' : ''; ?>>Semifinales</option>
+                        <option value="final" <?php echo ($torneo['fase_actual'] == 'final') ? 'selected' : ''; ?>>Final</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ida_y_vuelta">
+                    <input type="checkbox" id="ida_y_vuelta" name="ida_y_vuelta" value="1" <?php echo (isset($torneo['ida_y_vuelta']) && $torneo['ida_y_vuelta']) ? 'checked' : ''; ?>>
+                    Torneo con Ida y Vuelta
+                </label>
+                <small>Si se marca, cada equipo jugará 2 veces contra cada oponente (local y visitante)</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
                     <label for="max_participantes">Max. Participantes:</label>
                     <input type="number" id="max_participantes" name="max_participantes" value="<?php echo htmlspecialchars($torneo['max_participantes']); ?>" required min="2">
                 </div>

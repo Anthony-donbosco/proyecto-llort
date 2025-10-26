@@ -2,10 +2,23 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-$sql = "SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo, d.nombre_mostrado AS deporte
+// Obtener lista de deportes para el filtro
+$deportes_query = $conn->query("SELECT id, nombre_mostrado FROM deportes WHERE es_por_equipos = 1 ORDER BY nombre_mostrado");
+
+// Filtro por deporte
+$deporte_filtro = isset($_GET['deporte_id']) && $_GET['deporte_id'] != '' ? (int)$_GET['deporte_id'] : null;
+
+// Construir consulta SQL con filtro
+$sql = "SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo, d.nombre_mostrado AS deporte, d.id AS deporte_id
         FROM participantes p
         JOIN deportes d ON p.deporte_id = d.id
-        ORDER BY p.nombre_mostrado";
+        WHERE p.tipo_participante_id = 1";
+
+if ($deporte_filtro !== null) {
+    $sql .= " AND p.deporte_id = " . $deporte_filtro;
+}
+
+$sql .= " ORDER BY p.nombre_mostrado";
 $result = $conn->query($sql);
 ?>
 
@@ -23,6 +36,34 @@ $result = $conn->query($sql);
     <?php if (isset($_GET['error'])): ?>
         <div class="alert alert-error"><?php echo htmlspecialchars($_GET['error']); ?></div>
     <?php endif; ?>
+
+    <!-- Filtro por deporte -->
+    <div class="search-bar">
+        <form method="GET" action="gestionar_equipos.php" class="filter-form">
+            <div class="form-group">
+                <label for="deporte_id">Filtrar por Deporte:</label>
+                <select id="deporte_id" name="deporte_id" onchange="this.form.submit()">
+                    <option value="">Todos los deportes</option>
+                    <?php
+                    $deportes_query->data_seek(0); // Reset pointer
+                    while($d = $deportes_query->fetch_assoc()):
+                    ?>
+                        <option value="<?php echo $d['id']; ?>" <?php echo ($deporte_filtro == $d['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($d['nombre_mostrado']); ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+            <?php if ($deporte_filtro !== null): ?>
+                <a href="gestionar_equipos.php" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Limpiar Filtro
+                </a>
+            <?php endif; ?>
+        </form>
+    </div>
 
     <div class="table-container">
         <table class="admin-table">
