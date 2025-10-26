@@ -9,7 +9,7 @@ if (!isset($_GET['partido_id'])) {
 
 $partido_id = (int)$_GET['partido_id'];
 
-// Obtener información del partido
+
 $sql_partido = "SELECT p.*,
                 pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                 pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
@@ -38,13 +38,13 @@ if (!$partido) {
     exit;
 }
 
-// Obtener estados de partido
+
 $stmt_estados = $conn->query("SELECT * FROM estados_partido ORDER BY orden");
 
-// Determinar si es voleibol para mostrar sets
+
 $es_voleibol = ($partido['codigo_deporte'] == 'volleyball');
 
-// Obtener jugadores del equipo local
+
 $sql_jugadores_local = "SELECT mp.*, pe.participante_id
                         FROM miembros_plantel mp
                         JOIN planteles_equipo pe ON mp.plantel_id = pe.id
@@ -55,13 +55,13 @@ $stmt_local->bind_param("i", $partido['participante_local_id']);
 $stmt_local->execute();
 $jugadores_local = $stmt_local->get_result();
 
-// Obtener jugadores del equipo visitante
+
 $stmt_visitante = $conn->prepare($sql_jugadores_local);
 $stmt_visitante->bind_param("i", $partido['participante_visitante_id']);
 $stmt_visitante->execute();
 $jugadores_visitante = $stmt_visitante->get_result();
 
-// Obtener eventos (goles) del partido
+
 $sql_eventos = "SELECT ep.*,
                 mp.nombre_jugador, mp.numero_camiseta, mp.posicion, pe.participante_id,
                 mp_asist.nombre_jugador AS asistencia_nombre, mp_asist.numero_camiseta AS asistencia_numero
@@ -82,7 +82,7 @@ $contador_goles_local = 0;
 $contador_goles_visitante = 0;
 
 while($evento = $eventos->fetch_assoc()) {
-    // Contar solo goles válidos (no autogoles del mismo equipo)
+    
     $es_gol_valido = in_array($evento['tipo_evento'], ['gol', 'penal_anotado']);
     $es_autogol = $evento['tipo_evento'] == 'autogol';
 
@@ -91,7 +91,7 @@ while($evento = $eventos->fetch_assoc()) {
         if ($es_gol_valido) {
             $contador_goles_local++;
         } elseif ($es_autogol) {
-            // Autogol del equipo local suma al visitante
+            
             $contador_goles_visitante++;
         }
     } else {
@@ -99,13 +99,13 @@ while($evento = $eventos->fetch_assoc()) {
         if ($es_gol_valido) {
             $contador_goles_visitante++;
         } elseif ($es_autogol) {
-            // Autogol del equipo visitante suma al local
+            
             $contador_goles_local++;
         }
     }
 }
 
-// Usar marcadores calculados si existen eventos, sino usar los guardados
+
 $marcador_local_calculado = $contador_goles_local;
 $marcador_visitante_calculado = $contador_goles_visitante;
 
@@ -167,7 +167,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         </div>
     </div>
 
-    <!-- Cronómetro del Partido -->
+    
     <div class="cronometro-section">
         <h2><i class="fas fa-clock"></i> Cronómetro del Partido</h2>
 
@@ -216,12 +216,12 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         </div>
     </div>
 
-    <!-- Sección de Goleadores -->
+    
     <div class="goleadores-section">
         <h2><i class="fas fa-futbol"></i> Goleadores del Partido</h2>
 
         <div class="goleadores-container">
-            <!-- Goleadores Local -->
+            
             <div class="goleadores-equipo">
                 <div class="goleadores-header">
                     <h3><?php echo htmlspecialchars($partido['equipo_local']); ?></h3>
@@ -264,7 +264,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
                 </div>
             </div>
 
-            <!-- Goleadores Visitante -->
+            
             <div class="goleadores-equipo">
                 <div class="goleadores-header">
                     <h3><?php echo htmlspecialchars($partido['equipo_visitante']); ?></h3>
@@ -309,7 +309,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         </div>
     </div>
 
-    <!-- Sección de MVP del Partido -->
+    
     <div class="mvp-section">
         <h2><i class="fas fa-trophy"></i> MVP del Partido</h2>
 
@@ -342,7 +342,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         </div>
     </div>
 
-    <!-- Modal para seleccionar MVP -->
+    
     <div id="modalMVP" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -386,7 +386,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         </div>
     </div>
 
-    <!-- Modal para agregar gol -->
+    
     <div id="modalGol" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -456,7 +456,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
         <div class="form-section">
             <h2><i class="fas fa-scoreboard"></i> Resultado del Partido</h2>
 
-            <!-- Marcadores Calculados (basados en goles registrados) -->
+            
             <div class="marcadores-calculados">
                 <div class="info-badge info-badge-primary">
                     <i class="fas fa-info-circle"></i>
@@ -752,7 +752,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
     margin-top: 1rem;
 }
 
-/* Estilos para Cronómetro */
+
 .cronometro-section {
     background: white;
     padding: 2rem;
@@ -941,7 +941,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
     margin: 0;
 }
 
-/* Estilos para Goleadores */
+
 .goleadores-section {
     background: white;
     padding: 2rem;
@@ -1103,7 +1103,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
     transform: scale(1.1);
 }
 
-/* Estilos para MVP del Partido */
+
 .mvp-section {
     background: white;
     padding: 2rem;
@@ -1237,7 +1237,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
     border-color: #1a237e;
 }
 
-/* Modal */
+
 .modal {
     position: fixed;
     top: 0;
@@ -1380,7 +1380,7 @@ $marcador_visitante_calculado = $contador_goles_visitante;
 </style>
 
 <script>
-// Datos de jugadores
+
 const jugadoresLocal = <?php echo json_encode($jugadores_local->fetch_all(MYSQLI_ASSOC)); ?>;
 const jugadoresVisitante = <?php echo json_encode($jugadores_visitante->fetch_all(MYSQLI_ASSOC)); ?>;
 
@@ -1391,15 +1391,15 @@ function abrirModalGol(tipo) {
     const equipoTipo = document.getElementById('equipoTipo');
     const modalTitle = document.getElementById('modalTitle');
 
-    // Limpiar opciones anteriores
+    
     select.innerHTML = '<option value="">Seleccione un jugador</option>';
     selectAsistencia.innerHTML = '<option value="">Sin asistencia</option>';
 
-    // Determinar jugadores según equipo
+    
     const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
     const nombreEquipo = tipo === 'local' ? '<?php echo addslashes($partido['equipo_local']); ?>' : '<?php echo addslashes($partido['equipo_visitante']); ?>';
 
-    // Llenar select con jugadores (anotador)
+    
     jugadores.forEach(jugador => {
         const option = document.createElement('option');
         option.value = jugador.id;
@@ -1407,7 +1407,7 @@ function abrirModalGol(tipo) {
         select.appendChild(option);
     });
 
-    // Llenar select con jugadores (asistencia) - mismo equipo
+    
     jugadores.forEach(jugador => {
         const option = document.createElement('option');
         option.value = jugador.id;
@@ -1432,14 +1432,14 @@ function eliminarGol(eventoId) {
     }
 }
 
-// Cerrar modal al hacer clic fuera
+
 document.getElementById('modalGol')?.addEventListener('click', function(e) {
     if (e.target === this) {
         cerrarModalGol();
     }
 });
 
-// ============= MODAL MVP =============
+
 let equipoMVPActual = 'local';
 
 function abrirModalMVP() {
@@ -1458,12 +1458,12 @@ function cerrarModalMVP() {
 function cambiarEquipoMVP(tipo) {
     equipoMVPActual = tipo;
 
-    // Cambiar tabs activos
+    
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(tab => tab.classList.remove('active'));
     event.target.classList.add('active');
 
-    // Cargar jugadores del equipo seleccionado
+    
     cargarJugadoresMVP(tipo);
 }
 
@@ -1481,21 +1481,21 @@ function cargarJugadoresMVP(tipo) {
     });
 }
 
-// Cerrar modal MVP al hacer clic fuera
+
 document.getElementById('modalMVP')?.addEventListener('click', function(e) {
     if (e.target === this) {
         cerrarModalMVP();
     }
 });
 
-// ============= CRONÓMETRO DEL PARTIDO =============
+
 const PARTIDO_ID = <?php echo $partido_id; ?>;
 let intervaloCronometro = null;
 
-// Obtener estado del cronómetro al cargar la página
+
 document.addEventListener('DOMContentLoaded', function() {
     obtenerEstadoCronometro();
-    // Actualizar cada segundo
+    
     intervaloCronometro = setInterval(obtenerEstadoCronometro, 1000);
 });
 
@@ -1518,12 +1518,12 @@ function actualizarDisplayCronometro(cronometro) {
     const btnPausar = document.getElementById('btnPausar');
     const btnReanudar = document.getElementById('btnReanudar');
 
-    // Convertir segundos a formato MM:SS o formato de partido (45', 90+2', etc)
+    
     const tiempo = formatearTiempoPartido(cronometro.tiempo_transcurrido, cronometro.tiempo_agregado);
     tiempoDisplay.textContent = tiempo;
     periodoDisplay.textContent = cronometro.periodo_actual;
 
-    // Actualizar estado y botones
+    
     const estado = cronometro.estado_cronometro;
     let badgeHTML = '';
 
@@ -1551,17 +1551,17 @@ function formatearTiempoPartido(segundos, tiempoAgregado) {
     const minutos = Math.floor(segundos / 60);
     const segs = segundos % 60;
 
-    // Formato MM:SS normal para tiempo regular
-    // Si estamos en el primer tiempo (0-45 min) o segundo tiempo (46-90 min)
+    
+    
     if (minutos < 45) {
-        // Primer tiempo: 0:00 a 44:59
+        
         return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
     } else if (minutos >= 45 && minutos < 90) {
-        // Segundo tiempo: 45:00 a 89:59
+        
         return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
     } else {
-        // Tiempo agregado después del minuto 90
-        // Mostrar como "45+X'" para primer tiempo o "90+X'" para segundo tiempo
+        
+        
         const minutosExtra = minutos - 90;
         if (minutosExtra > 0) {
             return `90+${minutosExtra}'`;
@@ -1652,14 +1652,14 @@ function enviarAccionCronometro(accion) {
         body: formData
     })
     .then(response => {
-        // Primero verificar si la respuesta es válida
+        
         if (!response.ok) {
             throw new Error('HTTP error! status: ' + response.status);
         }
-        return response.text(); // Obtener como texto primero
+        return response.text(); 
     })
     .then(text => {
-        console.log('Respuesta del servidor:', text); // Debug
+        console.log('Respuesta del servidor:', text); 
         try {
             const data = JSON.parse(text);
             if (data.success) {
@@ -1683,7 +1683,7 @@ function enviarAccionCronometro(accion) {
 }
 
 function mostrarAlerta(mensaje, tipo) {
-    // Crear alerta temporal
+    
     const alerta = document.createElement('div');
     alerta.className = 'alert alert-' + tipo;
     alerta.textContent = mensaje;

@@ -1,10 +1,10 @@
 <?php
-// 1. Seguridad y Conexión
-require_once 'auth_admin.php'; // Tu guardia de seguridad
-require_once 'admin_header.php'; // Tu header
 
-// 2. Lógica para LEER (Read) los torneos
-// Consultamos con JOIN para obtener los nombres (deporte y estado) y no solo los IDs
+require_once 'auth_admin.php'; 
+require_once 'admin_header.php'; 
+
+
+
 $sql = "SELECT t.id, t.nombre, d.nombre_mostrado AS deporte, t.fecha_inicio, t.fecha_fin, e.nombre_mostrado AS estado
         FROM torneos t
         JOIN deportes d ON t.deporte_id = d.id
@@ -99,6 +99,6 @@ $result = $conn->query($sql);
 </main>
 
 <?php
-// 4. Incluir el Footer
-require_once 'admin_footer.php'; // Tu footer
+
+require_once 'admin_footer.php'; 
 ?>

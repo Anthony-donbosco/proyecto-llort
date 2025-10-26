@@ -11,7 +11,7 @@ $torneo_id = (int)$_POST['torneo_id'];
 
 if ($action == 'terminar') {
     try {
-        // Verificar que el torneo existe
+        
         $stmt_check = $conn->prepare("SELECT id, nombre FROM torneos WHERE id = ?");
         $stmt_check->bind_param("i", $torneo_id);
         $stmt_check->execute();
@@ -23,14 +23,14 @@ if ($action == 'terminar') {
         }
         $stmt_check->close();
 
-        // Actualizar estado del torneo a "Finalizado" (estado_id = 5)
+        
         $stmt_update = $conn->prepare("UPDATE torneos SET estado_id = 5 WHERE id = ?");
         $stmt_update->bind_param("i", $torneo_id);
         $stmt_update->execute();
         $stmt_update->close();
 
-        // Opcional: registrar información del campeón en una tabla de ganadores
-        // (Esto depende de si tienes una tabla específica para registrar ganadores)
+        
+        
 
         header("Location: gestionar_torneos.php?success=Torneo finalizado exitosamente.");
 

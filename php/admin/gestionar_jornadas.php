@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte, e.nombre_mostrado AS estado
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -24,17 +24,17 @@ if (!$torneo) {
     exit;
 }
 
-// Contar equipos inscritos
+
 $stmt_count = $conn->prepare("SELECT COUNT(*) as total FROM torneo_participantes WHERE torneo_id = ?");
 $stmt_count->bind_param("i", $torneo_id);
 $stmt_count->execute();
 $total_equipos = $stmt_count->get_result()->fetch_assoc()['total'];
 
-// Calcular jornadas necesarias
+
 $jornadas_ida = $total_equipos > 0 ? $total_equipos - 1 : 0;
 $jornadas_totales = $torneo['ida_y_vuelta'] ? $jornadas_ida * 2 : $jornadas_ida;
 
-// Obtener jornadas existentes
+
 $sql_jornadas = "SELECT j.*, COUNT(p.id) as total_partidos
                  FROM jornadas j
                  JOIN fases f ON j.fase_id = f.id
@@ -47,13 +47,13 @@ $stmt_jornadas->bind_param("i", $torneo_id);
 $stmt_jornadas->execute();
 $jornadas = $stmt_jornadas->get_result();
 
-// Verificar si todas las jornadas están completas
+
 $todas_jornadas_completas = true;
 $jornadas_array = [];
 while($jornada = $jornadas->fetch_assoc()) {
     $jornadas_array[] = $jornada;
 
-    // Verificar si todos los partidos de esta jornada están finalizados
+    
     $stmt_check = $conn->prepare("SELECT COUNT(*) as total,
                                    SUM(CASE WHEN estado_id = 5 THEN 1 ELSE 0 END) as finalizados
                                    FROM partidos

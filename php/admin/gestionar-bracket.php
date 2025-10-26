@@ -1,5 +1,5 @@
 <?php
-// php/admin/gestionar_bracket.php
+
 session_start();
 require_once '../db_connect.php';
 
@@ -11,7 +11,7 @@ if ($torneo_id === 0) {
     exit();
 }
 
-// Obtener información del torneo
+
 $query_torneo = "SELECT t.*, d.nombre_mostrado as deporte, d.codigo as codigo_deporte, d.es_por_equipos
                  FROM torneos t 
                  JOIN deportes d ON t.deporte_id = d.id 
@@ -26,7 +26,7 @@ if (!$torneo) {
     exit();
 }
 
-// Para ajedrez, iniciar directamente como bracket
+
 if ($torneo['codigo_deporte'] === 'chess' && $torneo['tipo_torneo'] !== 'bracket') {
     $update_query = "UPDATE torneos SET tipo_torneo = 'bracket', fase_actual = 'cuartos' WHERE id = ?";
     $stmt_update = $conn->prepare($update_query);
@@ -36,7 +36,7 @@ if ($torneo['codigo_deporte'] === 'chess' && $torneo['tipo_torneo'] !== 'bracket
     $torneo['fase_actual'] = 'cuartos';
 }
 
-// Obtener participantes del torneo
+
 $query_participantes = "SELECT p.*, tp.semilla
                        FROM participantes p 
                        JOIN torneo_participantes tp ON p.id = tp.participante_id 
@@ -47,7 +47,7 @@ $stmt_part->bind_param("i", $torneo_id);
 $stmt_part->execute();
 $participantes = $stmt_part->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Obtener bracket actual
+
 $query_bracket = "SELECT bt.*, p.nombre_mostrado as participante_nombre, p.nombre_corto
                  FROM bracket_torneos bt
                  LEFT JOIN participantes p ON bt.participante_id = p.id
@@ -58,7 +58,7 @@ $stmt_bracket->bind_param("i", $torneo_id);
 $stmt_bracket->execute();
 $bracket_data = $stmt_bracket->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Organizar bracket por fases
+
 $bracket = [
     'cuartos' => [],
     'semis' => [],
@@ -69,28 +69,28 @@ foreach ($bracket_data as $item) {
     $bracket[$item['fase']][$item['posicion_bracket']] = $item;
 }
 
-// Procesar formulario
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     
     if ($action === 'cambiar_fase_bracket') {
-        // Cambiar torneo a modo bracket
+        
         $update_query = "UPDATE torneos SET tipo_torneo = 'bracket', fase_actual = 'cuartos' WHERE id = ?";
         $stmt_update = $conn->prepare($update_query);
         $stmt_update->bind_param("i", $torneo_id);
         
         if ($stmt_update->execute()) {
-            // Crear estructura inicial del bracket con los mejores equipos
+            
             $num_participantes = count($participantes);
             $cuartos_participantes = array_slice($participantes, 0, min(8, $num_participantes));
             
-            // Limpiar bracket existente
+            
             $delete_query = "DELETE FROM bracket_torneos WHERE torneo_id = ?";
             $stmt_delete = $conn->prepare($delete_query);
             $stmt_delete->bind_param("i", $torneo_id);
             $stmt_delete->execute();
             
-            // Insertar participantes en cuartos
+            
             $insert_query = "INSERT INTO bracket_torneos (torneo_id, fase, posicion_bracket, participante_id) VALUES (?, 'cuartos', ?, ?)";
             $stmt_insert = $conn->prepare($insert_query);
             
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $success_message = "Torneo cambiado a modo bracket. Se han seleccionado los " . count($cuartos_participantes) . " mejores equipos para cuartos de final.";
             
-            // Recargar datos del bracket
+            
             header("Location: " . $_SERVER['REQUEST_URI']);
             exit();
         } else {
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fase = $_POST['fase'];
         $participantes_seleccionados = $_POST['participantes'] ?? [];
         
-        // Validar número de participantes por fase
+        
         $max_participantes = [
             'cuartos' => 8,
             'semis' => 4,
@@ -125,13 +125,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($participantes_seleccionados) > $max_participantes[$fase]) {
             $error_message = "Demasiados participantes para la fase de " . $fase;
         } else {
-            // Limpiar fase actual
+            
             $delete_query = "DELETE FROM bracket_torneos WHERE torneo_id = ? AND fase = ?";
             $stmt_delete = $conn->prepare($delete_query);
             $stmt_delete->bind_param("is", $torneo_id, $fase);
             $stmt_delete->execute();
             
-            // Insertar nuevos participantes
+            
             $insert_query = "INSERT INTO bracket_torneos (torneo_id, fase, posicion_bracket, participante_id) VALUES (?, ?, ?, ?)";
             $stmt_insert = $conn->prepare($insert_query);
             
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            // Actualizar fase actual del torneo
+            
             $update_torneo = "UPDATE torneos SET fase_actual = ? WHERE id = ?";
             $stmt_update_torneo = $conn->prepare($update_torneo);
             $stmt_update_torneo->bind_param("si", $fase, $torneo_id);
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $success_message = "Bracket de " . $fase . " actualizado correctamente";
             
-            // Recargar página
+            
             header("Location: " . $_SERVER['REQUEST_URI']);
             exit();
         }
@@ -400,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         
         <?php if ($torneo['tipo_torneo'] !== 'bracket'): ?>
-            <!-- Cambiar a modo bracket -->
+            
             <div class="fase-selector">
                 <h3>Cambiar a Modo Eliminatoria (Bracket)</h3>
                 <p>El torneo está actualmente en modo liga. Puedes cambiarlo a modo eliminatoria para gestionar cuartos de final, semifinales y final.</p>
@@ -417,9 +417,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </div>
         <?php else: ?>
-            <!-- Gestionar bracket -->
+            
             <div class="bracket-visual">
-                <!-- Cuartos de Final -->
+                
                 <div class="fase-column">
                     <div class="fase-title">Cuartos de Final</div>
                     <?php for ($i = 1; $i <= 8; $i++): ?>
@@ -438,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="conector"></div>
                 </div>
                 
-                <!-- Semifinales -->
+                
                 <div class="fase-column">
                     <div class="fase-title">Semifinales</div>
                     <?php for ($i = 1; $i <= 4; $i++): ?>
@@ -457,7 +457,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="conector"></div>
                 </div>
                 
-                <!-- Final -->
+                
                 <div class="fase-column">
                     <div class="fase-title">Final</div>
                     <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 60px;">
@@ -475,7 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
             
-            <!-- Formulario para gestionar bracket -->
+            
             <div class="form-bracket">
                 <h3>Gestionar Bracket</h3>
                 
@@ -582,14 +582,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
         function showFase(fase) {
-            // Actualizar tabs
+            
             document.querySelectorAll('.fase-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
             
-            // Actualizar campo oculto
+            
             document.getElementById('fase-actual').value = fase;
             
-            // Mostrar/ocultar secciones
+            
             document.querySelectorAll('.posicion-selector').forEach(section => {
                 section.style.display = 'none';
             });
@@ -597,7 +597,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         function selectParticipante(element, participanteId) {
-            // Toggle selección visual
+            
             element.classList.toggle('selected');
         }
     </script>

@@ -1,9 +1,9 @@
 <?php
-// php/admin/ver_plantel.php
+
 session_start();
 require_once '../db_connect.php';
 
-// Verificar si es administrador
+
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../login.php");
     exit();
@@ -17,7 +17,7 @@ if ($torneo_id === 0) {
     exit();
 }
 
-// Obtener información del torneo y equipo
+
 $query_info = "SELECT t.*, d.nombre_mostrado as deporte, d.codigo as codigo_deporte, d.es_por_equipos,
                p.nombre_mostrado as equipo, p.nombre_corto as equipo_corto, p.url_logo
                FROM torneos t 
@@ -34,9 +34,9 @@ if (!$info) {
     exit();
 }
 
-// Obtener jugadores con posiciones
+
 if ($info['es_por_equipos'] == 1 && $participante_id > 0) {
-    // Para equipos
+    
     $query_jugadores = "SELECT j.*, pos.codigo as posicion_codigo, pos.nombre_mostrado as posicion_nombre,
                        pos.coordenada_x, pos.coordenada_y, pos.es_titular as posicion_titular
                        FROM jugadores j 
@@ -46,7 +46,7 @@ if ($info['es_por_equipos'] == 1 && $participante_id > 0) {
     $stmt_jug = $conn->prepare($query_jugadores);
     $stmt_jug->bind_param("ii", $torneo_id, $participante_id);
 } else {
-    // Para deportes individuales
+    
     $query_jugadores = "SELECT j.*, NULL as posicion_codigo, NULL as posicion_nombre,
                        NULL as coordenada_x, NULL as coordenada_y, 1 as posicion_titular
                        FROM jugadores j 
@@ -59,7 +59,7 @@ if ($info['es_por_equipos'] == 1 && $participante_id > 0) {
 $stmt_jug->execute();
 $jugadores = $stmt_jug->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Separar titulares y suplentes
+
 $titulares = [];
 $suplentes = [];
 
@@ -153,7 +153,7 @@ foreach ($jugadores as $jugador) {
             bottom: 0;
         }
         
-        /* Líneas del campo de fútbol */
+        
         .campo-futbol .lineas-campo::before {
             content: '';
             position: absolute;
@@ -177,7 +177,7 @@ foreach ($jugadores as $jugador) {
             transform: translate(-50%, -50%);
         }
         
-        /* Líneas del campo de baloncesto */
+        
         .campo-baloncesto .lineas-campo::before {
             content: '';
             position: absolute;
@@ -200,7 +200,7 @@ foreach ($jugadores as $jugador) {
             transform: translate(-50%, -50%);
         }
         
-        /* Red de voleibol */
+        
         .campo-voleibol .lineas-campo::before {
             content: '';
             position: absolute;
@@ -352,7 +352,7 @@ foreach ($jugadores as $jugador) {
         </div>
         
         <?php if ($info['es_por_equipos'] == 1 && !empty($titulares)): ?>
-            <!-- Campo para deportes de equipo -->
+            
             <div class="campo-container">
                 <h3>Alineación Titular</h3>
                 <div class="campo-<?php echo $info['codigo_deporte']; ?>">
@@ -375,7 +375,7 @@ foreach ($jugadores as $jugador) {
                 </div>
             </div>
             
-            <!-- Suplentes -->
+            
             <?php if (!empty($suplentes)): ?>
                 <div class="suplentes-container">
                     <h3>Suplentes</h3>
@@ -399,7 +399,7 @@ foreach ($jugadores as $jugador) {
             <?php endif; ?>
             
         <?php else: ?>
-            <!-- Lista para deportes individuales -->
+            
             <div>
                 <h3>Participantes (<?php echo count($jugadores); ?>)</h3>
                 <?php if (!empty($jugadores)): ?>

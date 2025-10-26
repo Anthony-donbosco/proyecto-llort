@@ -9,7 +9,7 @@ if (!isset($_GET['jornada_id'])) {
 
 $jornada_id = (int)$_GET['jornada_id'];
 
-// Obtener información de la jornada y torneo
+
 $stmt_jornada = $conn->prepare("SELECT j.*, f.torneo_id, t.nombre AS nombre_torneo
                                  FROM jornadas j
                                  JOIN fases f ON j.fase_id = f.id
@@ -26,7 +26,7 @@ if (!$jornada) {
 
 $torneo_id = $jornada['torneo_id'];
 
-// Obtener partidos de esta jornada
+
 $sql_partidos = "SELECT p.*,
                  pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                  pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
@@ -292,17 +292,17 @@ $partidos = $stmt_partidos->get_result();
 <?php
 function getBadgeClass($estado_id) {
     switch($estado_id) {
-        case 1: // No iniciado
-        case 2: // Programado
+        case 1: 
+        case 2: 
             return 'badge-secondary';
-        case 3: // En vivo
+        case 3: 
             return 'badge-success';
-        case 5: // Finalizado
+        case 5: 
             return 'badge-primary';
-        case 6: // Pospuesto
-        case 8: // Suspendido
+        case 6: 
+        case 8: 
             return 'badge-warning';
-        case 7: // Cancelado
+        case 7: 
             return 'badge-danger';
         default:
             return 'badge-secondary';

@@ -2,7 +2,7 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Obtener configuración actual
+
 $config_sql = "SELECT * FROM configuracion_galeria";
 $config_result = $conn->query($config_sql);
 $config = [];
@@ -10,7 +10,7 @@ while($row = $config_result->fetch_assoc()) {
     $config[$row['clave']] = $row['valor'];
 }
 
-// Obtener todas las temporadas
+
 $temporadas_sql = "SELECT id, nombre FROM temporadas ORDER BY es_actual DESC, ano DESC";
 $temporadas = $conn->query($temporadas_sql);
 
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mostrar_todas = isset($_POST['mostrar_todas_temporadas']) ? 1 : 0;
 
     try {
-        // Actualizar configuración
+        
         $sql1 = "UPDATE configuracion_galeria SET valor = ? WHERE clave = 'temporada_galeria_activa'";
         $stmt1 = $conn->prepare($sql1);
         $stmt1->bind_param("s", $temporada_activa);
@@ -95,7 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <script>
-// Mostrar/ocultar selector de temporada según checkbox
 document.getElementById('mostrar_todas_temporadas').addEventListener('change', function() {
     const selectGroup = document.getElementById('temporada-select-group');
     if (this.checked) {
@@ -107,7 +106,6 @@ document.getElementById('mostrar_todas_temporadas').addEventListener('change', f
     }
 });
 
-// Ejecutar al cargar la página
 window.addEventListener('DOMContentLoaded', function() {
     const checkbox = document.getElementById('mostrar_todas_temporadas');
     if (checkbox.checked) {

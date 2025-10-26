@@ -14,7 +14,7 @@ $redirect_url = "editar_partido.php?partido_id=$partido_id";
 
 if ($action == 'editar') {
     try {
-        // Validar campos requeridos
+        
         if (!isset($_POST['marcador_local']) || !isset($_POST['marcador_visitante']) ||
             !isset($_POST['estado_id']) || !isset($_POST['inicio_partido'])) {
             header("Location: $redirect_url&error=Todos los campos obligatorios deben ser completados.");
@@ -27,13 +27,13 @@ if ($action == 'editar') {
         $inicio_partido = $_POST['inicio_partido'];
         $notas = isset($_POST['notas']) ? trim($_POST['notas']) : null;
 
-        // Validar marcadores
+        
         if ($marcador_local < 0 || $marcador_visitante < 0) {
             header("Location: $redirect_url&error=Los marcadores no pueden ser negativos.");
             exit;
         }
 
-        // Construir query base
+        
         $sql = "UPDATE partidos SET
                 marcador_local = ?,
                 marcador_visitante = ?,
@@ -44,7 +44,7 @@ if ($action == 'editar') {
         $params = [$marcador_local, $marcador_visitante, $estado_id, $inicio_partido, $notas];
         $types = "iiiss";
 
-        // Si hay sets (voleibol), agregarlos
+        
         if (isset($_POST['marcador_local_sets']) && isset($_POST['marcador_visitante_sets'])) {
             $marcador_local_sets = (int)$_POST['marcador_local_sets'];
             $marcador_visitante_sets = (int)$_POST['marcador_visitante_sets'];
@@ -64,7 +64,7 @@ if ($action == 'editar') {
         $params[] = $partido_id;
         $types .= "i";
 
-        // Ejecutar actualización
+        
         $stmt = $conn->prepare($sql);
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
@@ -83,7 +83,7 @@ if ($action == 'editar') {
 
 } elseif ($action == 'seleccionar_mvp') {
     try {
-        // Validar que se haya seleccionado un jugador
+        
         if (!isset($_POST['mvp_jugador_id']) || empty($_POST['mvp_jugador_id'])) {
             header("Location: $redirect_url&error=Debe seleccionar un jugador para MVP.");
             exit;
@@ -91,7 +91,7 @@ if ($action == 'editar') {
 
         $mvp_jugador_id = (int)$_POST['mvp_jugador_id'];
 
-        // Actualizar el MVP del partido
+        
         $stmt = $conn->prepare("UPDATE partidos SET mvp_miembro_plantel_id = ? WHERE id = ?");
         $stmt->bind_param("ii", $mvp_jugador_id, $partido_id);
         $stmt->execute();

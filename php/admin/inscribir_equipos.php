@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -23,7 +23,7 @@ if (!$torneo) {
     exit;
 }
 
-// Obtener equipos ya inscritos
+
 $stmt_inscritos = $conn->prepare("SELECT tp.participante_id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                    FROM torneo_participantes tp
                                    JOIN participantes p ON tp.participante_id = p.id
@@ -43,7 +43,7 @@ while ($row = $inscritos->fetch_assoc()) {
 $total_inscritos = count($equipos_inscritos);
 $cupos_disponibles = $torneo['max_participantes'] - $total_inscritos;
 
-// Obtener equipos disponibles para inscribir (del mismo deporte, no inscritos)
+
 $sql_disponibles = "SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                     FROM participantes p
                     WHERE p.deporte_id = ? AND p.tipo_participante_id = 1";
@@ -113,7 +113,6 @@ $disponibles = $stmt_disponibles->get_result();
     <?php endif; ?>
 
     <div class="inscripcion-container">
-        <!-- Equipos Disponibles -->
         <div class="equipos-section">
             <h2><i class="fas fa-list"></i> Equipos Disponibles</h2>
 
@@ -154,8 +153,6 @@ $disponibles = $stmt_disponibles->get_result();
                 </div>
             <?php endif; ?>
         </div>
-
-        <!-- Equipos Inscritos -->
         <div class="equipos-section">
             <h2><i class="fas fa-check-circle"></i> Equipos Inscritos (<?php echo $total_inscritos; ?>)</h2>
 

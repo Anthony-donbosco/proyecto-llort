@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte, e.nombre_mostrado AS estado
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -24,7 +24,7 @@ if (!$torneo) {
     exit;
 }
 
-// Verificar que todas las jornadas estén completas
+
 $stmt_check = $conn->prepare("SELECT COUNT(*) as total_partidos,
                                SUM(CASE WHEN estado_id = 5 THEN 1 ELSE 0 END) as partidos_finalizados
                                FROM partidos p
@@ -38,7 +38,7 @@ if ($check_result['total_partidos'] != $check_result['partidos_finalizados']) {
     exit;
 }
 
-// Obtener todos los equipos inscritos
+
 $stmt_equipos = $conn->prepare("SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                  FROM torneo_participantes tp
                                  JOIN participantes p ON tp.participante_id = p.id
@@ -48,7 +48,7 @@ $stmt_equipos->bind_param("i", $torneo_id);
 $stmt_equipos->execute();
 $equipos_result = $stmt_equipos->get_result();
 
-// Inicializar tabla de posiciones
+
 $tabla = [];
 while ($equipo = $equipos_result->fetch_assoc()) {
     $tabla[$equipo['id']] = [
@@ -61,7 +61,7 @@ while ($equipo = $equipos_result->fetch_assoc()) {
     ];
 }
 
-// Obtener todos los partidos finalizados
+
 $sql_partidos = "SELECT p.participante_local_id, p.participante_visitante_id,
                  p.marcador_local, p.marcador_visitante
                  FROM partidos p
@@ -72,7 +72,7 @@ $stmt_partidos->bind_param("i", $torneo_id);
 $stmt_partidos->execute();
 $partidos = $stmt_partidos->get_result();
 
-// Calcular estadísticas
+
 while ($partido = $partidos->fetch_assoc()) {
     $local_id = $partido['participante_local_id'];
     $visitante_id = $partido['participante_visitante_id'];
@@ -106,12 +106,12 @@ while ($partido = $partidos->fetch_assoc()) {
     }
 }
 
-// Calcular diferencia de goles
+
 foreach ($tabla as &$equipo) {
     $equipo['dg'] = $equipo['gf'] - $equipo['gc'];
 }
 
-// Ordenar tabla
+
 usort($tabla, function($a, $b) {
     if ($b['pts'] != $a['pts']) return $b['pts'] - $a['pts'];
     if ($b['dg'] != $a['dg']) return $b['dg'] - $a['dg'];
@@ -141,13 +141,13 @@ $equipos_playoffs = array_slice($tabla, 0, 8);
     <?php endif; ?>
 
     <div class="finalizacion-container">
-        <!-- Resumen del torneo -->
+        
         <div class="resumen-card">
             <h2><i class="fas fa-trophy"></i> Fase de Liga Completada</h2>
             <p>Todos los partidos de la fase de liga han finalizado. Ahora puedes elegir cómo continuar:</p>
         </div>
 
-        <!-- Campeón -->
+        
         <?php if ($campeon): ?>
             <div class="campeon-card">
                 <div class="campeon-header">
@@ -174,9 +174,9 @@ $equipos_playoffs = array_slice($tabla, 0, 8);
             </div>
         <?php endif; ?>
 
-        <!-- Opciones de finalización -->
+        
         <div class="opciones-grid">
-            <!-- Opción 1: Terminar torneo -->
+            
             <div class="opcion-card">
                 <div class="opcion-icon terminar">
                     <i class="fas fa-flag-checkered"></i>
@@ -196,7 +196,7 @@ $equipos_playoffs = array_slice($tabla, 0, 8);
                 </form>
             </div>
 
-            <!-- Opción 2: Continuar con playoffs -->
+            
             <div class="opcion-card <?php echo count($tabla) < 8 ? 'opcion-disabled' : ''; ?>">
                 <div class="opcion-icon playoffs">
                     <i class="fas fa-sitemap"></i>
@@ -229,7 +229,7 @@ $equipos_playoffs = array_slice($tabla, 0, 8);
             </div>
         </div>
 
-        <!-- Tabla de posiciones resumida -->
+        
         <div class="tabla-final-card">
             <h3><i class="fas fa-list-ol"></i> Tabla de Posiciones Final</h3>
             <div class="tabla-scroll">

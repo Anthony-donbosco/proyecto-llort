@@ -44,7 +44,7 @@ $temporadas = $conn->query($temporadas_sql);
 $deportes_sql = "SELECT id, nombre_mostrado FROM deportes ORDER BY nombre_mostrado";
 $deportes = $conn->query($deportes_sql);
 
-// Obtener configuración de galería
+
 $config_sql = "SELECT * FROM configuracion_galeria";
 $config_result = $conn->query($config_sql);
 $config = [];

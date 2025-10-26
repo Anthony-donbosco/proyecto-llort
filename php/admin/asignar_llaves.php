@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -23,7 +23,7 @@ if (!$torneo) {
     exit;
 }
 
-// Obtener equipos inscritos
+
 $stmt_equipos = $conn->prepare("SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                  FROM torneo_participantes tp
                                  JOIN participantes p ON tp.participante_id = p.id
@@ -33,7 +33,7 @@ $stmt_equipos->bind_param("i", $torneo_id);
 $stmt_equipos->execute();
 $equipos = $stmt_equipos->get_result();
 
-// Obtener bracket actual si existe
+
 $stmt_bracket = $conn->prepare("SELECT * FROM bracket_torneos WHERE torneo_id = ? ORDER BY fase, posicion_bracket");
 $stmt_bracket->bind_param("i", $torneo_id);
 $stmt_bracket->execute();
@@ -44,7 +44,7 @@ while($b = $bracket_result->fetch_assoc()) {
     $bracket[$b['fase']][$b['posicion_bracket']] = $b;
 }
 
-// Obtener partidos de playoffs
+
 $stmt_partidos = $conn->prepare("SELECT p.*,
                                   pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                                   pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
@@ -80,7 +80,6 @@ while($partido = $partidos->fetch_assoc()) {
         <div class="alert alert-error"><?php echo htmlspecialchars($_GET['error']); ?></div>
     <?php endif; ?>
 
-    <!-- Selector de equipos disponibles -->
     <div class="equipos-disponibles">
         <h2><i class="fas fa-users"></i> Equipos Disponibles</h2>
         <p style="color: #666; margin-bottom: 1rem;">Arrastra los equipos a las llaves para asignarlos</p>
@@ -106,12 +105,10 @@ while($partido = $partidos->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Bracket Visual -->
     <div class="bracket-container">
         <h2><i class="fas fa-sitemap"></i> Bracket de Playoffs</h2>
 
         <div class="bracket-visual">
-            <!-- Cuartos de Final -->
             <div class="bracket-round">
                 <h3>Cuartos de Final</h3>
                 <div class="matchups">
@@ -136,7 +133,6 @@ while($partido = $partidos->fetch_assoc()) {
                 </div>
             </div>
 
-            <!-- Semifinales -->
             <div class="bracket-round">
                 <h3>Semifinales</h3>
                 <div class="matchups">
@@ -161,7 +157,6 @@ while($partido = $partidos->fetch_assoc()) {
                 </div>
             </div>
 
-            <!-- Final -->
             <div class="bracket-round">
                 <h3>Final</h3>
                 <div class="matchups">
@@ -405,7 +400,7 @@ let bracketData = {
     final: {}
 };
 
-// Drag and Drop
+
 const draggables = document.querySelectorAll('.equipo-draggable');
 const droppables = document.querySelectorAll('.droppable');
 
@@ -442,7 +437,7 @@ droppables.forEach(droppable => {
         const posicion = matchup.dataset.posicion;
         const tipo = droppable.dataset.tipo;
 
-        // Crear contenido del equipo
+        
         droppable.innerHTML = `
             <div class="equipo-asignado">
                 ${equipoHTML}
@@ -454,7 +449,7 @@ droppables.forEach(droppable => {
         droppable.classList.remove('droppable');
         droppable.classList.add('has-team');
 
-        // Guardar en memoria
+        
         if (!bracketData[fase][posicion]) {
             bracketData[fase][posicion] = {};
         }
@@ -475,7 +470,7 @@ function removerEquipo(btn) {
     droppable.classList.remove('has-team');
     droppable.classList.add('droppable');
 
-    // Remover de memoria
+    
     const matchup = droppable.closest('.matchup');
     const fase = matchup.dataset.fase;
     const posicion = matchup.dataset.posicion;
@@ -485,7 +480,7 @@ function removerEquipo(btn) {
         delete bracketData[fase][posicion][tipo];
     }
 
-    // Reiniciar event listeners
+    
     setupDroppable(droppable);
 }
 
@@ -531,7 +526,7 @@ function setupDroppable(element) {
 }
 
 function guardarBracket() {
-    // Validar que todos los cuartos tengan equipos
+    
     if (Object.keys(bracketData.cuartos).length < 4) {
         alert('Debes asignar los 8 equipos en los cuartos de final (4 partidos)');
         return;
@@ -544,7 +539,7 @@ function guardarBracket() {
         }
     }
 
-    // Enviar datos al servidor
+    
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'playoffs_process.php';

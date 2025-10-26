@@ -2,31 +2,31 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Obtener parámetros de filtro
+
 $mes_actual = isset($_GET['mes']) ? (int)$_GET['mes'] : date('n');
 $anio_actual = isset($_GET['anio']) ? (int)$_GET['anio'] : date('Y');
 $torneo_filtro = isset($_GET['torneo']) ? (int)$_GET['torneo'] : null;
 $deporte_filtro = isset($_GET['deporte']) ? (int)$_GET['deporte'] : null;
 $estado_filtro = isset($_GET['estado']) ? (int)$_GET['estado'] : null;
 
-// Validar mes y año
+
 if ($mes_actual < 1 || $mes_actual > 12) $mes_actual = date('n');
 if ($anio_actual < 2000 || $anio_actual > 2100) $anio_actual = date('Y');
 
-// Calcular primer y último día del mes
+
 $primer_dia = date('Y-m-d', mktime(0, 0, 0, $mes_actual, 1, $anio_actual));
 $ultimo_dia = date('Y-m-t', mktime(0, 0, 0, $mes_actual, 1, $anio_actual));
 
-// Obtener todos los torneos para el filtro
+
 $stmt_torneos = $conn->query("SELECT id, nombre FROM torneos ORDER BY fecha_inicio DESC");
 
-// Obtener todos los deportes para el filtro
+
 $stmt_deportes = $conn->query("SELECT id, nombre_mostrado FROM deportes ORDER BY nombre_mostrado");
 
-// Obtener estados de partido
+
 $stmt_estados = $conn->query("SELECT id, nombre_mostrado FROM estados_partido ORDER BY orden");
 
-// Construir query de partidos
+
 $sql_partidos = "SELECT p.*,
                  pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                  pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
@@ -71,7 +71,7 @@ $stmt_partidos->bind_param($types, ...$params);
 $stmt_partidos->execute();
 $partidos = $stmt_partidos->get_result();
 
-// Agrupar partidos por fecha
+
 $partidos_por_fecha = [];
 while ($partido = $partidos->fetch_assoc()) {
     $fecha = date('Y-m-d', strtotime($partido['inicio_partido']));
@@ -81,7 +81,7 @@ while ($partido = $partidos->fetch_assoc()) {
     $partidos_por_fecha[$fecha][] = $partido;
 }
 
-// Calcular mes anterior y siguiente
+
 $mes_anterior = $mes_actual - 1;
 $anio_anterior = $anio_actual;
 if ($mes_anterior < 1) {
@@ -96,7 +96,7 @@ if ($mes_siguiente > 12) {
     $anio_siguiente++;
 }
 
-// Nombre del mes
+
 $nombres_meses = [
     1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
     5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
@@ -117,7 +117,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
         </div>
     </div>
 
-    <!-- Filtros -->
+    
     <form method="GET" class="filtros-card">
         <div class="filtros-header">
             <h3><i class="fas fa-filter"></i> Filtros</h3>
@@ -197,7 +197,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
         </div>
     </form>
 
-    <!-- Navegación de mes -->
+    
     <div class="mes-navegacion">
         <a href="?mes=<?php echo $mes_anterior; ?>&anio=<?php echo $anio_anterior; ?><?php echo $torneo_filtro ? '&torneo='.$torneo_filtro : ''; ?><?php echo $deporte_filtro ? '&deporte='.$deporte_filtro : ''; ?><?php echo $estado_filtro ? '&estado='.$estado_filtro : ''; ?>"
            class="btn btn-secondary">
@@ -212,7 +212,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
         </a>
     </div>
 
-    <!-- Resumen -->
+    
     <div class="resumen-card">
         <div class="resumen-item">
             <i class="fas fa-futbol"></i>
@@ -230,7 +230,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
         </div>
     </div>
 
-    <!-- Lista de partidos por fecha -->
+    
     <div class="calendario-container">
         <?php if (empty($partidos_por_fecha)): ?>
             <div class="empty-state">
@@ -240,7 +240,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
             </div>
         <?php else: ?>
             <?php
-            // Obtener día actual para resaltarlo
+            
             $hoy = date('Y-m-d');
 
             foreach ($partidos_por_fecha as $fecha => $partidos_del_dia):
@@ -297,7 +297,7 @@ $nombre_mes = $nombres_meses[$mes_actual];
                                         </div>
 
                                         <div class="partido-marcador">
-                                            <?php if ($partido['estado_id'] == 5): // Finalizado ?>
+                                            <?php if ($partido['estado_id'] == 5): ?>
                                                 <div class="marcador-final">
                                                     <span class="marcador-num"><?php echo $partido['marcador_local']; ?></span>
                                                     <span class="marcador-sep">-</span>
@@ -729,17 +729,17 @@ $nombre_mes = $nombres_meses[$mes_actual];
 <?php
 function getBadgeClass($estado_id) {
     switch($estado_id) {
-        case 1: // No iniciado
-        case 2: // Programado
+        case 1: 
+        case 2: 
             return 'badge-secondary';
-        case 3: // En vivo
+        case 3: 
             return 'badge-success';
-        case 5: // Finalizado
+        case 5: 
             return 'badge-primary';
-        case 6: // Pospuesto
-        case 8: // Suspendido
+        case 6: 
+        case 8: 
             return 'badge-warning';
-        case 7: // Cancelado
+        case 7: 
             return 'badge-danger';
         default:
             return 'badge-secondary';

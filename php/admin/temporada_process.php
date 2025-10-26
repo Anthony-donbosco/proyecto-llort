@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $es_actual = isset($_POST['es_actual']) ? 1 : 0;
 
     try {
-        // Si se marca como actual, desmarcar todas las demás
+        
         if ($es_actual == 1) {
             $conn->query("UPDATE temporadas SET es_actual = 0");
         }
@@ -50,10 +50,10 @@ if (isset($_GET['set_actual'])) {
     $temporada_id = (int)$_GET['set_actual'];
 
     try {
-        // Desmarcar todas las temporadas
+        
         $conn->query("UPDATE temporadas SET es_actual = 0");
 
-        // Marcar la seleccionada como actual
+        
         $sql = "UPDATE temporadas SET es_actual = 1 WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $temporada_id);

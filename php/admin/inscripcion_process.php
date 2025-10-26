@@ -14,7 +14,7 @@ $redirect_url = "inscribir_equipos.php?torneo_id=$torneo_id";
 
 if ($action == 'inscribir') {
     try {
-        // Verificar cupos disponibles
+        
         $stmt_check = $conn->prepare("SELECT COUNT(*) as total, t.max_participantes
                                        FROM torneo_participantes tp
                                        JOIN torneos t ON tp.torneo_id = t.id
@@ -33,7 +33,7 @@ if ($action == 'inscribir') {
         }
         $stmt_check->close();
 
-        // Verificar que no esté ya inscrito
+        
         $stmt_dup = $conn->prepare("SELECT COUNT(*) as existe FROM torneo_participantes WHERE torneo_id = ? AND participante_id = ?");
         $stmt_dup->bind_param("ii", $torneo_id, $equipo_id);
         $stmt_dup->execute();
@@ -45,7 +45,7 @@ if ($action == 'inscribir') {
         }
         $stmt_dup->close();
 
-        // Inscribir equipo
+        
         $stmt = $conn->prepare("INSERT INTO torneo_participantes (torneo_id, participante_id) VALUES (?, ?)");
         $stmt->bind_param("ii", $torneo_id, $equipo_id);
         $stmt->execute();
@@ -59,7 +59,7 @@ if ($action == 'inscribir') {
 
 } elseif ($action == 'desinscribir') {
     try {
-        // Verificar si ya hay jornadas creadas
+        
         $stmt_jornadas = $conn->prepare("SELECT COUNT(*) as total FROM fases f
                                           JOIN jornadas j ON f.id = j.fase_id
                                           WHERE f.torneo_id = ?");
@@ -73,7 +73,7 @@ if ($action == 'inscribir') {
         }
         $stmt_jornadas->close();
 
-        // Desinscribir equipo
+        
         $stmt = $conn->prepare("DELETE FROM torneo_participantes WHERE torneo_id = ? AND participante_id = ?");
         $stmt->bind_param("ii", $torneo_id, $equipo_id);
         $stmt->execute();

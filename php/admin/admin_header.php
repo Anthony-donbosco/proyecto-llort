@@ -14,14 +14,12 @@
                 <a href="dashboard.php">Admin Colegio Llort</a>
             </div>
 
-            <!-- Botón hamburguesa -->
             <button class="hamburger-menu" id="hamburger-menu" aria-label="Menú">
                 <span></span>
                 <span></span>
-                <span></span>
+                <span></span
             </button>
 
-            <!-- Navegación con overlay -->
             <div class="nav-overlay" id="nav-overlay"></div>
             <nav class="admin-nav" id="admin-nav">
                 <button class="nav-close" id="nav-close" aria-label="Cerrar menú">
@@ -42,7 +40,6 @@
     <div class="admin-content">
 
 <script>
-// Script para menú hamburguesa
 document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.getElementById('hamburger-menu');
     const nav = document.getElementById('admin-nav');
@@ -65,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     navClose.addEventListener('click', closeMenu);
     overlay.addEventListener('click', closeMenu);
 
-    // Cerrar al hacer clic en un enlace (excepto en desktop)
     const navLinks = nav.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', function() {

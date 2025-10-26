@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -23,7 +23,7 @@ if (!$torneo) {
     exit;
 }
 
-// Obtener todos los equipos inscritos
+
 $stmt_equipos = $conn->prepare("SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                  FROM torneo_participantes tp
                                  JOIN participantes p ON tp.participante_id = p.id
@@ -32,7 +32,7 @@ $stmt_equipos->bind_param("i", $torneo_id);
 $stmt_equipos->execute();
 $equipos_result = $stmt_equipos->get_result();
 
-// Inicializar tabla de posiciones
+
 $tabla = [];
 while ($equipo = $equipos_result->fetch_assoc()) {
     $tabla[$equipo['id']] = [
@@ -45,7 +45,7 @@ while ($equipo = $equipos_result->fetch_assoc()) {
     ];
 }
 
-// Calcular tabla de posiciones
+
 $sql_partidos = "SELECT p.participante_local_id, p.participante_visitante_id,
                  p.marcador_local, p.marcador_visitante
                  FROM partidos p
@@ -89,29 +89,29 @@ while ($partido = $partidos->fetch_assoc()) {
     }
 }
 
-// Calcular diferencia de goles
+
 foreach ($tabla as &$equipo) {
     $equipo['dg'] = $equipo['gf'] - $equipo['gc'];
 }
 
-// Ordenar tabla
+
 usort($tabla, function($a, $b) {
     if ($b['pts'] != $a['pts']) return $b['pts'] - $a['pts'];
     if ($b['dg'] != $a['dg']) return $b['dg'] - $a['dg'];
     return $b['gf'] - $a['gf'];
 });
 
-// Verificar que hay al menos 8 equipos
+
 if (count($tabla) < 8) {
     header("Location: finalizar_torneo.php?torneo_id=$torneo_id&error=Se necesitan al menos 8 equipos para generar playoffs.");
     exit;
 }
 
-// Obtener los 8 primeros
+
 $clasificados = array_slice($tabla, 0, 8);
 
-// Generar emparejamientos
-// 1° vs 8°, 4° vs 5°, 3° vs 6°, 2° vs 7°
+
+
 $emparejamientos = [
     ['local' => $clasificados[0], 'visitante' => $clasificados[7], 'numero' => 1],
     ['local' => $clasificados[3], 'visitante' => $clasificados[4], 'numero' => 2],
@@ -136,7 +136,7 @@ $emparejamientos = [
     <?php endif; ?>
 
     <div class="playoffs-container">
-        <!-- Información -->
+        
         <div class="info-card">
             <h2><i class="fas fa-info-circle"></i> Generación de Cuartos de Final</h2>
             <p>Se generará una nueva fase de "Cuartos de Final" con 4 partidos. Los emparejamientos se realizan según las posiciones de la tabla:</p>
@@ -148,7 +148,7 @@ $emparejamientos = [
             </ul>
         </div>
 
-        <!-- Equipos Clasificados -->
+        
         <div class="clasificados-card">
             <h3><i class="fas fa-trophy"></i> Equipos Clasificados a Playoffs</h3>
             <div class="clasificados-grid">
@@ -171,7 +171,7 @@ $emparejamientos = [
             </div>
         </div>
 
-        <!-- Emparejamientos -->
+        
         <form action="playoffs_process.php" method="POST" class="playoffs-form">
             <input type="hidden" name="torneo_id" value="<?php echo $torneo_id; ?>">
             <input type="hidden" name="action" value="generar">

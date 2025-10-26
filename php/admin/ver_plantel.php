@@ -36,7 +36,7 @@ $stmt_jugadores->bind_param("i", $plantel_id);
 $stmt_jugadores->execute();
 $jugadores = $stmt_jugadores->get_result();
 
-// Obtener el goleador del equipo (máximo goleador)
+
 $stmt_goleador = $conn->prepare("SELECT mp.*, COUNT(ep.id) as total_goles
                                  FROM miembros_plantel mp
                                  LEFT JOIN eventos_partido ep ON mp.id = ep.miembro_plantel_id
@@ -51,7 +51,7 @@ $stmt_goleador->execute();
 $goleador_result = $stmt_goleador->get_result();
 $goleador = $goleador_result->fetch_assoc();
 
-// Obtener el MVP más reciente del equipo
+
 $stmt_mvp = $conn->prepare("SELECT mp.*, COUNT(p.id) as veces_mvp,
                             MAX(p.inicio_partido) as ultimo_partido
                             FROM miembros_plantel mp
@@ -69,7 +69,7 @@ $mvp = $mvp_result->fetch_assoc();
 
 <main class="admin-page">
     <div class="page-header">
-        <h1 style="color: black">Plantel de "<?php echo htmlspecialchars($nombre_equipo); ?>"</h1>
+        <h1>Plantel de "<?php echo htmlspecialchars($nombre_equipo); ?>"</h1>
         <div>
             <a href="crear_jugador.php?plantel_id=<?php echo $plantel_id; ?>&equipo_id=<?php echo $equipo_id; ?>" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Agregar Jugador
@@ -88,7 +88,7 @@ $mvp = $mvp_result->fetch_assoc();
     <?php endif; ?>
 
     <div class="plantel-layout">
-        <!-- Columna izquierda: Tabla de jugadores -->
+        
         <div class="tabla-jugadores">
             <div class="table-container">
         <table class="admin-table">
@@ -142,9 +142,9 @@ $mvp = $mvp_result->fetch_assoc();
     </div>
         </div>
 
-        <!-- Columna derecha: Estadísticas -->
+        
         <div class="estadisticas-equipo">
-            <!-- Cuadro del Goleador -->
+            
             <div class="stat-card goleador-card">
                 <?php if ($goleador && $goleador['total_goles'] > 0): ?>
                     <div class="stat-content">
@@ -194,7 +194,7 @@ $mvp = $mvp_result->fetch_assoc();
                 <?php endif; ?>
             </div>
 
-            <!-- Cuadro del MVP -->
+            
             <div class="stat-card mvp-card">
                 <?php if ($mvp): ?>
                     <div class="stat-content">
@@ -254,7 +254,8 @@ $mvp = $mvp_result->fetch_assoc();
 <style>
 .plantel-layout {
     display: grid;
-    grid-template-columns: 1fr 450px;
+    
+    grid-template-columns: 2fr 1fr;
     gap: 2.5rem;
     margin-top: 1rem;
     align-items: start;
@@ -265,11 +266,13 @@ $mvp = $mvp_result->fetch_assoc();
 }
 
 .estadisticas-equipo {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 2rem;
     position: sticky;
-    top: 20px;
+    top: 80px;
+    align-content: start;
+    grid-auto-rows: 1fr;
 }
 
 .stat-card {
@@ -279,6 +282,9 @@ $mvp = $mvp_result->fetch_assoc();
     overflow: hidden;
     transition: all 0.3s ease;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .stat-card:hover {
@@ -291,13 +297,16 @@ $mvp = $mvp_result->fetch_assoc();
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
     gap: 1.25rem;
     background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    flex: 1;
+    min-height: 500px;
 }
 
 .jugador-foto-container {
     position: relative;
-    margin-bottom: 0.5rem;
+    flex-shrink: 0;
 }
 
 .jugador-foto-stat {
@@ -417,7 +426,7 @@ $mvp = $mvp_result->fetch_assoc();
     grid-template-columns: 1fr 1fr;
     gap: 0.7rem;
     width: 100%;
-    margin-bottom: 0.75rem;
+    flex-shrink: 0;
 }
 
 .stat-item {
@@ -502,7 +511,10 @@ $mvp = $mvp_result->fetch_assoc();
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
+    flex: 1;
+    min-height: 500px;
 }
 
 .empty-badge {
@@ -538,7 +550,7 @@ $mvp = $mvp_result->fetch_assoc();
     color: #999;
 }
 
-/* Animación de aparición */
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -562,7 +574,7 @@ $mvp = $mvp_result->fetch_assoc();
     animation-delay: 0.2s;
 }
 
-/* Responsive */
+
 @media (max-width: 1200px) {
     .plantel-layout {
         grid-template-columns: 1fr;
@@ -579,10 +591,16 @@ $mvp = $mvp_result->fetch_assoc();
     .estadisticas-equipo {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        grid-auto-rows: auto;
     }
 
     .stat-content {
         padding: 1.75rem 1.25rem 1.5rem;
+        min-height: 450px;
+    }
+
+    .stat-empty {
+        min-height: 450px;
     }
 
     .badge-title {

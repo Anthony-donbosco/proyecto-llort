@@ -11,7 +11,7 @@ if (!$partido_id) {
     exit;
 }
 
-// Obtener o crear cronómetro para el partido
+
 function obtenerCronometro($conn, $partido_id) {
     $stmt = $conn->prepare("SELECT * FROM cronometro_partido WHERE partido_id = ?");
     $stmt->bind_param("i", $partido_id);
@@ -20,7 +20,7 @@ function obtenerCronometro($conn, $partido_id) {
     $cronometro = $result->fetch_assoc();
     $stmt->close();
 
-    // Si no existe, crear uno
+    
     if (!$cronometro) {
         $stmt = $conn->prepare("INSERT INTO cronometro_partido (partido_id, estado_cronometro, tiempo_transcurrido, periodo_actual)
                                 VALUES (?, 'detenido', 0, '1er Tiempo')");
@@ -34,13 +34,13 @@ function obtenerCronometro($conn, $partido_id) {
     return $cronometro;
 }
 
-// Obtener estado actual del cronómetro
+
 if ($action == 'obtener_estado') {
     $cronometro = obtenerCronometro($conn, $partido_id);
 
-    // Si está corriendo, calcular tiempo actual
+    
     if ($cronometro['estado_cronometro'] == 'corriendo' && $cronometro['tiempo_inicio']) {
-        // Obtener timestamp Unix desde MySQL para evitar problemas de zona horaria
+        
         $stmt = $conn->prepare("SELECT UNIX_TIMESTAMP(tiempo_inicio) as inicio_unix FROM cronometro_partido WHERE partido_id = ?");
         $stmt->bind_param("i", $partido_id);
         $stmt->execute();
@@ -52,11 +52,11 @@ if ($action == 'obtener_estado') {
         $ahora = time();
         $segundos_corriendo = $ahora - $inicio_unix;
 
-        // El tiempo transcurrido base + los segundos que lleva corriendo desde tiempo_inicio
+        
         $tiempo_base = (int)$cronometro['tiempo_transcurrido'];
         $cronometro['tiempo_transcurrido'] = $tiempo_base + $segundos_corriendo;
     } else {
-        // Convertir a entero para evitar problemas
+        
         $cronometro['tiempo_transcurrido'] = (int)$cronometro['tiempo_transcurrido'];
     }
 
@@ -67,11 +67,11 @@ if ($action == 'obtener_estado') {
     exit;
 }
 
-// Iniciar cronómetro
+
 if ($action == 'iniciar') {
     $cronometro = obtenerCronometro($conn, $partido_id);
 
-    // Si estaba pausado, mantener el tiempo transcurrido y solo reanudar
+    
     if ($cronometro['estado_cronometro'] == 'pausado') {
         $stmt = $conn->prepare("UPDATE cronometro_partido
                                 SET estado_cronometro = 'corriendo',
@@ -80,7 +80,7 @@ if ($action == 'iniciar') {
                                 WHERE partido_id = ?");
         $stmt->bind_param("i", $partido_id);
     } else {
-        // Si está detenido o es la primera vez, resetear a 0
+        
         $stmt = $conn->prepare("UPDATE cronometro_partido
                                 SET estado_cronometro = 'corriendo',
                                     tiempo_inicio = NOW(),
@@ -93,7 +93,7 @@ if ($action == 'iniciar') {
     $stmt->execute();
     $stmt->close();
 
-    // Cambiar estado del partido a "En Vivo" (estado_id = 3)
+    
     $stmt_partido = $conn->prepare("UPDATE partidos SET estado_id = 3 WHERE id = ?");
     $stmt_partido->bind_param("i", $partido_id);
     $stmt_partido->execute();
@@ -103,12 +103,12 @@ if ($action == 'iniciar') {
     exit;
 }
 
-// Pausar cronómetro
+
 if ($action == 'pausar') {
     $cronometro = obtenerCronometro($conn, $partido_id);
 
     if ($cronometro['estado_cronometro'] == 'corriendo') {
-        // Obtener timestamp Unix desde MySQL para evitar problemas de zona horaria
+        
         $stmt = $conn->prepare("SELECT UNIX_TIMESTAMP(tiempo_inicio) as inicio_unix FROM cronometro_partido WHERE partido_id = ?");
         $stmt->bind_param("i", $partido_id);
         $stmt->execute();
@@ -137,7 +137,7 @@ if ($action == 'pausar') {
     exit;
 }
 
-// Cambiar periodo
+
 if ($action == 'cambiar_periodo') {
     $periodo = $_POST['periodo'] ?? '';
 
@@ -155,7 +155,7 @@ if ($action == 'cambiar_periodo') {
     exit;
 }
 
-// Agregar tiempo extra
+
 if ($action == 'agregar_tiempo') {
     $minutos = (int)($_POST['minutos'] ?? 0);
 
@@ -168,7 +168,7 @@ if ($action == 'agregar_tiempo') {
     exit;
 }
 
-// Reiniciar cronómetro
+
 if ($action == 'reiniciar') {
     $stmt = $conn->prepare("UPDATE cronometro_partido
                             SET estado_cronometro = 'detenido',

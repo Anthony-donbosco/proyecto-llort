@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -23,7 +23,7 @@ if (!$torneo) {
     exit;
 }
 
-// Obtener todos los equipos inscritos
+
 $stmt_equipos = $conn->prepare("SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                  FROM torneo_participantes tp
                                  JOIN participantes p ON tp.participante_id = p.id
@@ -33,7 +33,7 @@ $stmt_equipos->bind_param("i", $torneo_id);
 $stmt_equipos->execute();
 $equipos_result = $stmt_equipos->get_result();
 
-// Inicializar tabla de posiciones
+
 $tabla = [];
 while ($equipo = $equipos_result->fetch_assoc()) {
     $tabla[$equipo['id']] = [
@@ -41,18 +41,18 @@ while ($equipo = $equipos_result->fetch_assoc()) {
         'nombre' => $equipo['nombre_mostrado'],
         'nombre_corto' => $equipo['nombre_corto'],
         'logo' => $equipo['url_logo'],
-        'pj' => 0,  // Partidos jugados
-        'pg' => 0,  // Partidos ganados
-        'pe' => 0,  // Partidos empatados
-        'pp' => 0,  // Partidos perdidos
-        'gf' => 0,  // Goles a favor
-        'gc' => 0,  // Goles en contra
-        'dg' => 0,  // Diferencia de goles
-        'pts' => 0  // Puntos
+        'pj' => 0,  
+        'pg' => 0,  
+        'pe' => 0,  
+        'pp' => 0,  
+        'gf' => 0,  
+        'gc' => 0,  
+        'dg' => 0,  
+        'pts' => 0  
     ];
 }
 
-// Obtener todos los partidos finalizados del torneo
+
 $sql_partidos = "SELECT p.participante_local_id, p.participante_visitante_id,
                  p.marcador_local, p.marcador_visitante
                  FROM partidos p
@@ -64,41 +64,41 @@ $stmt_partidos->bind_param("i", $torneo_id);
 $stmt_partidos->execute();
 $partidos = $stmt_partidos->get_result();
 
-// Calcular estadísticas
+
 while ($partido = $partidos->fetch_assoc()) {
     $local_id = $partido['participante_local_id'];
     $visitante_id = $partido['participante_visitante_id'];
     $goles_local = $partido['marcador_local'];
     $goles_visitante = $partido['marcador_visitante'];
 
-    // Verificar que ambos equipos estén en la tabla
+    
     if (!isset($tabla[$local_id]) || !isset($tabla[$visitante_id])) {
         continue;
     }
 
-    // Actualizar partidos jugados
+    
     $tabla[$local_id]['pj']++;
     $tabla[$visitante_id]['pj']++;
 
-    // Actualizar goles
+    
     $tabla[$local_id]['gf'] += $goles_local;
     $tabla[$local_id]['gc'] += $goles_visitante;
     $tabla[$visitante_id]['gf'] += $goles_visitante;
     $tabla[$visitante_id]['gc'] += $goles_local;
 
-    // Determinar resultado
+    
     if ($goles_local > $goles_visitante) {
-        // Victoria local
+        
         $tabla[$local_id]['pg']++;
         $tabla[$local_id]['pts'] += 3;
         $tabla[$visitante_id]['pp']++;
     } elseif ($goles_local < $goles_visitante) {
-        // Victoria visitante
+        
         $tabla[$visitante_id]['pg']++;
         $tabla[$visitante_id]['pts'] += 3;
         $tabla[$local_id]['pp']++;
     } else {
-        // Empate
+        
         $tabla[$local_id]['pe']++;
         $tabla[$local_id]['pts'] += 1;
         $tabla[$visitante_id]['pe']++;
@@ -106,12 +106,12 @@ while ($partido = $partidos->fetch_assoc()) {
     }
 }
 
-// Calcular diferencia de goles
+
 foreach ($tabla as &$equipo) {
     $equipo['dg'] = $equipo['gf'] - $equipo['gc'];
 }
 
-// Ordenar tabla por: 1. Puntos, 2. Diferencia de goles, 3. Goles a favor
+
 usort($tabla, function($a, $b) {
     if ($b['pts'] != $a['pts']) {
         return $b['pts'] - $a['pts'];
@@ -391,7 +391,7 @@ usort($tabla, function($a, $b) {
     font-weight: 600;
 }
 
-/* Estilos para posiciones especiales */
+
 .lider .posicion-num {
     background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
     color: #1a237e;

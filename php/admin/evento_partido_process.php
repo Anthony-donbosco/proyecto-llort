@@ -8,9 +8,9 @@ if (!$partido_id) {
     exit;
 }
 
-// Función para recalcular marcadores del partido
+
 function recalcularMarcadores($conn, $partido_id) {
-    // Obtener información del partido
+    
     $sql_partido = "SELECT participante_local_id, participante_visitante_id FROM partidos WHERE id = ?";
     $stmt_partido = $conn->prepare($sql_partido);
     $stmt_partido->bind_param("i", $partido_id);
@@ -20,7 +20,7 @@ function recalcularMarcadores($conn, $partido_id) {
 
     if (!$partido) return;
 
-    // Contar goles por equipo
+    
     $sql_eventos = "SELECT ep.tipo_evento, pe.participante_id
                     FROM eventos_partido ep
                     JOIN miembros_plantel mp ON ep.miembro_plantel_id = mp.id
@@ -54,7 +54,7 @@ function recalcularMarcadores($conn, $partido_id) {
     }
     $stmt_eventos->close();
 
-    // Actualizar marcadores en la tabla partidos
+    
     $sql_update = "UPDATE partidos SET marcador_local = ?, marcador_visitante = ? WHERE id = ?";
     $stmt_update = $conn->prepare($sql_update);
     $stmt_update->bind_param("iii", $goles_local, $goles_visitante, $partido_id);
@@ -62,20 +62,20 @@ function recalcularMarcadores($conn, $partido_id) {
     $stmt_update->close();
 }
 
-// Agregar gol
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
     $jugador_id = (int)$_POST['jugador_id'];
     $asistencia_id = !empty($_POST['asistencia_id']) ? (int)$_POST['asistencia_id'] : NULL;
     $minuto = !empty($_POST['minuto']) ? trim($_POST['minuto']) : NULL;
     $tipo_evento = $_POST['tipo_evento'];
 
-    // Validar que el asistente no sea el mismo que el anotador
+    
     if ($asistencia_id !== NULL && $asistencia_id == $jugador_id) {
         header("Location: editar_partido.php?partido_id=$partido_id&error=El jugador que asiste no puede ser el mismo que anota.");
         exit;
     }
 
-    // Validar formato de minuto (45 o 90+2)
+    
     if ($minuto !== NULL && !preg_match('/^([0-9]{1,3}|[0-9]{1,3}\+[0-9]{1,2})$/', $minuto)) {
         header("Location: editar_partido.php?partido_id=$partido_id&error=Formato de minuto inválido. Use: 45 o 90+2");
         exit;
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
         $stmt->execute();
         $stmt->close();
 
-        // Actualizar estadísticas del jugador (goles)
+        
         if ($tipo_evento == 'gol' || $tipo_evento == 'penal_anotado') {
             $sql_update = "UPDATE miembros_plantel SET goles = goles + 1 WHERE id = ?";
             $stmt_update = $conn->prepare($sql_update);
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
             $stmt_update->close();
         }
 
-        // Actualizar estadísticas del jugador (asistencias)
+        
         if ($asistencia_id !== NULL) {
             $sql_asist = "UPDATE miembros_plantel SET asistencias = asistencias + 1 WHERE id = ?";
             $stmt_asist = $conn->prepare($sql_asist);
@@ -107,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
             $stmt_asist->close();
         }
 
-        // Recalcular marcadores del partido
+        
         recalcularMarcadores($conn, $partido_id);
 
         header("Location: editar_partido.php?partido_id=$partido_id&success=Gol agregado exitosamente.");
@@ -116,12 +116,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'agregar_gol') {
     }
 }
 
-// Eliminar gol
+
 if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['evento_id'])) {
     $evento_id = (int)$_GET['evento_id'];
 
     try {
-        // Obtener información del evento antes de eliminarlo
+        
         $sql_get = "SELECT miembro_plantel_id, asistencia_miembro_plantel_id, tipo_evento FROM eventos_partido WHERE id = ?";
         $stmt_get = $conn->prepare($sql_get);
         $stmt_get->bind_param("i", $evento_id);
@@ -130,14 +130,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
         $stmt_get->close();
 
         if ($evento) {
-            // Eliminar evento
+            
             $sql_delete = "DELETE FROM eventos_partido WHERE id = ?";
             $stmt_delete = $conn->prepare($sql_delete);
             $stmt_delete->bind_param("i", $evento_id);
             $stmt_delete->execute();
             $stmt_delete->close();
 
-            // Actualizar estadísticas del jugador (goles)
+            
             if ($evento['tipo_evento'] == 'gol' || $evento['tipo_evento'] == 'penal_anotado') {
                 $sql_update = "UPDATE miembros_plantel SET goles = GREATEST(goles - 1, 0) WHERE id = ?";
                 $stmt_update = $conn->prepare($sql_update);
@@ -146,7 +146,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
                 $stmt_update->close();
             }
 
-            // Actualizar estadísticas del jugador (asistencias)
+            
             if ($evento['asistencia_miembro_plantel_id']) {
                 $sql_asist = "UPDATE miembros_plantel SET asistencias = GREATEST(asistencias - 1, 0) WHERE id = ?";
                 $stmt_asist = $conn->prepare($sql_asist);
@@ -155,7 +155,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
                 $stmt_asist->close();
             }
 
-            // Recalcular marcadores del partido
+            
             recalcularMarcadores($conn, $partido_id);
 
             header("Location: editar_partido.php?partido_id=$partido_id&success=Gol eliminado exitosamente.");

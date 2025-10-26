@@ -1,5 +1,5 @@
 <?php
-// php/admin/gestionar_jugadores.php
+
 session_start();
 require_once '../db_connect.php';
 
@@ -11,7 +11,7 @@ if ($torneo_id === 0) {
     exit();
 }
 
-// Obtener información del torneo
+
 $query_torneo = "SELECT t.*, d.nombre_mostrado as deporte, d.es_por_equipos, d.codigo as codigo_deporte 
                  FROM torneos t 
                  JOIN deportes d ON t.deporte_id = d.id 
@@ -26,7 +26,7 @@ if (!$torneo) {
     exit();
 }
 
-// Obtener posiciones del deporte si es por equipos
+
 $posiciones = [];
 if ($torneo['es_por_equipos'] == 1) {
     $query_posiciones = "SELECT * FROM posiciones_deporte WHERE deporte_id = ? ORDER BY orden_visualizacion";
@@ -36,7 +36,7 @@ if ($torneo['es_por_equipos'] == 1) {
     $posiciones = $stmt_pos->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// Obtener equipos/participantes del torneo
+
 $query_participantes = "SELECT p.* FROM participantes p 
                        JOIN torneo_participantes tp ON p.id = tp.participante_id 
                        WHERE tp.torneo_id = ? ORDER BY p.nombre_mostrado";
@@ -45,7 +45,7 @@ $stmt_part->bind_param("i", $torneo_id);
 $stmt_part->execute();
 $participantes = $stmt_part->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Obtener jugadores existentes
+
 $jugadores = [];
 if ($participante_id > 0) {
     $query_jugadores = "SELECT j.*, pos.nombre_mostrado as posicion_nombre, pos.codigo as posicion_codigo
@@ -58,7 +58,7 @@ if ($participante_id > 0) {
     $stmt_jug->execute();
     $jugadores = $stmt_jug->get_result()->fetch_all(MYSQLI_ASSOC);
 } else if ($torneo['es_por_equipos'] == 0) {
-    // Para deportes individuales, obtener todos los jugadores del torneo
+    
     $query_jugadores = "SELECT j.*, pos.nombre_mostrado as posicion_nombre, pos.codigo as posicion_codigo
                        FROM jugadores j 
                        LEFT JOIN posiciones_deporte pos ON j.posicion_id = pos.id
@@ -70,7 +70,7 @@ if ($participante_id > 0) {
     $jugadores = $stmt_jug->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// Procesar formulario
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $peso = !empty($_POST['peso']) ? (float)$_POST['peso'] : null;
         $altura = !empty($_POST['altura']) ? (float)$_POST['altura'] : null;
         
-        // Para deportes individuales, participante_id es NULL
+        
         $participante_insert = ($torneo['es_por_equipos'] == 1) ? $participante_id : null;
         
         $query_insert = "INSERT INTO jugadores (participante_id, torneo_id, deporte_id, posicion_id, nombre, apellido, numero_camiseta, es_capitan, es_titular, fecha_nacimiento, peso, altura) 
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($stmt_insert->execute()) {
             $success_message = "Jugador agregado correctamente";
-            // Recargar jugadores
+            
             header("Location: " . $_SERVER['REQUEST_URI']);
             exit();
         } else {
@@ -210,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         
         <?php if ($torneo['es_por_equipos'] == 1): ?>
-            <!-- Selector de equipo para deportes por equipos -->
+            
             <div class="participante-selector">
                 <h3>Seleccionar Equipo</h3>
                 <form method="GET">
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         
         <?php if (($torneo['es_por_equipos'] == 1 && $participante_id > 0) || $torneo['es_por_equipos'] == 0): ?>
-            <!-- Formulario para agregar jugador -->
+            
             <div class="form-container">
                 <h3>Agregar <?php echo ($torneo['es_por_equipos'] == 1) ? 'Jugador al Equipo' : 'Participante'; ?></h3>
                 <form method="POST">
@@ -302,7 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </div>
             
-            <!-- Lista de jugadores -->
+            
             <div>
                 <h3>
                     <?php echo ($torneo['es_por_equipos'] == 1) ? 'Jugadores del Equipo' : 'Participantes del Torneo'; ?>
