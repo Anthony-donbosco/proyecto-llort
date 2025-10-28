@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $sql = "INSERT INTO noticias (titulo, subtitulo, contenido, imagen_portada, autor, deporte_id, temporada_id, etiquetas, destacada, publicada, fecha_publicacion, orden)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssiisisssi", $titulo, $subtitulo, $contenido, $imagen_path, $autor, $deporte_id, $temporada_id, $etiquetas, $destacada, $publicada, $fecha_publicacion, $orden);
+            $stmt->bind_param("sssssiisiiis", $titulo, $subtitulo, $contenido, $imagen_path, $autor, $deporte_id, $temporada_id, $etiquetas, $destacada, $publicada, $fecha_publicacion, $orden);
             $stmt->execute();
             header("Location: $redirect_url?success=Noticia creada exitosamente.");
 
@@ -57,8 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     SET titulo = ?, subtitulo = ?, contenido = ?, imagen_portada = ?, autor = ?, deporte_id = ?, temporada_id = ?, etiquetas = ?, destacada = ?, publicada = ?, fecha_publicacion = ?, orden = ?
                     WHERE id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssiisisssi", $titulo, $subtitulo, $contenido, $imagen_path, $autor, $deporte_id, $temporada_id, $etiquetas, $destacada, $publicada, $fecha_publicacion, $orden, $noticia_id);
-            $stmt->execute();
+            $stmt->bind_param("sssssiisiiisi", $titulo, $subtitulo, $contenido, $imagen_path, $autor, $deporte_id, $temporada_id, $etiquetas, $destacada, $publicada, $fecha_publicacion, $orden, $noticia_id);
             header("Location: $redirect_url?success=Noticia actualizada exitosamente.");
         }
 
