@@ -1,4 +1,4 @@
-/* Estilos Generales del Admin */
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f7f6;
@@ -412,7 +412,7 @@ body {
 }
 
 :root {
-  /* Primitive Color Tokens */
+  
   --color-white: rgba(255, 255, 255, 1);
   --color-black: rgba(0, 0, 0, 1);
   --color-cream-50: rgba(252, 252, 249, 1);
@@ -436,7 +436,7 @@ body {
   --color-orange-400: rgba(230, 129, 97, 1);
   --color-orange-500: rgba(168, 75, 47, 1);
 
-  /* RGB versions for opacity control */
+  
   --color-brown-600-rgb: 94, 82, 64;
   --color-teal-500-rgb: 33, 128, 141;
   --color-slate-900-rgb: 19, 52, 59;
@@ -446,17 +446,17 @@ body {
   --color-orange-500-rgb: 168, 75, 47;
   --color-orange-400-rgb: 230, 129, 97;
 
-  /* Background color tokens (Light Mode) */
-  --color-bg-1: rgba(59, 130, 246, 0.08); /* Light blue */
-  --color-bg-2: rgba(245, 158, 11, 0.08); /* Light yellow */
-  --color-bg-3: rgba(34, 197, 94, 0.08); /* Light green */
-  --color-bg-4: rgba(239, 68, 68, 0.08); /* Light red */
-  --color-bg-5: rgba(147, 51, 234, 0.08); /* Light purple */
-  --color-bg-6: rgba(249, 115, 22, 0.08); /* Light orange */
-  --color-bg-7: rgba(236, 72, 153, 0.08); /* Light pink */
-  --color-bg-8: rgba(6, 182, 212, 0.08); /* Light cyan */
+  
+  --color-bg-1: rgba(59, 130, 246, 0.08); 
+  --color-bg-2: rgba(245, 158, 11, 0.08); 
+  --color-bg-3: rgba(34, 197, 94, 0.08); 
+  --color-bg-4: rgba(239, 68, 68, 0.08); 
+  --color-bg-5: rgba(147, 51, 234, 0.08); 
+  --color-bg-6: rgba(249, 115, 22, 0.08); 
+  --color-bg-7: rgba(236, 72, 153, 0.08); 
+  --color-bg-8: rgba(6, 182, 212, 0.08); 
 
-  /* Semantic Color Tokens (Light Mode) */
+  
   --color-background: var(--color-cream-50);
   --color-surface: var(--color-cream-100);
   --color-text: var(--color-slate-900);
@@ -478,21 +478,21 @@ body {
   --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
   --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
 
-  /* Common style patterns */
+  
   --focus-ring: 0 0 0 3px var(--color-focus-ring);
   --focus-outline: 2px solid var(--color-primary);
   --status-bg-opacity: 0.15;
   --status-border-opacity: 0.25;
   --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  /* Removed --select-caret-dark */
+  
 
-  /* RGB versions for opacity control */
+  
   --color-success-rgb: 33, 128, 141;
   --color-error-rgb: 192, 21, 47;
   --color-warning-rgb: 168, 75, 47;
   --color-info-rgb: 98, 108, 113;
 
-  /* Typography */
+  
   --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo,
@@ -514,7 +514,7 @@ body {
   --line-height-normal: 1.5;
   --letter-spacing-tight: -0.01em;
 
-  /* Spacing */
+  
   --space-0: 0;
   --space-1: 1px;
   --space-2: 2px;
@@ -528,14 +528,14 @@ body {
   --space-24: 24px;
   --space-32: 32px;
 
-  /* Border Radius */
+  
   --radius-sm: 6px;
   --radius-base: 8px;
   --radius-md: 10px;
   --radius-lg: 12px;
   --radius-full: 9999px;
 
-  /* Shadows */
+  
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04),
@@ -545,23 +545,23 @@ body {
   --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15),
     inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 
-  /* Animation */
+  
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Layout */
+  
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;
   --container-xl: 1280px;
 }
 
-/* Removed dark mode sections: @media (prefers-color-scheme: dark) and [data-color-scheme="dark"] */
 
-/* The rest of the CSS remains the same: Base styles, Typography, Buttons, Forms, Cards, Status, Container, Utilities, Accessibility */
 
-/* Base styles */
+
+
+
 html {
   font-size: var(--font-size-base);
   font-family: var(--font-family-base);
@@ -583,7 +583,7 @@ body {
   box-sizing: inherit;
 }
 
-/* Typography */
+
 h1,
 h2,
 h3,
@@ -654,7 +654,7 @@ pre code {
   padding: 0;
 }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -733,7 +733,7 @@ pre code {
   cursor: not-allowed;
 }
 
-/* Form elements */
+
 .form-control {
   display: block;
   width: 100%;
@@ -758,14 +758,14 @@ select.form-control {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: var(--select-caret-light); /* Only light caret needed */
+  background-image: var(--select-caret-light); 
   background-repeat: no-repeat;
   background-position: right var(--space-12) center;
   background-size: 16px;
   padding-right: var(--space-32);
 }
 
-/* Removed dark mode caret handling */
+
 
 .form-control:focus {
   border-color: var(--color-primary);
@@ -783,7 +783,7 @@ select.form-control {
   margin-bottom: var(--space-16);
 }
 
-/* Card component */
+
 .card {
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -807,7 +807,7 @@ select.form-control {
   border-bottom: 1px solid var(--color-card-border-inner);
 }
 
-/* Status indicators - simplified with CSS variables */
+
 .status {
   display: inline-flex;
   align-items: center;
@@ -857,7 +857,7 @@ select.form-control {
     rgba(var(--color-info-rgb, 98, 108, 113), var(--status-border-opacity));
 }
 
-/* Container layout */
+
 .container {
   width: 100%;
   margin-right: auto;
@@ -887,7 +887,7 @@ select.form-control {
   }
 }
 
-/* Utility classes */
+
 .flex {
   display: flex;
 }
@@ -958,7 +958,7 @@ select.form-control {
   display: none;
 }
 
-/* Accessibility */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -976,7 +976,7 @@ select.form-control {
   outline-offset: 2px;
 }
 
-/* Removed dark mode specifics for btn--outline */
+
 
 @font-face {
   font-family: 'FKGroteskNeue';
@@ -984,13 +984,13 @@ select.form-control {
     format('woff2');
 }
 
-/* END PERPLEXITY DESIGN SYSTEM */
-/* CSS Administrativo Mejorado para Sistema Deportivo */
-/* css/admin_style.css */
 
-/* Using design system variables defined in :root */
 
-/* Reset y base */
+
+
+
+
+
 * {
   margin: 0;
   padding: 0;
@@ -1010,7 +1010,7 @@ body {
   padding: var(--spacing-lg);
 }
 
-/* Encabezados */
+
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
   margin-bottom: var(--spacing-md);
@@ -1023,11 +1023,8 @@ h1 {
   font-size: var(--font-size-4xl);
   margin-bottom: var(--spacing-xl);
   color: #333;
-  /* Gradiente removido - causaba texto invisible */
-  /* background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text; */
+  
+  
 }
 
 h2 {
@@ -1041,8 +1038,8 @@ h3 {
   color: var(--color-primary);
 }
 
-/* Botones */
-/* Uses .btn styles from the Design System part */
+
+
 .btn-success {
   background: var(--color-success);
   color: var(--color-btn-primary-text);
@@ -1074,11 +1071,11 @@ h3 {
 }
 
 
-/* Formularios */
-/* Uses .form-control, .form-group, .form-row from Design System part */
 
-/* Tarjetas */
-/* Uses .card styles from Design System part */
+
+
+
+
 .card-header {
   background: var(--gradient-primary);
   color: var(--color-btn-primary-text);
@@ -1096,7 +1093,7 @@ h3 {
   border-top: 1px solid var(--color-card-border-inner);
 }
 
-/* Alertas */
+
 .alert {
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-base);
@@ -1159,7 +1156,7 @@ h3 {
   background: var(--color-info);
 }
 
-/* Tablas */
+
 .table {
   width: 100%;
   background: var(--color-surface);
@@ -1195,7 +1192,7 @@ h3 {
   overflow-x: auto;
 }
 
-/* Badges */
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1238,7 +1235,7 @@ h3 {
   border: 1px solid var(--color-border);
 }
 
-/* Grid de tarjetas */
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1246,7 +1243,7 @@ h3 {
   margin-bottom: var(--spacing-xl);
 }
 
-/* Stats cards */
+
 .stat-card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -1303,7 +1300,7 @@ h3 {
   font-weight: var(--font-weight-medium);
 }
 
-/* Loading y estados */
+
 .loading {
   display: flex;
   align-items: center;
@@ -1340,7 +1337,7 @@ h3 {
   opacity: 0.5;
 }
 
-/* Navegación */
+
 .nav-tabs {
   display: flex;
   border-bottom: 2px solid var(--color-border);
@@ -1372,13 +1369,13 @@ h3 {
   border-bottom-color: var(--color-primary);
 }
 
-/* Utilidades */
-/* Uses utility classes from Design System part */
 
-/* Responsive */
-/* Uses responsive media queries from Design System part */
 
-/* Animaciones */
+
+
+
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1407,7 +1404,7 @@ h3 {
   animation: slideIn var(--duration-normal) var(--ease-standard);
 }
 
-/* Mejoras específicas para el sistema deportivo */
+
 .torneo-card {
   border-left: 4px solid var(--color-primary);
 }
@@ -1469,7 +1466,7 @@ h3 {
   color: var(--color-warning);
 }
 
-/* Estilos para Dashboard Mejorado */
+
 .dashboard-section {
     margin-bottom: 2.5rem;
 }
@@ -1502,7 +1499,7 @@ h3 {
     font-size: 0.95rem;
 }
 
-/* Estilos para filtros */
+
 .filter-form {
     display: flex;
     gap: 1rem;
@@ -1524,7 +1521,7 @@ h3 {
     width: 100%;
 }
 
-/* Estilos para sección de formularios */
+
 .form-section-title {
     margin: 2rem 0 1.5rem;
     padding-bottom: 0.75rem;
@@ -1550,7 +1547,7 @@ h3 {
     font-size: 0.85rem;
 }
 
-/* Badges mejorados */
+
 .badge {
     padding: 4px 10px;
     border-radius: 12px;
@@ -1585,7 +1582,7 @@ h3 {
     color: white;
 }
 
-/* Page header mejorado */
+
 .page-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     padding: 1.5rem;
@@ -1600,7 +1597,7 @@ h3 {
     flex-wrap: wrap;
 }
 
-/* Responsividad para dashboard */
+
 @media (max-width: 768px) {
     .dashboard-widgets {
         grid-template-columns: 1fr;
@@ -1626,7 +1623,7 @@ h3 {
     }
 }
 
-/* Mejoras visuales adicionales */
+
 .widget {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e0e0;
@@ -1651,9 +1648,7 @@ h3 {
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* ========================================
-   MENÚ HAMBURGUESA
-   ======================================== */
+
 
 .hamburger-menu {
     display: none;
@@ -1719,11 +1714,9 @@ h3 {
     display: none !important;
 }
 
-/* ========================================
-   TABLAS RESPONSIVE
-   ======================================== */
 
-/* Ocultar columnas en móvil */
+
+
 @media (max-width: 768px) {
     .admin-table th:not(:first-child):not(:nth-child(2)):not(:last-child),
     .admin-table td:not(:first-child):not(:nth-child(2)):not(:last-child) {
@@ -1747,13 +1740,11 @@ h3 {
     }
 }
 
-/* ========================================
-   RESPONSIVE DESIGN - MEDIA QUERIES
-   ======================================== */
 
-/* Tablets y pantallas medianas (768px y menos) */
+
+
 @media (max-width: 768px) {
-    /* Mostrar hamburguesa y ocultar nav desktop */
+    
     .hamburger-menu {
         display: flex;
     }
@@ -1773,7 +1764,7 @@ h3 {
         border-top: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* Header responsive */
+    
     .admin-header {
         height: 60px;
         padding: 0 1rem;
@@ -1831,13 +1822,13 @@ h3 {
         text-align: center;
     }
 
-    /* Contenido admin */
+    
     .admin-content {
         padding: 1rem;
         padding-top: 80px;
     }
 
-    /* Page header */
+    
     .page-header {
         flex-direction: column;
         align-items: flex-start;
@@ -1853,7 +1844,7 @@ h3 {
         width: 100%;
     }
 
-    /* Botones */
+    
     .btn {
         width: 100%;
         justify-content: center;
@@ -1868,7 +1859,7 @@ h3 {
         width: 100%;
     }
 
-    /* Forms */
+    
     .admin-form .form-row {
         grid-template-columns: 1fr;
     }
@@ -1877,7 +1868,7 @@ h3 {
         padding: 1rem;
     }
 
-    /* Tablas */
+    
     .table-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -1899,7 +1890,7 @@ h3 {
         height: 40px;
     }
 
-    /* Dashboard widgets */
+    
     .dashboard-widgets {
         grid-template-columns: 1fr;
     }
@@ -1914,12 +1905,12 @@ h3 {
         font-size: 1.5rem;
     }
 
-    /* Cards grid */
+    
     .cards-grid {
         grid-template-columns: 1fr;
     }
 
-    /* Stat cards */
+    
     .stat-card {
         flex-direction: column;
         text-align: center;
@@ -1930,7 +1921,7 @@ h3 {
         height: 50px;
     }
 
-    /* Search bar */
+    
     .search-bar form {
         flex-direction: column;
     }
@@ -1943,7 +1934,7 @@ h3 {
         width: 100%;
     }
 
-    /* Filter form */
+    
     .filter-form {
         flex-direction: column;
         align-items: stretch;
@@ -1954,9 +1945,9 @@ h3 {
     }
 }
 
-/* Móviles pequeños (576px y menos) */
+
 @media (max-width: 576px) {
-    /* Header */
+    
     .admin-header {
         padding: 0 0.5rem;
     }
@@ -1965,13 +1956,13 @@ h3 {
         font-size: 1rem;
     }
 
-    /* Contenido */
+    
     .admin-content {
         padding: 0.75rem;
         padding-top: 180px;
     }
 
-    /* Tipografía */
+    
     h1 {
         font-size: var(--font-size-xl);
     }
@@ -1984,7 +1975,7 @@ h3 {
         font-size: var(--font-size-md);
     }
 
-    /* Page header */
+    
     .page-header {
         padding: 0.75rem;
     }
@@ -1993,7 +1984,7 @@ h3 {
         font-size: var(--font-size-xl);
     }
 
-    /* Botones */
+    
     .btn {
         padding: 0.5rem 0.75rem;
         font-size: 0.85rem;
@@ -2003,7 +1994,7 @@ h3 {
         font-size: 0.9rem;
     }
 
-    /* Forms */
+    
     .form-container-admin {
         padding: 0.75rem;
     }
@@ -2019,7 +2010,7 @@ h3 {
         padding: 0.6rem;
     }
 
-    /* Tablas */
+    
     .admin-table {
         font-size: 0.8rem;
         min-width: 500px;
@@ -2030,7 +2021,7 @@ h3 {
         padding: 0.4rem;
     }
 
-    /* Dashboard */
+    
     .dashboard-section h2 {
         font-size: 1.1rem;
     }
@@ -2052,7 +2043,7 @@ h3 {
         font-size: 0.85rem;
     }
 
-    /* Stat cards */
+    
     .stat-content h3 {
         font-size: var(--font-size-xl);
     }
@@ -2061,32 +2052,32 @@ h3 {
         font-size: 0.85rem;
     }
 
-    /* Badges */
+    
     .badge {
         font-size: 0.7rem;
         padding: 3px 8px;
     }
 
-    /* Alerts */
+    
     .alert {
         padding: 0.75rem;
         font-size: 0.85rem;
     }
 
-    /* Image preview */
+    
     .form-image-preview {
         width: 120px;
         height: 120px;
     }
 
-    /* Status badge */
+    
     .status-badge {
         font-size: 0.7rem;
         padding: 0.2rem 0.5rem;
     }
 }
 
-/* Tablets horizontales y desktop pequeño (769px a 1024px) */
+
 @media (min-width: 769px) and (max-width: 1024px) {
     .admin-content {
         padding: 1.5rem;
@@ -2106,7 +2097,7 @@ h3 {
     }
 }
 
-/* Desktop grande (1025px en adelante) */
+
 @media (min-width: 1025px) {
     .dashboard-widgets {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2117,7 +2108,7 @@ h3 {
     }
 }
 
-/* Mejoras para impresión */
+
 @media print {
     .admin-header,
     .admin-nav,
@@ -2143,14 +2134,14 @@ h3 {
     }
 }
 
-/* Mejoras de accesibilidad para dispositivos táctiles */
+
 @media (hover: none) and (pointer: coarse) {
     .btn,
     .admin-nav a,
     .logout-button,
     .widget a,
     .action-buttons .btn {
-        min-height: 44px; /* Tamaño mínimo táctil recomendado */
+        min-height: 44px; 
         padding: 0.75rem 1rem;
     }
 
@@ -2163,7 +2154,7 @@ h3 {
     }
 }
 
-/* Orientación landscape en móviles */
+
 @media (max-width: 768px) and (orientation: landscape) {
     .admin-content {
         padding-top: 120px;

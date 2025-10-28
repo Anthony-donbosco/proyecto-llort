@@ -40,28 +40,28 @@ if (!$partido) {
     exit;
 }
 
-// Decodificar eventos disponibles del deporte
+
 $eventos_disponibles = json_decode($partido['eventos_disponibles'], true) ?? [];
 $tipo_puntuacion = $partido['tipo_puntuacion'];
 $usa_cronometro = $partido['usa_cronometro'];
-// Comparación explícita para evitar problemas de tipos
+
 $es_deporte_individual = ((int)$partido['es_por_equipos'] === 0);
 $es_ajedrez = ($partido['codigo_deporte'] === 'chess');
 $es_pingpong = ($partido['codigo_deporte'] === 'table_tennis');
 
-// Para deportes individuales, verificar si el "equipo" tiene solo 1 jugador
-// Si es así, auto-seleccionar ese jugador
+
+
 if ($es_deporte_individual && !$partido['jugador_local_id']) {
     $participante_id_local = $partido['participante_local_id'];
 
-    // 1. Buscar el plantel_id para este participante
+    
     $stmt_plantel = $conn->prepare("SELECT id FROM planteles_equipo WHERE participante_id = ? LIMIT 1");
     $stmt_plantel->bind_param("i", $participante_id_local);
     $stmt_plantel->execute();
     $plantel_result = $stmt_plantel->get_result();
     
     if ($plantel_result->num_rows == 0) {
-        // No tiene plantel, CREARLO (esto debería hacerlo equipo_process.php)
+        
         $stmt_crear_plantel = $conn->prepare("INSERT INTO planteles_equipo (participante_id) VALUES (?)");
         $stmt_crear_plantel->bind_param("i", $participante_id_local);
         $stmt_crear_plantel->execute();
@@ -73,7 +73,7 @@ if ($es_deporte_individual && !$partido['jugador_local_id']) {
     }
     $stmt_plantel->close();
 
-    // 2. Buscar el miembro_plantel (el jugador)
+    
     $stmt_miembro = $conn->prepare("SELECT id FROM miembros_plantel WHERE plantel_id = ? LIMIT 1");
     $stmt_miembro->bind_param("i", $plantel_id);
     $stmt_miembro->execute();
@@ -82,11 +82,11 @@ if ($es_deporte_individual && !$partido['jugador_local_id']) {
     $jugador_unico_id = null;
 
     if ($miembro_result->num_rows == 0) {
-        // No existe el jugador, CREARLO
-        // Usamos el nombre del "participante" (equipo) como nombre de jugador
+        
+        
         $nombre_jugador = $partido['equipo_local'];
-        $numero_camiseta = 1; // Número por defecto
-        $posicion = $es_ajedrez ? 'Jugador' : 'Jugador'; // Posición genérica
+        $numero_camiseta = 1; 
+        $posicion = $es_ajedrez ? 'Jugador' : 'Jugador'; 
 
         $stmt_crear_miembro = $conn->prepare("INSERT INTO miembros_plantel (plantel_id, nombre_jugador, numero_camiseta, posicion) VALUES (?, ?, ?, ?)");
         $stmt_crear_miembro->bind_param("isss", $plantel_id, $nombre_jugador, $numero_camiseta, $posicion);
@@ -99,7 +99,7 @@ if ($es_deporte_individual && !$partido['jugador_local_id']) {
     }
     $stmt_miembro->close();
 
-    // 3. Auto-seleccionar este jugador en el partido
+    
     if ($jugador_unico_id) {
         $stmt_update = $conn->prepare("UPDATE partidos SET jugador_local_id = ? WHERE id = ?");
         $stmt_update->bind_param("ii", $jugador_unico_id, $partido_id);
@@ -112,14 +112,14 @@ if ($es_deporte_individual && !$partido['jugador_local_id']) {
 if ($es_deporte_individual && !$partido['jugador_visitante_id']) {
     $participante_id_visitante = $partido['participante_visitante_id'];
 
-    // 1. Buscar el plantel_id
+    
     $stmt_plantel = $conn->prepare("SELECT id FROM planteles_equipo WHERE participante_id = ? LIMIT 1");
     $stmt_plantel->bind_param("i", $participante_id_visitante);
     $stmt_plantel->execute();
     $plantel_result = $stmt_plantel->get_result();
     
     if ($plantel_result->num_rows == 0) {
-        // No tiene plantel, CREARLO
+        
         $stmt_crear_plantel = $conn->prepare("INSERT INTO planteles_equipo (participante_id) VALUES (?)");
         $stmt_crear_plantel->bind_param("i", $participante_id_visitante);
         $stmt_crear_plantel->execute();
@@ -131,7 +131,7 @@ if ($es_deporte_individual && !$partido['jugador_visitante_id']) {
     }
     $stmt_plantel->close();
 
-    // 2. Buscar el miembro_plantel
+    
     $stmt_miembro = $conn->prepare("SELECT id FROM miembros_plantel WHERE plantel_id = ? LIMIT 1");
     $stmt_miembro->bind_param("i", $plantel_id);
     $stmt_miembro->execute();
@@ -140,7 +140,7 @@ if ($es_deporte_individual && !$partido['jugador_visitante_id']) {
     $jugador_unico_id = null;
 
     if ($miembro_result->num_rows == 0) {
-        // No existe el jugador, CREARLO
+        
         $nombre_jugador = $partido['equipo_visitante'];
         $numero_camiseta = 1;
         $posicion = $es_ajedrez ? 'Jugador' : 'Jugador';
@@ -156,7 +156,7 @@ if ($es_deporte_individual && !$partido['jugador_visitante_id']) {
     }
     $stmt_miembro->close();
 
-    // 3. Auto-seleccionar este jugador en el partido
+    
     if ($jugador_unico_id) {
         $stmt_update = $conn->prepare("UPDATE partidos SET jugador_visitante_id = ? WHERE id = ?");
         $stmt_update->bind_param("ii", $jugador_unico_id, $partido_id);
@@ -166,7 +166,7 @@ if ($es_deporte_individual && !$partido['jugador_visitante_id']) {
     }
 }
 
-// Obtener jugadores seleccionados si existen
+
 $jugador_local_seleccionado = null;
 $jugador_visitante_seleccionado = null;
 
@@ -186,7 +186,7 @@ if ($partido['jugador_visitante_id']) {
     $stmt_jv->close();
 }
 
-// Para ping pong: obtener puntos por set
+
 $puntos_sets = [];
 if ($es_pingpong) {
     $stmt_sets = $conn->prepare("SELECT * FROM puntos_set WHERE partido_id = ? ORDER BY set_numero");
@@ -200,7 +200,7 @@ if ($es_pingpong) {
 }
 
 
-// Determinar nombres según tipo de puntuación
+
 $nombre_evento_singular = 'Evento';
 $nombre_evento_plural = 'Eventos';
 $icono_evento = 'fa-futbol';
@@ -278,10 +278,10 @@ $goles_visitante = [];
 $contador_goles_local = 0;
 $contador_goles_visitante = 0;
 
-// Bucle WHILE corregido
+
 while($evento = $eventos->fetch_assoc()) {
     
-    // --- Lógica de Goles (Fútbol) ---
+    
     if ($tipo_puntuacion == 'goles') {
         $es_gol_valido = in_array($evento['tipo_evento'], ['gol', 'penal_anotado']);
         $es_autogol = $evento['tipo_evento'] == 'autogol';
@@ -302,25 +302,25 @@ while($evento = $eventos->fetch_assoc()) {
             }
         }
     
-    // --- Lógica de Puntos (Básquetbol, etc.) ---
+    
     } elseif ($tipo_puntuacion == 'puntos') {
-        // Asumimos que $evento['valor_puntos'] contiene el valor (1, 2, 3)
-        // y que no hay "autopuntos" en contra (como autogoles).
         
-        $puntos = (int)($evento['valor_puntos'] ?? 0); // Obtenemos el valor de la anotación
+        
+        
+        $puntos = (int)($evento['valor_puntos'] ?? 0); 
 
         if ($evento['participante_id'] == $partido['participante_local_id']) {
             $goles_local[] = $evento;
-            $contador_goles_local += $puntos; // Sumamos el valor, no solo 1
+            $contador_goles_local += $puntos; 
         } else {
             $goles_visitante[] = $evento;
-            $contador_goles_visitante += $puntos; // Sumamos el valor, no solo 1
+            $contador_goles_visitante += $puntos; 
         }
         
-    // --- Otra lógica (Sets, Ganador Directo, etc.) ---
+    
     } else {
-        // Para otros tipos, los eventos no suman al marcador principal (ej. Voleibol)
-        // pero igual queremos que aparezcan en la lista.
+        
+        
         if ($evento['participante_id'] == $partido['participante_local_id']) {
             $goles_local[] = $evento;
         } else {
@@ -331,11 +331,11 @@ while($evento = $eventos->fetch_assoc()) {
 
 
 if ($es_pingpong) {
-    // Para Ping Pong, el marcador principal son los sets ganados
+    
     $marcador_local_calculado = $partido['sets_ganados_local'] ?? 0;
     $marcador_visitante_calculado = $partido['sets_ganados_visitante'] ?? 0;
 } else {
-    // Para otros deportes, usar los marcadores guardados en BD (actualizados por recalcularMarcadores)
+    
     $marcador_local_calculado = (int)($partido['marcador_local'] ?? 0);
     $marcador_visitante_calculado = (int)($partido['marcador_visitante'] ?? 0);
 }
@@ -380,7 +380,7 @@ if ($es_pingpong) {
 
         <div class="equipos-display">
             <?php if ($es_deporte_individual): ?>
-                <!-- Modo Deportes Individuales -->
+                
                 <div class="jugador-individual-display">
                     <div class="jugador-info">
                         <?php if ($jugador_local_seleccionado): ?>
@@ -427,7 +427,7 @@ if ($es_pingpong) {
                     </div>
                 </div>
             <?php else: ?>
-                <!-- Modo Equipos Normal -->
+                
                 <div class="equipo-display">
                     <div class="equipo-logo-display">
                         <?php if ($partido['logo_local']): ?>
@@ -489,7 +489,7 @@ if ($es_pingpong) {
 
                 <div class="cronometro-opciones" id="botones-periodo">
                     <?php
-                    // Determinar los botones de período según el deporte
+                    
                     $codigo_deporte = $partido['codigo_deporte'];
                     $periodos = [];
 
@@ -526,7 +526,7 @@ if ($es_pingpong) {
         </div>
     </div>
     <?php if ($es_pingpong): ?>
-        <!-- INTERFAZ DE PING PONG -->
+        
         <div class="pingpong-section">
             <h2><i class="fas fa-table-tennis"></i> Control de Sets - Ping Pong</h2>
 
@@ -821,7 +821,7 @@ if ($es_pingpong) {
                     </div>
 
                     <?php if ($tipo_puntuacion == 'goles'): ?>
-                    <!-- Asistencia solo para deportes de goles -->
+                    
                     <div class="form-group">
                         <label for="asistencia_id">Asistencia (Opcional)</label>
                         <select id="asistencia_id" name="asistencia_id" class="form-input">
@@ -832,7 +832,7 @@ if ($es_pingpong) {
                     <?php endif; ?>
 
                     <?php if ($usa_cronometro): ?>
-                    <!-- Minuto solo si el deporte usa cronómetro -->
+                    
                     <div class="form-group">
                         <label for="minuto">Minuto</label>
                         <input type="text" id="minuto" name="minuto" class="form-input"
@@ -858,7 +858,7 @@ if ($es_pingpong) {
                     </div>
 
                     <?php if ($tipo_puntuacion == 'puntos'): ?>
-                    <!-- Campo de valor de puntos (visible solo para deportes tipo puntos) -->
+                    
                     <div class="form-group">
                         <label for="valor_puntos">Valor en Puntos</label>
                         <input type="number" id="valor_puntos" name="valor_puntos" class="form-input" min="1" max="3" value="1" readonly>
@@ -897,12 +897,12 @@ if ($es_pingpong) {
                 
 
                 <?php if ($es_ajedrez): ?>
-                    <!-- Botones para Definir Ganador en Ajedrez -->
+                    
                     <div class="form-section">
                         <h2><i class="fas fa-trophy"></i> Ganador</h2>
 
                         <?php if ($partido['ganador_individual_id'] !== null): ?>
-                            <!-- Mostrar resultado ya definido -->
+                            
                             <div class="resultado-ajedrez-definido">
                                 <i class="fas fa-check-circle"></i>
                                 <strong>Resultado Definido:</strong>
@@ -918,7 +918,7 @@ if ($es_pingpong) {
                                 <p class="texto-advertencia">El resultado ya fue definido. Marcador: <?php echo $partido['marcador_local'] . ' - ' . $partido['marcador_visitante']; ?></p>
                             </div>
                         <?php else: ?>
-                            <!-- Botones para definir ganador -->
+                            
                             <div class="ajedrez-botones-ganador">
                                 <button type="button" class="btn-ajedrez btn-ganador-local" onclick="definirGanadorAjedrez('local')">
                                     <i class="fas fa-crown"></i>

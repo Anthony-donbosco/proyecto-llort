@@ -1,5 +1,5 @@
-<?php // includes/footer.php ?>
-    </main> <?php // Cierre de main-content ?>
+<?php ?>
+    </main> <?php ?>
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column footer-contact">
@@ -33,6 +33,6 @@
         </div>
     </footer>
 
-    <script src="../js/usuario_script.js"></script> <?php // Script para menú hamburguesa, etc. ?>
+    <script src="../../js/usuario_script.js"></script> <?php ?>
 </body>
 </html>

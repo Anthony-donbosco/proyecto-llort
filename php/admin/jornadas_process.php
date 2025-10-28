@@ -21,7 +21,7 @@ if ($action == 'generar') {
         exit;
     }
 
-    // Prevenir generación de jornadas en torneos tipo bracket
+    
     if ($torneo['tipo_torneo'] == 'bracket') {
         header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=No se pueden generar jornadas en torneos tipo Bracket.");
         exit;

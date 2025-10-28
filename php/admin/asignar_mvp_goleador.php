@@ -9,7 +9,7 @@ if (!isset($_GET['torneo_id'])) {
 
 $torneo_id = (int)$_GET['torneo_id'];
 
-// Obtener información del torneo
+
 $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte, d.tipo_puntuacion
                                 FROM torneos t
                                 JOIN deportes d ON t.deporte_id = d.id
@@ -26,7 +26,7 @@ if (!$torneo) {
 $tipo_puntuacion = $torneo['tipo_puntuacion'];
 $nombre_goleador = ($tipo_puntuacion == 'goles') ? 'Goleador' : (($tipo_puntuacion == 'puntos') ? 'Máximo Anotador' : 'Mejor Jugador');
 
-// Obtener MVP actual si existe
+
 $mvp_actual = null;
 if ($torneo['mvp_torneo_miembro_id']) {
     $stmt_mvp = $conn->prepare("SELECT m.*, pe.participante_id, p.nombre_mostrado AS equipo_nombre
@@ -40,7 +40,7 @@ if ($torneo['mvp_torneo_miembro_id']) {
     $stmt_mvp->close();
 }
 
-// Obtener goleador actual si existe
+
 $goleador_actual = null;
 if ($torneo['goleador_torneo_miembro_id']) {
     $stmt_gol = $conn->prepare("SELECT m.*, pe.participante_id, p.nombre_mostrado AS equipo_nombre
@@ -54,7 +54,7 @@ if ($torneo['goleador_torneo_miembro_id']) {
     $stmt_gol->close();
 }
 
-// Obtener todos los equipos del torneo
+
 $stmt_equipos = $conn->prepare("SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                                  FROM torneo_participantes tp
                                  JOIN participantes p ON tp.participante_id = p.id
@@ -64,7 +64,7 @@ $stmt_equipos->bind_param("i", $torneo_id);
 $stmt_equipos->execute();
 $equipos = $stmt_equipos->get_result();
 
-// Obtener top goleadores del torneo (para sugerencias)
+
 $stmt_top_goleadores = $conn->prepare("SELECT m.id, m.nombre_jugador, m.numero_camiseta, m.posicion, m.url_foto,
                                         p.nombre_mostrado AS equipo_nombre,
                                         COUNT(ep.id) AS total_goles
@@ -102,7 +102,7 @@ $top_goleadores = $stmt_top_goleadores->get_result();
         <div class="alert alert-error"><?php echo htmlspecialchars($_GET['error']); ?></div>
     <?php endif; ?>
 
-    <!-- Sección MVP del Torneo -->
+    
     <div class="mvp-section">
         <h2><i class="fas fa-star"></i> MVP del Torneo</h2>
 
@@ -141,7 +141,7 @@ $top_goleadores = $stmt_top_goleadores->get_result();
         </div>
     </div>
 
-    <!-- Sección Goleador del Torneo -->
+    
     <div class="goleador-section">
         <h2><i class="fas fa-futbol"></i> <?php echo $nombre_goleador; ?> del Torneo</h2>
 
@@ -179,7 +179,7 @@ $top_goleadores = $stmt_top_goleadores->get_result();
             <?php endif; ?>
         </div>
 
-        <!-- Top Goleadores (sugerencias) -->
+        
         <?php if ($top_goleadores->num_rows > 0): ?>
         <div class="top-goleadores-sugerencias">
             <h3>Top Goleadores del Torneo (sugerencias)</h3>
@@ -206,7 +206,7 @@ $top_goleadores = $stmt_top_goleadores->get_result();
     </div>
 </main>
 
-<!-- Modal MVP -->
+
 <div id="modalMVP" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -253,7 +253,7 @@ $top_goleadores = $stmt_top_goleadores->get_result();
     </div>
 </div>
 
-<!-- Modal Goleador -->
+
 <div id="modalGoleador" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">

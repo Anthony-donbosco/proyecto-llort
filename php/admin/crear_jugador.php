@@ -21,7 +21,7 @@ $jugador = [
     'asistencias' => 0,
     'porterias_cero' => 0
 ];
-$foto_preview = '../img/jugadores/default.png';
+$foto_preview = '../../img/jugadores/default.png';
 $page_title = 'Agregar Jugador';
 
 if (isset($_GET['edit_id'])) {

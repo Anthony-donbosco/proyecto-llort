@@ -18,9 +18,9 @@ if (!$partido_id) {
 
 try {
     if ($action == 'definir_ganador') {
-        $tipo_resultado = $_POST['tipo_resultado'] ?? ''; // 'local', 'visitante', 'empate'
+        $tipo_resultado = $_POST['tipo_resultado'] ?? ''; 
 
-        // Obtener información del partido
+        
         $stmt = $conn->prepare("SELECT jugador_local_id, jugador_visitante_id FROM partidos WHERE id = ?");
         $stmt->bind_param("i", $partido_id);
         $stmt->execute();
@@ -32,7 +32,7 @@ try {
             exit;
         }
 
-        // Determinar ganador_individual_id y marcadores
+        
         $ganador_individual_id = null;
         $marcador_local = 0;
         $marcador_visitante = 0;
@@ -49,7 +49,7 @@ try {
                 $marcador_visitante = 1;
                 break;
             case 'empate':
-                $ganador_individual_id = 0; // 0 representa empate
+                $ganador_individual_id = 0; 
                 $marcador_local = 0;
                 $marcador_visitante = 0;
                 break;
@@ -58,7 +58,7 @@ try {
                 exit;
         }
 
-        // Actualizar el partido: ganador, marcadores y estado (finalizado)
+        
         $stmt_update = $conn->prepare("UPDATE partidos SET
             ganador_individual_id = ?,
             marcador_local = ?,

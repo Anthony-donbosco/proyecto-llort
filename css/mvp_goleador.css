@@ -1,4 +1,4 @@
-/* Estilos para página de MVP y Goleador del Torneo */
+
 
 .mvp-section, .goleador-section {
     background: white;
@@ -24,7 +24,7 @@
     min-height: 250px;
 }
 
-/* MVP Actual */
+
 .mvp-actual-display, .goleador-actual-display {
     display: flex;
     flex-direction: column;
@@ -120,7 +120,7 @@
     font-size: 2rem;
 }
 
-/* MVP/Goleador Vacío */
+
 .mvp-vacio-display, .goleador-vacio-display {
     display: flex;
     flex-direction: column;
@@ -142,7 +142,7 @@
     font-size: 1.1rem;
 }
 
-/* Top Goleadores Sugerencias */
+
 .top-goleadores-sugerencias {
     margin-top: 2rem;
     padding: 1.5rem;
@@ -229,7 +229,7 @@
     margin-top: 0.25rem;
 }
 
-/* Modal Styles */
+
 .modal {
     position: fixed;
     top: 0;
@@ -301,7 +301,7 @@
     flex: 1;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
     .mvp-actual-display, .goleador-actual-display {
         padding: 1.5rem;

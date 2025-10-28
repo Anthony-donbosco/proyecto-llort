@@ -69,18 +69,18 @@ if ($action == 'obtener_estado') {
 
 
 if ($action == 'iniciar') {
-    // Verificar si el partido tiene ambos equipos
+    
     $stmt_verificar = $conn->prepare("SELECT participante_local_id, participante_visitante_id, torneo_id, fase_id FROM partidos WHERE id = ?");
     $stmt_verificar->bind_param("i", $partido_id);
     $stmt_verificar->execute();
     $partido_data = $stmt_verificar->get_result()->fetch_assoc();
     $stmt_verificar->close();
 
-    // Si solo hay un equipo (BYE), marcar como ganador automático
+    
     if (!$partido_data['participante_local_id'] || !$partido_data['participante_visitante_id']) {
         $ganador_id = $partido_data['participante_local_id'] ?: $partido_data['participante_visitante_id'];
 
-        // Marcar como finalizado con 3-0 (victoria por W.O.)
+        
         $stmt_wo = $conn->prepare("UPDATE partidos SET
                                    marcador_local = IF(participante_local_id = ?, 3, 0),
                                    marcador_visitante = IF(participante_visitante_id = ?, 3, 0),
@@ -91,7 +91,7 @@ if ($action == 'iniciar') {
         $stmt_wo->execute();
         $stmt_wo->close();
 
-        // Avanzar ganador a la siguiente fase
+        
         require_once 'avanzar_ganador.php';
         $resultado_avance = avanzarGanadorSiguienteFase($conn, $partido_id);
 

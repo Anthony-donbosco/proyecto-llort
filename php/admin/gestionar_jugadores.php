@@ -76,7 +76,7 @@ $jugadores = $stmt->get_result();
                 <?php
                 if ($jugadores->num_rows > 0) {
                     while($row = $jugadores->fetch_assoc()) {
-                        $foto_url = !empty($row['url_foto']) ? htmlspecialchars($row['url_foto']) : '../img/jugadores/default.png';
+                        $foto_url = !empty($row['url_foto']) ? htmlspecialchars($row['url_foto']) : '../../img/jugadores/default.png';
                 ?>
                     <tr>
                         <td><img src="<?php echo $foto_url; ?>" alt="Foto" class="table-avatar"></td>

@@ -10,7 +10,7 @@ $equipo = [
     'tipo_participante_id' => 1,
     'url_logo' => ''
 ];
-$logo_preview = '../img/logos/default.png';
+$logo_preview = '../../img/logos/default.png';
 $is_individual_edit = false;
 if (isset($_GET['edit_id'])) {
     $is_edit = true;
@@ -106,9 +106,9 @@ $todos_deportes_json = json_encode($todos_deportes);
                             <?php foreach ($todos_deportes as $d): ?>
                                 <?php
                                 $is_sport_individual = ($d['es_por_equipos'] == 0);
-                                // Mostrar solo si el tipo de deporte coincide con el modo del formulario
-                                // (Si $is_individual_edit es TRUE, solo mostrar deportes individuales)
-                                // (Si $is_individual_edit es FALSE, solo mostrar deportes de equipo)
+                                
+                                
+                                
                                 if (($is_individual_edit && $is_sport_individual) || (!$is_individual_edit && !$is_sport_individual)):
                                 ?>
                                     <option 

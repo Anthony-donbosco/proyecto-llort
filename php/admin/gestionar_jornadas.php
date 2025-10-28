@@ -24,7 +24,7 @@ if (!$torneo) {
     exit;
 }
 
-// Prevenir acceso a jornadas si es torneo tipo bracket
+
 if ($torneo['tipo_torneo'] == 'bracket') {
     header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=Los torneos tipo Bracket no tienen jornadas. Ve directamente a Asignar Llaves.");
     exit;

@@ -50,10 +50,10 @@ $cupos_disponibles = $torneo['max_participantes'] - $total_inscritos;
 
 $sql_disponibles = "SELECT p.id, p.nombre_mostrado, p.nombre_corto, p.url_logo
                      FROM participantes p
-                     WHERE p.deporte_id = ? AND p.tipo_participante_id = ?"; // <-- Cambio aquí
+                     WHERE p.deporte_id = ? AND p.tipo_participante_id = ?"; 
 
 $params = [$torneo['deporte_id'], $tipo_participante_buscado];
-$types = 'ii'; // i por deporte_id, i por tipo_participante_id
+$types = 'ii'; 
 
 if (count($ids_inscritos) > 0) {
     $placeholders = implode(',', array_fill(0, count($ids_inscritos), '?'));

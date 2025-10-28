@@ -261,7 +261,7 @@
     }
 }
 
-/* Estilos para la sección del Campeón */
+
 .bracket-champion {
     margin-top: 2rem;
     border-top: 3px solid #ffd700;
@@ -422,7 +422,7 @@
     text-align: center;
 }
 
-/* Estilos para equipos que han avanzado automáticamente */
+
 .has-team-avanzado {
     background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
     border: 2px solid #4caf50;

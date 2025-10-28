@@ -28,20 +28,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         } elseif ($_POST['action'] == 'update' && isset($_POST['torneo_id'])) {
             $torneo_id = (int)$_POST['torneo_id'];
 
-            // Verificar si se está cambiando a tipo bracket
+            
             $stmt_check = $conn->prepare("SELECT tipo_torneo FROM torneos WHERE id = ?");
             $stmt_check->bind_param("i", $torneo_id);
             $stmt_check->execute();
             $tipo_anterior = $stmt_check->get_result()->fetch_assoc()['tipo_torneo'];
             $stmt_check->close();
 
-            // Si se está cambiando de liga a bracket, limpiar jornadas y partidos de liga
+            
             if ($tipo_anterior == 'liga' && $tipo_torneo == 'bracket') {
-                // Iniciar transacción para mantener consistencia
+                
                 $conn->begin_transaction();
 
                 try {
-                    // 1. Eliminar partidos de fase de liga
+                    
                     $stmt_del_partidos = $conn->prepare("DELETE p FROM partidos p
                                                          JOIN fases f ON p.fase_id = f.id
                                                          WHERE f.torneo_id = ? AND f.tipo_fase_id = 1");
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     $partidos_eliminados = $stmt_del_partidos->affected_rows;
                     $stmt_del_partidos->close();
 
-                    // 2. Eliminar jornadas
+                    
                     $stmt_del_jornadas = $conn->prepare("DELETE j FROM jornadas j
                                                          JOIN fases f ON j.fase_id = f.id
                                                          WHERE f.torneo_id = ? AND f.tipo_fase_id = 1");
@@ -59,14 +59,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     $jornadas_eliminadas = $stmt_del_jornadas->affected_rows;
                     $stmt_del_jornadas->close();
 
-                    // 3. Eliminar fases de tipo liga
+                    
                     $stmt_del_fases = $conn->prepare("DELETE FROM fases WHERE torneo_id = ? AND tipo_fase_id = 1");
                     $stmt_del_fases->bind_param("i", $torneo_id);
                     $stmt_del_fases->execute();
                     $fases_eliminadas = $stmt_del_fases->affected_rows;
                     $stmt_del_fases->close();
 
-                    // Actualizar el torneo
+                    
                     $sql = "UPDATE torneos SET nombre = ?, deporte_id = ?, temporada_id = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, max_participantes = ?, estado_id = ?, tipo_torneo = ?, fase_actual = ?, ida_y_vuelta = ?
                             WHERE id = ?";
                     $stmt = $conn->prepare($sql);
@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     $stmt->execute();
                     $stmt->close();
 
-                    // Confirmar transacción
+                    
                     $conn->commit();
 
                     $mensaje = "Torneo actualizado a tipo Bracket. Se eliminaron $partidos_eliminados partido(s), $jornadas_eliminadas jornada(s) y $fases_eliminadas fase(s) de liga.";
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     header("Location: gestionar_torneos.php?error=Error al cambiar a Bracket: " . $e->getMessage());
                 }
             } else {
-                // Actualización normal sin cambio de tipo o cambio de bracket a liga
+                
                 $sql = "UPDATE torneos SET nombre = ?, deporte_id = ?, temporada_id = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, max_participantes = ?, estado_id = ?, tipo_torneo = ?, fase_actual = ?, ida_y_vuelta = ?
                         WHERE id = ?";
                 $stmt = $conn->prepare($sql);

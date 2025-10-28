@@ -7,7 +7,7 @@ let bracketData = {
 let faseInicialTorneo = 'cuartos';
 let equiposRequeridos = 8;
 
-// Función para ocultar equipo de la lista disponible
+
 function ocultarEquipo(equipoId) {
     const equipoElement = document.getElementById('equipo-' + equipoId);
     if (equipoElement) {
@@ -15,7 +15,7 @@ function ocultarEquipo(equipoId) {
     }
 }
 
-// Función para mostrar equipo en la lista disponible
+
 function mostrarEquipo(equipoId) {
     const equipoElement = document.getElementById('equipo-' + equipoId);
     if (equipoElement) {
@@ -77,7 +77,7 @@ droppables.forEach(droppable => {
         }
         bracketData[fase][posicion][tipo] = equipoId;
 
-        // Ocultar equipo de la lista disponible
+        
         ocultarEquipo(equipoId);
 
         console.log('Bracket actualizado:', bracketData);
@@ -87,18 +87,18 @@ droppables.forEach(droppable => {
 function removerEquipo(btn) {
     const droppable = btn.closest('.matchup-team');
 
-    // Obtener el ID del equipo antes de removerlo
+    
     const matchup = droppable.closest('.matchup');
     const fase = matchup.dataset.fase;
     const posicion = matchup.dataset.posicion;
     const tipo = droppable.dataset.tipo;
     const equipoId = bracketData[fase] && bracketData[fase][posicion] ? bracketData[fase][posicion][tipo] : null;
 
-    // Verificar si el equipo contrario existe
+    
     const tipoContrario = tipo === 'local' ? 'visitante' : 'local';
     const equipoContrarioId = bracketData[fase] && bracketData[fase][posicion] ? bracketData[fase][posicion][tipoContrario] : null;
 
-    // Si hay un equipo contrario, mostrar alerta sobre avance automático
+    
     if (equipoContrarioId) {
         const equipoElement = document.getElementById('equipo-' + equipoContrarioId);
         const nombreEquipo = equipoElement ? equipoElement.querySelector('strong').textContent : 'el equipo rival';
@@ -106,7 +106,7 @@ function removerEquipo(btn) {
         const mensajeFase = fase === 'cuartos' ? 'semifinales' : fase === 'semis' ? 'la final' : 'como campeón';
 
         if (!confirm(`⚠️ Si eliminas este equipo, ${nombreEquipo} pasará automáticamente a ${mensajeFase}. ¿Deseas continuar?`)) {
-            return; // Cancelar la eliminación
+            return; 
         }
     }
 
@@ -123,7 +123,7 @@ function removerEquipo(btn) {
         delete bracketData[fase][posicion][tipo];
     }
 
-    // Mostrar equipo en la lista disponible
+    
     if (equipoId) {
         mostrarEquipo(equipoId);
     }
@@ -170,32 +170,32 @@ function setupDroppable(element) {
         }
         bracketData[fase][posicion][tipo] = equipoId;
 
-        // Ocultar equipo de la lista disponible
+        
         ocultarEquipo(equipoId);
     });
 }
 
 function inicializarBracket(bracketExistente, torneoId, faseInicial, equiposNecesarios) {
-    // Guardar configuración del torneo
+    
     faseInicialTorneo = faseInicial || 'cuartos';
     equiposRequeridos = equiposNecesarios || 8;
     window.torneoId = torneoId;
 
-    // Cargar bracket existente al cargar la página
+    
     if (bracketExistente) {
-        // Iterar sobre todas las fases posibles: cuartos, semis, final
+        
         const fasesPosibles = ['cuartos', 'semis', 'final'];
 
         fasesPosibles.forEach(fase => {
             if (bracketExistente[fase]) {
-                // Recorrer los datos del bracket existente de esta fase y restaurar la vista
+                
                 Object.entries(bracketExistente[fase]).forEach(([posicionBracket, data]) => {
                     if (data.participante_id) {
-                        // Determinar si es local o visitante basado en posicion_bracket (impar = local, par = visitante)
+                        
                         const esLocal = data.posicion_bracket % 2 === 1;
                         const tipo = esLocal ? 'local' : 'visitante';
 
-                        // Calcular el número de partido (posición) dentro de la fase
+                        
                         const posicionPartido = Math.ceil(data.posicion_bracket / 2);
 
                         const matchup = document.querySelector(`.matchup[data-fase="${fase}"][data-posicion="${posicionPartido}"]`);
@@ -204,7 +204,7 @@ function inicializarBracket(bracketExistente, torneoId, faseInicial, equiposNece
                             const droppable = matchup.querySelector(`.droppable[data-tipo="${tipo}"]`);
 
                             if (droppable) {
-                                // Buscar el equipo en el DOM para obtener su HTML
+                                
                                 const equipoElement = document.getElementById('equipo-' + data.participante_id);
                                 if (equipoElement) {
                                     const equipoHTML = equipoElement.innerHTML;
@@ -220,13 +220,13 @@ function inicializarBracket(bracketExistente, torneoId, faseInicial, equiposNece
                                     droppable.classList.remove('droppable');
                                     droppable.classList.add('has-team');
 
-                                    // Actualizar bracketData
+                                    
                                     if (!bracketData[fase][posicionPartido]) {
                                         bracketData[fase][posicionPartido] = {};
                                     }
                                     bracketData[fase][posicionPartido][tipo] = data.participante_id;
 
-                                    // Ocultar equipo de la lista
+                                    
                                     ocultarEquipo(data.participante_id);
                                 }
                             }
@@ -241,7 +241,7 @@ function inicializarBracket(bracketExistente, torneoId, faseInicial, equiposNece
 }
 
 function guardarBracket() {
-    // Validar según la fase inicial del torneo
+    
     let faseValidar = '';
     let partidosNecesarios = 0;
     let mensajeEquipos = '';
@@ -260,13 +260,13 @@ function guardarBracket() {
         mensajeEquipos = 'Debes asignar los 2 equipos para la final';
     }
 
-    // Validar que al menos haya algo asignado
+    
     if (Object.keys(bracketData[faseValidar]).length < partidosNecesarios) {
         alert(mensajeEquipos);
         return;
     }
 
-    // Validar cada partido - permitir que falte visitante (bye)
+    
     for (let i = 1; i <= partidosNecesarios; i++) {
         if (!bracketData[faseValidar][i] || !bracketData[faseValidar][i].local) {
             let nombreFase = faseValidar === 'cuartos' ? 'cuartos de final' :
@@ -275,14 +275,14 @@ function guardarBracket() {
             return;
         }
 
-        // Para la final, sí se requieren ambos equipos
+        
         if (faseValidar === 'final' && !bracketData[faseValidar][i].visitante) {
             alert('La final requiere ambos equipos asignados');
             return;
         }
     }
 
-    // Crear formulario y enviar
+    
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'playoffs_process.php';
@@ -321,18 +321,18 @@ function limpiarBracket() {
     }
 }
 
-// Función para generar bracket automáticamente
+
 function generarAutomatico() {
     if (!confirm('¿Generar bracket automáticamente? Esto reemplazará cualquier asignación manual actual.')) {
         return;
     }
 
-    // Limpiar bracket actual
+    
     Object.keys(bracketData).forEach(fase => {
         bracketData[fase] = {};
     });
 
-    // Obtener todos los equipos disponibles que no estén ocultos
+    
     const equiposArray = [];
     document.querySelectorAll('.equipo-draggable').forEach(equipo => {
         if (!equipo.classList.contains('asignado')) {
@@ -343,19 +343,19 @@ function generarAutomatico() {
         }
     });
 
-    // Validar que haya suficientes equipos
+    
     if (equiposArray.length < equiposRequeridos) {
         alert(`Se necesitan al menos ${equiposRequeridos} equipos para generar el bracket. Solo hay ${equiposArray.length} disponibles.`);
         return;
     }
 
-    // Mezclar equipos aleatoriamente (shuffle)
+    
     for (let i = equiposArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [equiposArray[i], equiposArray[j]] = [equiposArray[j], equiposArray[i]];
     }
 
-    // Determinar qué fase asignar
+    
     let faseAsignar = faseInicialTorneo;
     let partidosNecesarios = 0;
 
@@ -367,13 +367,13 @@ function generarAutomatico() {
         partidosNecesarios = 1;
     }
 
-    // Asignar equipos a los partidos
+    
     let equipoIndex = 0;
     for (let i = 1; i <= partidosNecesarios; i++) {
         const matchup = document.querySelector(`.matchup[data-fase="${faseAsignar}"][data-posicion="${i}"]`);
         if (!matchup) continue;
 
-        // Asignar equipo local
+        
         const localDroppable = matchup.querySelector('.droppable[data-tipo="local"]');
         if (localDroppable && equipoIndex < equiposArray.length) {
             const equipo = equiposArray[equipoIndex];
@@ -396,7 +396,7 @@ function generarAutomatico() {
             equipoIndex++;
         }
 
-        // Asignar equipo visitante
+        
         const visitanteDroppable = matchup.querySelector('.droppable[data-tipo="visitante"]');
         if (visitanteDroppable && equipoIndex < equiposArray.length) {
             const equipo = equiposArray[equipoIndex];
@@ -415,14 +415,14 @@ function generarAutomatico() {
             ocultarEquipo(equipo.id);
             equipoIndex++;
         } else if (visitanteDroppable && equipoIndex >= equiposArray.length) {
-            // Número impar de equipos - dar "bye" al equipo local
+            
             visitanteDroppable.innerHTML = `
                 <div class="team-placeholder" style="background: #fff3cd; border: 2px dashed #ffc107;">
                     <i class="fas fa-forward"></i>
                     <span style="color: #856404; font-weight: 600;">BYE - Pasa Directo</span>
                 </div>
             `;
-            // No marcar como visitante en bracketData, solo el local avanzará
+            
         }
     }
 
@@ -430,7 +430,7 @@ function generarAutomatico() {
     console.log('Bracket generado:', bracketData);
 }
 
-// Función para eliminar partidos del bracket
+
 function eliminarPartidosBracket() {
     if (!confirm('⚠️ ADVERTENCIA: Esto eliminará TODOS los partidos generados del bracket (cuartos, semifinales y final).\n\n' +
                  'Se perderán:\n' +
@@ -442,12 +442,12 @@ function eliminarPartidosBracket() {
         return;
     }
 
-    // Segunda confirmación
+    
     if (!confirm('Esta acción NO SE PUEDE DESHACER.\n\n¿Confirmas la eliminación de todos los partidos del bracket?')) {
         return;
     }
 
-    // Crear formulario y enviar
+    
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'playoffs_process.php';

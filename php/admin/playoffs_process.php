@@ -84,7 +84,7 @@ if ($action == 'generar') {
 
 } elseif ($action == 'crear_bracket') {
     try {
-        // Validar que se recibió el bracket_data
+        
         if (!isset($_POST['bracket_data']) || !isset($_POST['fase_inicial'])) {
             header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=Datos del bracket no recibidos.");
             exit;
@@ -98,7 +98,7 @@ if ($action == 'generar') {
             exit;
         }
 
-        // Validar según la fase inicial
+        
         if ($fase_inicial == 'cuartos' && !isset($bracket_data['cuartos'])) {
             header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=Datos de cuartos de final inválidos.");
             exit;
@@ -110,7 +110,7 @@ if ($action == 'generar') {
             exit;
         }
 
-        // VALIDAR QUE TODAS LAS JORNADAS DE FASE REGULAR ESTÉN COMPLETAS
+        
         $stmt_validar = $conn->prepare("SELECT COUNT(*) as partidos_pendientes
                                         FROM partidos p
                                         JOIN fases f ON p.fase_id = f.id
@@ -127,33 +127,33 @@ if ($action == 'generar') {
             exit;
         }
 
-        // Iniciar transacción
+        
         $conn->begin_transaction();
 
-        // Limpiar bracket anterior si existe
+        
         $stmt_delete = $conn->prepare("DELETE FROM bracket_torneos WHERE torneo_id = ?");
         $stmt_delete->bind_param("i", $torneo_id);
         $stmt_delete->execute();
         $stmt_delete->close();
 
-        // Insertar equipos en bracket_torneos según la fase inicial
+        
         $stmt_insert = $conn->prepare("INSERT INTO bracket_torneos (torneo_id, fase, posicion_bracket, participante_id)
                                        VALUES (?, ?, ?, ?)");
 
-        // Determinar qué fase insertar
-        $fase_data_key = $fase_inicial; // 'cuartos', 'semis', o 'final'
+        
+        $fase_data_key = $fase_inicial; 
 
         if (isset($bracket_data[$fase_data_key])) {
             foreach ($bracket_data[$fase_data_key] as $posicion => $partido) {
                 if (isset($partido['local'])) {
-                    $tipo_bracket = (int)$posicion * 2 - 1; // Impar para locales
+                    $tipo_bracket = (int)$posicion * 2 - 1; 
                     $participante_id = (int)$partido['local'];
                     $stmt_insert->bind_param("isii", $torneo_id, $fase_inicial, $tipo_bracket, $participante_id);
                     $stmt_insert->execute();
                 }
 
                 if (isset($partido['visitante'])) {
-                    $tipo_bracket = (int)$posicion * 2; // Par para visitantes
+                    $tipo_bracket = (int)$posicion * 2; 
                     $participante_id = (int)$partido['visitante'];
                     $stmt_insert->bind_param("isii", $torneo_id, $fase_inicial, $tipo_bracket, $participante_id);
                     $stmt_insert->execute();
@@ -163,17 +163,17 @@ if ($action == 'generar') {
 
         $stmt_insert->close();
 
-        // Determinar el tipo_fase_id y nombre según la fase inicial
+        
         $tipo_fase_map = [
             'cuartos' => ['id' => 2, 'nombre' => 'Cuartos de Final', 'orden' => 2],
             'semis' => ['id' => 3, 'nombre' => 'Semifinales', 'orden' => 3],
             'final' => ['id' => 4, 'nombre' => 'Final', 'orden' => 4]
         ];
 
-        // CREAR TODAS LAS FASES DEL PLAYOFF
+        
         $fases_ids = [];
 
-        // Determinar qué fases crear según fase inicial
+        
         $fases_a_crear = [];
         if ($fase_inicial == 'cuartos') {
             $fases_a_crear = ['cuartos', 'semis', 'final'];
@@ -186,7 +186,7 @@ if ($action == 'generar') {
         foreach ($fases_a_crear as $fase_nombre) {
             $fase_config = $tipo_fase_map[$fase_nombre];
 
-            // Buscar o crear cada fase
+            
             $stmt_fase = $conn->prepare("SELECT id FROM fases WHERE torneo_id = ? AND tipo_fase_id = ? LIMIT 1");
             $stmt_fase->bind_param("ii", $torneo_id, $fase_config['id']);
             $stmt_fase->execute();
@@ -196,7 +196,7 @@ if ($action == 'generar') {
                 $fase = $result_fase->fetch_assoc();
                 $fases_ids[$fase_nombre] = $fase['id'];
             } else {
-                // Crear fase
+                
                 $dias_inicio = ($fase_nombre == 'cuartos') ? 0 : (($fase_nombre == 'semis') ? 7 : 14);
                 $stmt_crear_fase = $conn->prepare("INSERT INTO fases (torneo_id, tipo_fase_id, orden_fase, nombre, fecha_inicio, fecha_fin)
                                                    VALUES (?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL ? DAY), DATE_ADD(CURDATE(), INTERVAL ? DAY))");
@@ -209,7 +209,7 @@ if ($action == 'generar') {
             $stmt_fase->close();
         }
 
-        // CREAR PARTIDOS DE LA FASE INICIAL
+        
         $stmt_partido = $conn->prepare("INSERT INTO partidos (torneo_id, fase_id, participante_local_id, participante_visitante_id, inicio_partido, estado_id)
                                         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), 2)");
 
@@ -235,12 +235,12 @@ if ($action == 'generar') {
         }
         $stmt_partido->close();
 
-        // CREAR PARTIDOS DE SEMIFINALES (si la fase inicial es cuartos)
+        
         if ($fase_inicial == 'cuartos' && isset($fases_ids['semis'])) {
             $stmt_semis = $conn->prepare("INSERT INTO partidos (torneo_id, fase_id, participante_local_id, participante_visitante_id, inicio_partido, estado_id)
                                           VALUES (?, ?, NULL, NULL, DATE_ADD(NOW(), INTERVAL 7 DAY), 2)");
 
-            // Crear 2 partidos de semifinales
+            
             for ($i = 0; $i < 2; $i++) {
                 $stmt_semis->bind_param("ii", $torneo_id, $fases_ids['semis']);
                 $stmt_semis->execute();
@@ -248,7 +248,7 @@ if ($action == 'generar') {
             $stmt_semis->close();
         }
 
-        // CREAR PARTIDO DE FINAL (si no es la fase inicial)
+        
         if ($fase_inicial != 'final' && isset($fases_ids['final'])) {
             $stmt_final = $conn->prepare("INSERT INTO partidos (torneo_id, fase_id, participante_local_id, participante_visitante_id, inicio_partido, estado_id)
                                           VALUES (?, ?, NULL, NULL, DATE_ADD(NOW(), INTERVAL 14 DAY), 2)");
@@ -257,29 +257,29 @@ if ($action == 'generar') {
             $stmt_final->close();
         }
 
-        // Si hay equipos con bye, marcarlos en una nota o simplemente no crear el partido
+        
         $mensaje_bye = '';
         if (count($equipos_con_bye) > 0) {
             $mensaje_bye = ' (' . count($equipos_con_bye) . ' equipo(s) pasaron directo por BYE)';
         }
 
-        // Confirmar transacción
+        
         $conn->commit();
 
         header("Location: asignar_llaves.php?torneo_id=$torneo_id&success=Bracket de playoffs creado exitosamente. Se generaron " . $contador . " partido(s) de " . $fase_config['nombre'] . $mensaje_bye . ".");
 
     } catch (Exception $e) {
-        // Revertir transacción
+        
         $conn->rollback();
         header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=Error al crear bracket: " . $e->getMessage());
     }
 
 } elseif ($action == 'eliminar_partidos_bracket') {
     try {
-        // Iniciar transacción
+        
         $conn->begin_transaction();
 
-        // 1. Eliminar eventos de todos los partidos del bracket
+        
         $stmt_delete_eventos = $conn->prepare("DELETE ep FROM eventos_partido ep
                                                 JOIN partidos p ON ep.partido_id = p.id
                                                 JOIN fases f ON p.fase_id = f.id
@@ -289,7 +289,7 @@ if ($action == 'generar') {
         $eventos_eliminados = $stmt_delete_eventos->affected_rows;
         $stmt_delete_eventos->close();
 
-        // 2. Eliminar cronómetros de partidos del bracket
+        
         $stmt_delete_cronometro = $conn->prepare("DELETE cp FROM cronometro_partido cp
                                                    JOIN partidos p ON cp.partido_id = p.id
                                                    JOIN fases f ON p.fase_id = f.id
@@ -298,7 +298,7 @@ if ($action == 'generar') {
         $stmt_delete_cronometro->execute();
         $stmt_delete_cronometro->close();
 
-        // 3. Obtener el conteo de partidos antes de eliminar
+        
         $stmt_count = $conn->prepare("SELECT COUNT(*) as total FROM partidos p
                                        JOIN fases f ON p.fase_id = f.id
                                        WHERE p.torneo_id = ? AND f.tipo_fase_id IN (2, 3, 4)");
@@ -308,7 +308,7 @@ if ($action == 'generar') {
         $partidos_eliminados = $count_result['total'];
         $stmt_count->close();
 
-        // 4. Eliminar todos los partidos del bracket (cuartos, semis, final)
+        
         $stmt_delete_partidos = $conn->prepare("DELETE p FROM partidos p
                                                  JOIN fases f ON p.fase_id = f.id
                                                  WHERE p.torneo_id = ? AND f.tipo_fase_id IN (2, 3, 4)");
@@ -316,23 +316,23 @@ if ($action == 'generar') {
         $stmt_delete_partidos->execute();
         $stmt_delete_partidos->close();
 
-        // 5. Eliminar las fases del bracket
+        
         $stmt_delete_fases = $conn->prepare("DELETE FROM fases WHERE torneo_id = ? AND tipo_fase_id IN (2, 3, 4)");
         $stmt_delete_fases->bind_param("i", $torneo_id);
         $stmt_delete_fases->execute();
         $stmt_delete_fases->close();
 
-        // 6. Limpiar bracket_torneos (las asignaciones visuales se mantienen)
-        // NOTA: No eliminamos bracket_torneos para que las asignaciones persistan
+        
+        
 
-        // Confirmar transacción
+        
         $conn->commit();
 
         $mensaje_detalle = "Partidos eliminados: $partidos_eliminados. Eventos eliminados: $eventos_eliminados.";
         header("Location: asignar_llaves.php?torneo_id=$torneo_id&success=Partidos del bracket eliminados exitosamente. $mensaje_detalle");
 
     } catch (Exception $e) {
-        // Revertir transacción
+        
         $conn->rollback();
         header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=Error al eliminar partidos: " . $e->getMessage());
     }

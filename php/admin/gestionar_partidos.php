@@ -2,7 +2,7 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-// Determinar si viene de jornada o de torneo (bracket)
+
 $jornada_id = isset($_GET['jornada_id']) ? (int)$_GET['jornada_id'] : null;
 $torneo_id = isset($_GET['torneo_id']) ? (int)$_GET['torneo_id'] : null;
 
@@ -11,7 +11,7 @@ if (!$jornada_id && !$torneo_id) {
     exit;
 }
 
-// Si viene de jornada (torneo tipo liga)
+
 if ($jornada_id) {
     $stmt_jornada = $conn->prepare("SELECT j.*, f.torneo_id, t.nombre AS nombre_torneo, t.tipo_torneo
                                      FROM jornadas j
@@ -29,7 +29,7 @@ if ($jornada_id) {
 
     $torneo_id = $jornada['torneo_id'];
 
-    // Obtener partidos de la jornada específica
+    
     $sql_partidos = "SELECT p.*,
                      pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                      pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
@@ -52,7 +52,7 @@ if ($jornada_id) {
     $stmt_jornada->close();
 
 } else {
-    // Si viene de torneo (bracket/playoffs)
+    
     $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
                                     FROM torneos t
                                     JOIN deportes d ON t.deporte_id = d.id
@@ -66,14 +66,14 @@ if ($jornada_id) {
         exit;
     }
 
-    // Crear un objeto jornada temporal para mantener compatibilidad con el código existente
+    
     $jornada = [
         'nombre' => 'Partidos de Playoffs - ' . $torneo['nombre'],
         'nombre_torneo' => $torneo['nombre'],
         'fecha_jornada' => date('Y-m-d')
     ];
 
-    // Obtener todos los partidos de playoff del torneo (fases 2,3,4 = cuartos, semis, final)
+    
     $sql_partidos = "SELECT p.*,
                      pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
                      pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,

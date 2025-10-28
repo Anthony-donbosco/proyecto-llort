@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         }
 
         if (move_uploaded_file($_FILES['imagen_portada']['tmp_name'], $target_file)) {
-            $imagen_path = '../img/noticias/' . $file_name;
+            $imagen_path = '../../img/noticias/' . $file_name;
         } else {
             header("Location: $redirect_url&error=Error al subir la imagen.");
             exit;

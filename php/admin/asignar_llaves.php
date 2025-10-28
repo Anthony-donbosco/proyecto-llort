@@ -23,14 +23,14 @@ if (!$torneo) {
     exit;
 }
 
-// Determinar qué fases mostrar según la configuración del torneo
+
 $fase_inicial = $torneo['fase_actual'] ?? 'cuartos';
 $mostrar_cuartos = in_array($fase_inicial, ['liga', 'cuartos']);
 $mostrar_semis = in_array($fase_inicial, ['liga', 'cuartos', 'semis']);
-$mostrar_final = true; // Siempre mostrar final
+$mostrar_final = true; 
 
-// Calcular cantidad de equipos necesarios según la fase inicial
-$equipos_necesarios = 2; // Por defecto final
+
+$equipos_necesarios = 2; 
 if ($fase_inicial == 'semis') {
     $equipos_necesarios = 4;
 } elseif ($fase_inicial == 'cuartos') {
@@ -83,7 +83,7 @@ $partidos_por_fase = [
 while($partido = $partidos->fetch_assoc()) {
     $partidos_playoff[] = $partido;
 
-    // Organizar por fase
+    
     if ($partido['tipo_fase_id'] == 2) {
         $partidos_por_fase['cuartos'][] = $partido;
     } elseif ($partido['tipo_fase_id'] == 3) {
@@ -95,7 +95,7 @@ while($partido = $partidos->fetch_assoc()) {
 
 $hay_partidos_generados = count($partidos_playoff) > 0;
 
-// Obtener el ganador del torneo si existe (partido de final finalizado)
+
 $stmt_ganador = $conn->prepare("SELECT p.id, p.marcador_local, p.marcador_visitante,
                                  pl.id AS id_local, pl.nombre_mostrado AS nombre_local, pl.nombre_corto AS corto_local, pl.url_logo AS logo_local,
                                  pv.id AS id_visitante, pv.nombre_mostrado AS nombre_visitante, pv.nombre_corto AS corto_visitante, pv.url_logo AS logo_visitante
@@ -113,7 +113,7 @@ $stmt_ganador->close();
 
 $campeon = null;
 if ($ganador) {
-    // Determinar quién ganó basado en el marcador
+    
     if ($ganador['marcador_local'] > $ganador['marcador_visitante']) {
         $campeon = [
             'id' => $ganador['id_local'],
@@ -248,12 +248,12 @@ if ($ganador) {
                 <h3>Semifinales</h3>
                 <div class="matchups">
                     <?php
-                    // Si el torneo comienza desde semis y no hay partidos, mostrar áreas droppables
+                    
                     $hay_semis = !empty($partidos_por_fase['semis']);
                     $semis_es_fase_inicial = ($fase_inicial == 'semis');
 
                     if ($hay_semis) {
-                        // Hay partidos de semifinales creados - mostrarlos
+                        
                         $semis_mostradas = 0;
                         foreach ($partidos_por_fase['semis'] as $idx => $partido_semi):
                             $semis_mostradas++;
@@ -262,7 +262,7 @@ if ($ganador) {
                             <div class="matchup" data-fase="semis" data-posicion="<?php echo $posicion_semi; ?>">
                                 <div class="matchup-title">Semifinal <?php echo $posicion_semi; ?></div>
 
-                                <!-- Equipo Local -->
+                                
                                 <div class="matchup-team <?php echo $partido_semi['id_local'] ? 'has-team-avanzado' : ''; ?>">
                                     <?php if ($partido_semi['id_local']): ?>
                                         <div class="equipo-logo-small">
@@ -286,7 +286,7 @@ if ($ganador) {
 
                                 <div class="vs-text">VS</div>
 
-                                <!-- Equipo Visitante -->
+                                
                                 <div class="matchup-team <?php echo $partido_semi['id_visitante'] ? 'has-team-avanzado' : ''; ?>">
                                     <?php if ($partido_semi['id_visitante']): ?>
                                         <div class="equipo-logo-small">
@@ -310,7 +310,7 @@ if ($ganador) {
                             </div>
                         <?php endforeach;
                     } elseif ($semis_es_fase_inicial) {
-                        // El torneo comienza desde semis pero aún no hay partidos - mostrar droppables
+                        
                         for($i = 1; $i <= 2; $i++): ?>
                             <div class="matchup" data-fase="semis" data-posicion="<?php echo $i; ?>">
                                 <div class="matchup-title">Semifinal <?php echo $i; ?></div>
@@ -343,7 +343,7 @@ if ($ganador) {
                     $partido_final = !empty($partidos_por_fase['final']) ? $partidos_por_fase['final'][0] : null;
                     $final_es_fase_inicial = ($fase_inicial == 'final');
 
-                    // Si el torneo es solo final directa y no hay partido creado, mostrar droppables
+                    
                     if (!$partido_final && $final_es_fase_inicial): ?>
                         <div class="matchup matchup-final" data-fase="final" data-posicion="1">
                             <div class="matchup-title"><i class="fas fa-crown"></i> Gran Final</div>
@@ -362,11 +362,11 @@ if ($ganador) {
                             </div>
                         </div>
                     <?php else: ?>
-                        <!-- Final con equipos avanzados o ya asignados -->
+                        
                         <div class="matchup matchup-final" data-fase="final" data-posicion="1">
                             <div class="matchup-title"><i class="fas fa-crown"></i> Gran Final</div>
 
-                            <!-- Equipo Local -->
+                            
                             <div class="matchup-team <?php echo ($partido_final && $partido_final['id_local']) ? 'has-team-avanzado' : ''; ?>">
                                 <?php if ($partido_final && $partido_final['id_local']): ?>
                                     <div class="equipo-logo-small">
@@ -390,7 +390,7 @@ if ($ganador) {
 
                             <div class="vs-text">VS</div>
 
-                            <!-- Equipo Visitante -->
+                            
                             <div class="matchup-team <?php echo ($partido_final && $partido_final['id_visitante']) ? 'has-team-avanzado' : ''; ?>">
                                 <?php if ($partido_final && $partido_final['id_visitante']): ?>
                                     <div class="equipo-logo-small">
@@ -417,7 +417,7 @@ if ($ganador) {
             </div>
             <?php endif; ?>
 
-            <!-- Sección del Campeón -->
+            
             <div class="bracket-round bracket-champion">
                 <h3><i class="fas fa-trophy"></i> Campeón</h3>
                 <div class="matchups">

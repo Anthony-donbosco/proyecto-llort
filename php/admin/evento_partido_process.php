@@ -10,7 +10,7 @@ if (!$partido_id) {
 
 
 function recalcularMarcadores($conn, $partido_id) {
-    // Obtener información del partido y deporte
+    
     $sql_partido = "SELECT p.participante_local_id, p.participante_visitante_id,
                     t.deporte_id, d.tipo_puntuacion
                     FROM partidos p
@@ -27,7 +27,7 @@ function recalcularMarcadores($conn, $partido_id) {
 
     $tipo_puntuacion = $partido['tipo_puntuacion'];
 
-    // Obtener eventos con valor de puntos
+    
     $sql_eventos = "SELECT ep.tipo_evento, ep.valor_puntos, pe.participante_id
                     FROM eventos_partido ep
                     JOIN miembros_plantel mp ON ep.miembro_plantel_id = mp.id
@@ -41,7 +41,7 @@ function recalcularMarcadores($conn, $partido_id) {
     $marcador_local = 0;
     $marcador_visitante = 0;
 
-    // Calcular marcador según tipo de puntuación
+    
     while($evento = $eventos->fetch_assoc()) {
         $tipo = $evento['tipo_evento'];
         $puntos = $evento['valor_puntos'] ?? 1;
@@ -49,7 +49,7 @@ function recalcularMarcadores($conn, $partido_id) {
 
         switch($tipo_puntuacion) {
             case 'goles':
-                // Fútbol/Fútbol Sala: contar goles
+                
                 $es_gol_valido = in_array($tipo, ['gol', 'penal_anotado']);
                 $es_autogol = ($tipo == 'autogol');
 
@@ -63,7 +63,7 @@ function recalcularMarcadores($conn, $partido_id) {
                 break;
 
             case 'puntos':
-                // Basketball/Voleibol: sumar puntos variables
+                
                 $eventos_puntos = ['canasta_1pt', 'canasta_2pt', 'canasta_3pt', 'punto', 'ace', 'bloqueo'];
 
                 if (in_array($tipo, $eventos_puntos)) {
@@ -76,7 +76,7 @@ function recalcularMarcadores($conn, $partido_id) {
                 break;
 
             case 'sets':
-                // Ping Pong/Tenis: contar sets ganados
+                
                 if ($tipo == 'set_ganado_local') {
                     $marcador_local++;
                 } elseif ($tipo == 'set_ganado_visitante') {
@@ -85,7 +85,7 @@ function recalcularMarcadores($conn, $partido_id) {
                 break;
 
             case 'ganador_directo':
-                // Ajedrez: resultado directo
+                
                 if ($tipo == 'victoria_local' || $tipo == 'jaque_mate') {
                     if ($participante == $partido['participante_local_id']) {
                         $marcador_local = 1;
@@ -111,14 +111,14 @@ function recalcularMarcadores($conn, $partido_id) {
     }
     $stmt_eventos->close();
 
-    // Actualizar marcadores
+    
     $sql_update = "UPDATE partidos SET marcador_local = ?, marcador_visitante = ? WHERE id = ?";
     $stmt_update = $conn->prepare($sql_update);
     $stmt_update->bind_param("iii", $marcador_local, $marcador_visitante, $partido_id);
     $stmt_update->execute();
     $stmt_update->close();
     
-    // Devolver los marcadores calculados
+    
     return [
         'local' => $marcador_local,
         'visitante' => $marcador_visitante
@@ -127,7 +127,7 @@ function recalcularMarcadores($conn, $partido_id) {
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'agregar_gol') {
-    // Siempre devolver JSON para POST
+    
     header('Content-Type: application/json');
 
     $jugador_id = isset($_POST['jugador_id']) ? (int)$_POST['jugador_id'] : 0;
@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $tipo_evento = isset($_POST['tipo_evento']) ? $_POST['tipo_evento'] : '';
     $valor_puntos = isset($_POST['valor_puntos']) ? (int)$_POST['valor_puntos'] : 1;
 
-    // Validaciones
+    
     if (!$jugador_id) {
         echo json_encode(['success' => false, 'error' => 'Jugador no especificado']);
         exit;
@@ -147,13 +147,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         exit;
     }
 
-    // Validar que asistencia no sea el mismo jugador
+    
     if ($asistencia_id !== NULL && $asistencia_id == $jugador_id) {
         echo json_encode(['success' => false, 'error' => 'El jugador que asiste no puede ser el mismo que anota.']);
         exit;
     }
 
-    // Validar formato de minuto
+    
     if ($minuto !== NULL && !preg_match('/^([0-9]{1,3}|[0-9]{1,3}\+[0-9]{1,2})$/', $minuto)) {
         echo json_encode(['success' => false, 'error' => 'Formato de minuto inválido. Use: 45 o 90+2']);
         exit;
@@ -177,10 +177,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
         $stmt->close();
 
-        // Los contadores se actualizan automáticamente mediante triggers
-        // trg_evento_insert se encarga de sumar goles, asistencias y porterías cero
+        
+        
 
-        // Recalcular marcadores del partido
+        
         $marcadores = recalcularMarcadores($conn, $partido_id);
 
         echo json_encode([
@@ -197,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 
-// Manejo de eliminación por POST (AJAX)
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'eliminar_gol') {
     header('Content-Type: application/json');
 
@@ -209,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 
     try {
-        // Verificar que el evento existe
+        
         $sql_get = "SELECT id FROM eventos_partido WHERE id = ?";
         $stmt_get = $conn->prepare($sql_get);
         $stmt_get->bind_param("i", $evento_id);
@@ -218,14 +218,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $stmt_get->close();
 
         if ($evento) {
-            // Eliminar el evento (los triggers se encargan de actualizar los contadores)
+            
             $sql_delete = "DELETE FROM eventos_partido WHERE id = ?";
             $stmt_delete = $conn->prepare($sql_delete);
             $stmt_delete->bind_param("i", $evento_id);
             $stmt_delete->execute();
             $stmt_delete->close();
 
-            // Recalcular marcadores del partido
+            
             $marcadores = recalcularMarcadores($conn, $partido_id);
 
             echo json_encode([
@@ -243,12 +243,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     exit;
 }
 
-// Manejo de eliminación por GET (legacy)
+
 if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['evento_id'])) {
     $evento_id = (int)$_GET['evento_id'];
 
     try {
-        // Verificar que el evento existe
+        
         $sql_get = "SELECT id FROM eventos_partido WHERE id = ?";
         $stmt_get = $conn->prepare($sql_get);
         $stmt_get->bind_param("i", $evento_id);
@@ -257,15 +257,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'eliminar_gol' && isset($_GET['
         $stmt_get->close();
 
         if ($evento) {
-            // Eliminar el evento (los triggers se encargan de actualizar los contadores)
-            // trg_evento_delete resta automáticamente goles, asistencias y porterías cero
+            
+            
             $sql_delete = "DELETE FROM eventos_partido WHERE id = ?";
             $stmt_delete = $conn->prepare($sql_delete);
             $stmt_delete->bind_param("i", $evento_id);
             $stmt_delete->execute();
             $stmt_delete->close();
 
-            // Recalcular marcadores del partido
+            
             recalcularMarcadores($conn, $partido_id);
 
             header("Location: editar_partido.php?partido_id=$partido_id&success=Evento eliminado exitosamente. Contadores actualizados.");

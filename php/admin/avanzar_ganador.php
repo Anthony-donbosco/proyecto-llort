@@ -1,14 +1,14 @@
 <?php
-/**
- * Sistema de avance automático de ganadores en brackets
- * Este archivo maneja el avance de equipos ganadores a la siguiente fase
- */
+
+
+
+
 
 require_once 'auth_admin.php';
 
 function avanzarGanadorSiguienteFase($conn, $partido_id) {
     try {
-        // Obtener información del partido finalizado
+        
         $stmt = $conn->prepare("SELECT p.*, f.tipo_fase_id, f.nombre AS nombre_fase,
                                  t.id AS torneo_id, t.nombre AS nombre_torneo
                                  FROM partidos p
@@ -24,32 +24,32 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
             return ['success' => false, 'message' => 'Partido no encontrado'];
         }
 
-        // Solo procesar partidos de playoff (tipo_fase_id: 2=cuartos, 3=semis, 4=final)
+        
         if (!in_array($partido['tipo_fase_id'], [2, 3, 4])) {
             return ['success' => true, 'message' => 'No es un partido de playoff'];
         }
 
-        // Determinar el ganador
+        
         $ganador_id = null;
         if ($partido['marcador_local'] > $partido['marcador_visitante']) {
             $ganador_id = $partido['participante_local_id'];
         } elseif ($partido['marcador_visitante'] > $partido['marcador_local']) {
             $ganador_id = $partido['participante_visitante_id'];
         } else {
-            // Empate - no avanzar por ahora
+            
             return ['success' => true, 'message' => 'Partido empatado, no se puede avanzar'];
         }
 
-        // Determinar la siguiente fase
+        
         $siguiente_fase_id = null;
         $siguiente_tipo_fase = null;
 
-        if ($partido['tipo_fase_id'] == 2) { // Cuartos -> Semis
+        if ($partido['tipo_fase_id'] == 2) { 
             $siguiente_tipo_fase = 3;
-        } elseif ($partido['tipo_fase_id'] == 3) { // Semis -> Final
+        } elseif ($partido['tipo_fase_id'] == 3) { 
             $siguiente_tipo_fase = 4;
-        } elseif ($partido['tipo_fase_id'] == 4) { // Final -> Campeón (no hay siguiente)
-            // Finalizar el torneo automáticamente
+        } elseif ($partido['tipo_fase_id'] == 4) { 
+            
             $stmt_finalizar = $conn->prepare("UPDATE torneos SET estado_id = 5 WHERE id = ?");
             $stmt_finalizar->bind_param("i", $partido['torneo_id']);
             $stmt_finalizar->execute();
@@ -58,7 +58,7 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
             return ['success' => true, 'message' => 'El partido es la final, se ha determinado el campeón. Torneo finalizado automáticamente.'];
         }
 
-        // Buscar o crear la fase siguiente
+        
         $stmt_fase = $conn->prepare("SELECT id FROM fases WHERE torneo_id = ? AND tipo_fase_id = ? LIMIT 1");
         $stmt_fase->bind_param("ii", $partido['torneo_id'], $siguiente_tipo_fase);
         $stmt_fase->execute();
@@ -68,7 +68,7 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
             $fase = $result_fase->fetch_assoc();
             $siguiente_fase_id = $fase['id'];
         } else {
-            // Crear la fase siguiente
+            
             $nombres_fase = [3 => 'Semifinales', 4 => 'Final'];
             $orden_fase = [3 => 3, 4 => 4];
 
@@ -81,13 +81,13 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
         }
         $stmt_fase->close();
 
-        // Determinar la posición del partido siguiente
-        // Los partidos de cuartos 1 y 2 van a semi 1, los partidos 3 y 4 van a semi 2
-        // Las semis 1 y 2 van a la final
+        
+        
+        
         $posicion_siguiente = determinarPosicionSiguiente($partido['id'], $partido['torneo_id'], $partido['tipo_fase_id']);
 
-        // Buscar el partido de la siguiente fase
-        // Los partidos ya deberían estar creados por playoffs_process.php
+        
+        
         $stmt_buscar = $conn->prepare("SELECT id, participante_local_id, participante_visitante_id
                                         FROM partidos
                                         WHERE torneo_id = ? AND fase_id = ?
@@ -100,7 +100,7 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
         $stmt_buscar->close();
 
         if (!$partido_siguiente) {
-            // Si no existe, crear el partido (fallback por si acaso)
+            
             $stmt_crear = $conn->prepare("INSERT INTO partidos (torneo_id, fase_id, participante_local_id, participante_visitante_id, inicio_partido, estado_id)
                                           VALUES (?, ?, NULL, NULL, DATE_ADD(NOW(), INTERVAL 7 DAY), 2)");
             $stmt_crear->bind_param("ii", $partido['torneo_id'], $siguiente_fase_id);
@@ -108,7 +108,7 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
             $partido_siguiente_id = $conn->insert_id;
             $stmt_crear->close();
 
-            // Volver a obtener el partido
+            
             $stmt_buscar2 = $conn->prepare("SELECT id, participante_local_id, participante_visitante_id FROM partidos WHERE id = ?");
             $stmt_buscar2->bind_param("i", $partido_siguiente_id);
             $stmt_buscar2->execute();
@@ -116,10 +116,10 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
             $stmt_buscar2->close();
         }
 
-        // Determinar si el ganador va como local o visitante en el siguiente partido
+        
         $es_local_siguiente = esLocalEnSiguienteFase($partido['id'], $partido['torneo_id'], $partido['tipo_fase_id']);
 
-        // Actualizar el partido con el ganador
+        
         if ($es_local_siguiente) {
             $stmt_update = $conn->prepare("UPDATE partidos SET participante_local_id = ? WHERE id = ?");
             $stmt_update->bind_param("ii", $ganador_id, $partido_siguiente['id']);
@@ -130,14 +130,14 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
         $stmt_update->execute();
         $stmt_update->close();
 
-        // Verificar que el ganador está en el partido siguiente
+        
         $stmt_verificar = $conn->prepare("SELECT participante_local_id, participante_visitante_id FROM partidos WHERE id = ?");
         $stmt_verificar->bind_param("i", $partido_siguiente['id']);
         $stmt_verificar->execute();
         $partido_actualizado = $stmt_verificar->get_result()->fetch_assoc();
         $stmt_verificar->close();
 
-        // Verificar que el ganador está asignado correctamente
+        
         $ganador_asignado = false;
         if ($es_local_siguiente && $partido_actualizado['participante_local_id'] == $ganador_id) {
             $ganador_asignado = true;
@@ -159,7 +159,7 @@ function avanzarGanadorSiguienteFase($conn, $partido_id) {
 function determinarPosicionSiguiente($partido_id, $torneo_id, $tipo_fase_actual) {
     global $conn;
 
-    // Obtener todos los partidos de la fase actual ordenados por ID
+    
     $stmt = $conn->prepare("SELECT p1.id
                             FROM partidos p1
                             JOIN fases f ON p1.fase_id = f.id
@@ -180,18 +180,18 @@ function determinarPosicionSiguiente($partido_id, $torneo_id, $tipo_fase_actual)
     }
     $stmt->close();
 
-    // Mapeo: Cuartos 1,2 -> Semi 1 | Cuartos 3,4 -> Semi 2 | Semi 1,2 -> Final 1
-    if ($tipo_fase_actual == 2) { // Cuartos
+    
+    if ($tipo_fase_actual == 2) { 
         return ($posicion_actual <= 2) ? 1 : 2;
-    } else { // Semis
-        return 1; // Siempre va a la final (posición 1)
+    } else { 
+        return 1; 
     }
 }
 
 function esLocalEnSiguienteFase($partido_id, $torneo_id, $tipo_fase_actual) {
     global $conn;
 
-    // Obtener todos los partidos de la fase actual ordenados por ID
+    
     $stmt = $conn->prepare("SELECT p1.id
                             FROM partidos p1
                             JOIN fases f ON p1.fase_id = f.id
@@ -212,11 +212,11 @@ function esLocalEnSiguienteFase($partido_id, $torneo_id, $tipo_fase_actual) {
     }
     $stmt->close();
 
-    // Cuartos 1 y 3 son locales en semis, Cuartos 2 y 4 son visitantes
-    // Semi 1 es local en final, Semi 2 es visitante
-    if ($tipo_fase_actual == 2) { // Cuartos
+    
+    
+    if ($tipo_fase_actual == 2) { 
         return ($posicion == 1 || $posicion == 3);
-    } else { // Semis
+    } else { 
         return ($posicion == 1);
     }
 }

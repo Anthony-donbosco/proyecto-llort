@@ -1,19 +1,19 @@
 <?php
-    // index.php
-    require_once 'auth_user.php'; // Asegura que el usuario esté logueado
-    require_once 'includes/header.php'; // Cabecera y navegación (ESTE YA INCLUYE db_connect.php)
-    // require_once 'php/db_connect.php'; // <-- REMOVE THIS LINE
+    
+    require_once '../auth_user.php'; 
+    require_once '../includes/header.php'; 
+    
 
-    // --- 1. Obtener Datos ---
-    // Make sure $conn variable is available because header.php included db_connect.php
+    
+    
     if (!isset($conn) || !$conn) {
-        // Fallback in case header didn't connect properly, though it should handle errors.
-        // Log this error properly in a real application.
+        
+        
         die("Error crítico: No se pudo establecer la conexión a la base de datos a través del header.");
     }
 
 
-    // a) Torneos Recientes (Activos primero, luego por fecha) - Limitar a 4
+    
     $sql_torneos = "SELECT t.id, t.nombre, d.nombre_mostrado as deporte, t.fecha_inicio, e.codigo as estado_codigo
                     FROM torneos t
                     JOIN deportes d ON t.deporte_id = d.id
@@ -21,13 +21,13 @@
                     ORDER BY FIELD(e.codigo, 'active', 'registration', 'draft', 'paused', 'closed', 'cancelled'), t.fecha_inicio DESC
                     LIMIT 4";
     $torneos_res = $conn->query($sql_torneos);
-    // Check for query errors
+    
     if (!$torneos_res) {
         die("Error en consulta de torneos: " . $conn->error);
     }
     $torneos = $torneos_res->fetch_all(MYSQLI_ASSOC);
 
-    // b) Jugadores Destacados (Los 3 primeros por orden)
+    
     $sql_destacados = "SELECT jd.*, m.nombre_jugador, m.posicion, m.url_foto,
                     COALESCE(t.nombre, temp.nombre, d.nombre_mostrado) AS contexto
                     FROM jugadores_destacados jd
@@ -44,12 +44,12 @@
     }
     $destacados = $destacados_res->fetch_all(MYSQLI_ASSOC);
 
-    // c) Noticias Recientes (La más reciente destacada para "Hero", las siguientes 3 normales)
+    
     $sql_noticias = "SELECT n.id, n.titulo, n.subtitulo, n.imagen_portada, n.fecha_publicacion, n.destacada
                     FROM noticias n
                     WHERE n.publicada = 1
                     ORDER BY n.destacada DESC, n.fecha_publicacion DESC
-                    LIMIT 4"; // Trae 4, la primera puede ser para el "hero" si es destacada
+                    LIMIT 4"; 
     $noticias_res = $conn->query($sql_noticias);
     if (!$noticias_res) {
         die("Error en consulta de noticias: " . $conn->error);
@@ -59,15 +59,15 @@
     $noticias_recientes = [];
     if (!empty($noticias)) {
         if ($noticias[0]['destacada']) {
-            $noticia_hero = array_shift($noticias); // Saca la primera si es destacada
-            $noticias_recientes = $noticias; // El resto son recientes
+            $noticia_hero = array_shift($noticias); 
+            $noticias_recientes = $noticias; 
         } else {
-            $noticias_recientes = $noticias; // Todas son recientes si la primera no es destacada
+            $noticias_recientes = $noticias; 
         }
     }
 
 
-    // d) Galería (6 fotos aleatorias activas)
+    
     $sql_galeria = "SELECT url_foto, titulo FROM galeria_temporadas WHERE esta_activa = 1 ORDER BY RAND() LIMIT 6";
     $galeria_res = $conn->query($sql_galeria);
     if (!$galeria_res) {
@@ -75,11 +75,11 @@
     }
     $galeria_fotos = $galeria_res->fetch_all(MYSQLI_ASSOC);
 
-    // e) Misión y Visión (Textos generados)
+    
     $mision = "Fomentar la participación activa de todos los estudiantes en eventos deportivos inclusivos, desarrollando habilidades físicas, mentales y sociales a través del deporte, mientras fortalecemos el espíritu de comunidad y compañerismo en el Colegio Fernando Llort Choussy.";
     $vision = "Ser un referente en la formación integral de estudiantes-atletas, promoviendo valores deportivos de excelencia, trabajo en equipo y disciplina que trasciendan más allá de las canchas, preparando líderes para el futuro.";
 
-    // Establecer título de la página
+    
     echo "<script>document.title = 'Inicio - Portal Deportivo CFLC';</script>";
 ?>
 
@@ -236,14 +236,14 @@
 
 </div>
 <?php
-// Cerrar resultados
+
 if (isset($torneos_res) && $torneos_res) $torneos_res->close();
 if (isset($destacados_res) && $destacados_res) $destacados_res->close();
 if (isset($noticias_res) && $noticias_res) $noticias_res->close();
 if (isset($galeria_res) && $galeria_res) $galeria_res->close();
 
-// Cerrar conexión (si db_connect no lo hace automáticamente al final del script)
-// if (isset($conn) && $conn) $conn->close(); // Ya se cierra en footer.php
 
-require_once 'includes/footer.php'; // Pie de página
+
+
+require_once '../includes/footer.php'; 
 ?>

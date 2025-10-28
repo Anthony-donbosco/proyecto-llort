@@ -96,7 +96,7 @@ $deportes = $conn->query($deportes_sql);
         <div class="alert alert-error"><?php echo htmlspecialchars($_GET['error']); ?></div>
     <?php endif; ?>
 
-    <!-- Sección de MVP y Goleadores del Torneo -->
+    
     <div class="mvp-torneo-section">
         <h2><i class="fas fa-trophy"></i> MVP y Goleadores de Torneos</h2>
 
