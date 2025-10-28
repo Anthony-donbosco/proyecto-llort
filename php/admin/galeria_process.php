@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $esta_activa = isset($_POST['esta_activa']) ? 1 : 0;
 
     // --- Directorio de subida ---
-    $upload_dir = '../../img/galeria/';
+    $upload_dir = '../img/galeria/';
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }

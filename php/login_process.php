@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['rol_id'] == 1) { 
                 header("Location: admin/dashboard.php");
             } else {
-                header("Location: ../login.php?error=Rol de usuario aún no implementado."); 
+                header("Location: index.php");
             }
             exit;
 

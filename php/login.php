@@ -2,7 +2,15 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
+if (!empty($_SESSION['user_id'])) {
+    // Redirigir admin al dashboard, usuario normal al index
+    if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1) {
+         header("Location: php/admin/dashboard.php");
+    } else {
+         header("Location: index.php"); // Redirige usuario normal al index
+    }
+    exit;
+}
 if (!empty($_SESSION['user_id'])) {
     if ($_SESSION['role_id'] == 1) {
         header("Location: admin/dashboard.php");
