@@ -91,7 +91,7 @@ $deportes = $conn->query($deportes_sql);
 
             <div class="form-group">
                 <label for="titulo">Título de la Foto: *</label>
-                <input type="text" name="titulo" id="titulo" value="<?php echo htmlspecialchars($foto['titulo']); ?>" required placeholder="Ej: Selección de Fútbol 2024">
+                <input type="text" name="titulo" id="titulo" value="<?php echo htmlspecialchars($foto['titulo']); ?>"  placeholder="Ej: Selección de Fútbol 2024">
             </div>
 
             <div class="form-group">
@@ -100,10 +100,21 @@ $deportes = $conn->query($deportes_sql);
             </div>
 
             <div class="form-group">
-                <label for="foto">Foto: <?php echo $is_edit ? '' : '*'; ?></label>
-                <input type="file" name="foto" id="foto" class="form-input-file" accept="image/png, image/jpeg, image/webp" <?php echo $is_edit ? '' : 'required'; ?>>
-                <div class="form-image-preview">
-                    <img src="<?php echo $foto_preview; ?>" alt="Preview" id="foto-preview-img">
+                <label for="foto">Foto(s): <?php echo $is_edit ? '' : '*'; ?></label>
+                
+                <?php if ($is_edit): ?>
+                    <input type="file" name="foto" id="foto" class="form-input-file" accept="image/png, image/jpeg, image/webp">
+                <?php else: ?>
+                    <input type="file" name="fotos[]" id="foto" class="form-input-file" accept="image/png, image/jpeg, image/webp" required multiple>
+                    <small>Puedes seleccionar múltiples fotos (máx. 50).</small>
+                <?php endif; ?>
+
+                <div class="form-image-preview" id="preview-container">
+                    <?php if ($is_edit): ?>
+                        <img src="<?php echo $foto_preview; ?>" alt="Preview" id="foto-preview-img">
+                    <?php else: ?>
+                        <small>Vista previa de las fotos seleccionadas:</small>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -147,12 +158,62 @@ $deportes = $conn->query($deportes_sql);
 
 <script>
 document.getElementById('foto').addEventListener('change', function(event) {
-    if (event.target.files && event.target.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('foto-preview-img').src = e.target.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
+    const files = event.target.files;
+    const isMultiple = event.target.multiple; // Verifica si el input es múltiple
+
+    if (!files || files.length === 0) {
+        return;
+    }
+
+    if (isMultiple) {
+        // --- MODO CREACIÓN (MÚLTIPLE) ---
+        const previewContainer = document.getElementById('preview-container');
+        // Limpia vistas previas anteriores
+        previewContainer.innerHTML = '<small>Vista previa de las fotos seleccionadas:</small>'; 
+
+        // Limita la vista previa a 50 fotos por rendimiento
+        const fileCount = Math.min(files.length, 50); 
+        
+        for (let i = 0; i < fileCount; i++) {
+            const file = files[i];
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Crea un elemento <img> para cada foto
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Preview ' + (i + 1);
+                    // Añade algo de estilo a las miniaturas
+                    img.style.width = '100px'; 
+                    img.style.height = '100px';
+                    img.style.objectFit = 'cover';
+                    img.style.margin = '5px';
+                    img.style.border = '1px solid #ddd';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        if (files.length > 50) {
+            // Advierte al usuario si seleccionó demasiadas
+            const warning = document.createElement('p');
+            warning.textContent = `Advertencia: Seleccionaste ${files.length} fotos. Solo se procesarán las primeras 50.`;
+            warning.style.color = 'red';
+            warning.style.fontWeight = 'bold';
+            previewContainer.appendChild(warning);
+        }
+
+    } else {
+        // --- MODO EDICIÓN (SIMPLE) ---
+        const file = files[0]; // Solo toma el primer archivo
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('foto-preview-img').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 });
 </script>
