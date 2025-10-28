@@ -2,46 +2,99 @@
 require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
-if (!isset($_GET['jornada_id'])) {
-    header("Location: gestionar_torneos.php?error=ID de jornada no especificado.");
+// Determinar si viene de jornada o de torneo (bracket)
+$jornada_id = isset($_GET['jornada_id']) ? (int)$_GET['jornada_id'] : null;
+$torneo_id = isset($_GET['torneo_id']) ? (int)$_GET['torneo_id'] : null;
+
+if (!$jornada_id && !$torneo_id) {
+    header("Location: gestionar_torneos.php?error=ID de jornada o torneo no especificado.");
     exit;
 }
 
-$jornada_id = (int)$_GET['jornada_id'];
+// Si viene de jornada (torneo tipo liga)
+if ($jornada_id) {
+    $stmt_jornada = $conn->prepare("SELECT j.*, f.torneo_id, t.nombre AS nombre_torneo, t.tipo_torneo
+                                     FROM jornadas j
+                                     JOIN fases f ON j.fase_id = f.id
+                                     JOIN torneos t ON f.torneo_id = t.id
+                                     WHERE j.id = ?");
+    $stmt_jornada->bind_param("i", $jornada_id);
+    $stmt_jornada->execute();
+    $jornada = $stmt_jornada->get_result()->fetch_assoc();
 
+    if (!$jornada) {
+        header("Location: gestionar_torneos.php?error=Jornada no encontrada.");
+        exit;
+    }
 
-$stmt_jornada = $conn->prepare("SELECT j.*, f.torneo_id, t.nombre AS nombre_torneo
-                                 FROM jornadas j
-                                 JOIN fases f ON j.fase_id = f.id
-                                 JOIN torneos t ON f.torneo_id = t.id
-                                 WHERE j.id = ?");
-$stmt_jornada->bind_param("i", $jornada_id);
-$stmt_jornada->execute();
-$jornada = $stmt_jornada->get_result()->fetch_assoc();
+    $torneo_id = $jornada['torneo_id'];
 
-if (!$jornada) {
-    header("Location: gestionar_torneos.php?error=Jornada no encontrada.");
-    exit;
+    // Obtener partidos de la jornada específica
+    $sql_partidos = "SELECT p.*,
+                     pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
+                     pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
+                     ep.nombre_mostrado AS estado,
+                     f.nombre AS nombre_fase
+                     FROM partidos p
+                     JOIN participantes pl ON p.participante_local_id = pl.id
+                     JOIN participantes pv ON p.participante_visitante_id = pv.id
+                     JOIN estados_partido ep ON p.estado_id = ep.id
+                     LEFT JOIN fases f ON p.fase_id = f.id
+                     WHERE p.jornada_id = ?
+                     ORDER BY p.inicio_partido";
+
+    $stmt_partidos = $conn->prepare($sql_partidos);
+    $stmt_partidos->bind_param("i", $jornada_id);
+    $stmt_partidos->execute();
+    $partidos = $stmt_partidos->get_result();
+
+    $es_bracket = false;
+    $stmt_jornada->close();
+
+} else {
+    // Si viene de torneo (bracket/playoffs)
+    $stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte
+                                    FROM torneos t
+                                    JOIN deportes d ON t.deporte_id = d.id
+                                    WHERE t.id = ?");
+    $stmt_torneo->bind_param("i", $torneo_id);
+    $stmt_torneo->execute();
+    $torneo = $stmt_torneo->get_result()->fetch_assoc();
+
+    if (!$torneo) {
+        header("Location: gestionar_torneos.php?error=Torneo no encontrado.");
+        exit;
+    }
+
+    // Crear un objeto jornada temporal para mantener compatibilidad con el código existente
+    $jornada = [
+        'nombre' => 'Partidos de Playoffs - ' . $torneo['nombre'],
+        'nombre_torneo' => $torneo['nombre'],
+        'fecha_jornada' => date('Y-m-d')
+    ];
+
+    // Obtener todos los partidos de playoff del torneo (fases 2,3,4 = cuartos, semis, final)
+    $sql_partidos = "SELECT p.*,
+                     pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
+                     pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
+                     ep.nombre_mostrado AS estado,
+                     f.nombre AS nombre_fase
+                     FROM partidos p
+                     LEFT JOIN participantes pl ON p.participante_local_id = pl.id
+                     LEFT JOIN participantes pv ON p.participante_visitante_id = pv.id
+                     JOIN estados_partido ep ON p.estado_id = ep.id
+                     LEFT JOIN fases f ON p.fase_id = f.id
+                     WHERE p.torneo_id = ? AND f.tipo_fase_id IN (2, 3, 4)
+                     ORDER BY f.tipo_fase_id ASC, p.inicio_partido";
+
+    $stmt_partidos = $conn->prepare($sql_partidos);
+    $stmt_partidos->bind_param("i", $torneo_id);
+    $stmt_partidos->execute();
+    $partidos = $stmt_partidos->get_result();
+
+    $es_bracket = true;
+    $stmt_torneo->close();
 }
-
-$torneo_id = $jornada['torneo_id'];
-
-
-$sql_partidos = "SELECT p.*,
-                 pl.nombre_mostrado AS equipo_local, pl.nombre_corto AS local_corto, pl.url_logo AS logo_local,
-                 pv.nombre_mostrado AS equipo_visitante, pv.nombre_corto AS visitante_corto, pv.url_logo AS logo_visitante,
-                 ep.nombre_mostrado AS estado
-                 FROM partidos p
-                 JOIN participantes pl ON p.participante_local_id = pl.id
-                 JOIN participantes pv ON p.participante_visitante_id = pv.id
-                 JOIN estados_partido ep ON p.estado_id = ep.id
-                 WHERE p.jornada_id = ?
-                 ORDER BY p.inicio_partido";
-
-$stmt_partidos = $conn->prepare($sql_partidos);
-$stmt_partidos->bind_param("i", $jornada_id);
-$stmt_partidos->execute();
-$partidos = $stmt_partidos->get_result();
 
 ?>
 
@@ -54,21 +107,35 @@ $partidos = $stmt_partidos->get_result();
             </small>
         </h1>
         <div>
-            <a href="gestionar_jornadas.php?torneo_id=<?php echo $torneo_id; ?>" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver a Jornadas
-            </a>
+            <?php if ($es_bracket): ?>
+                <a href="gestionar_torneos.php" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a Torneos
+                </a>
+            <?php else: ?>
+                <a href="gestionar_jornadas.php?torneo_id=<?php echo $torneo_id; ?>" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a Jornadas
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 
     <div class="jornada-info-card">
-        <div class="info-item">
-            <i class="fas fa-calendar"></i>
-            <span><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($jornada['fecha_jornada'])); ?></span>
-        </div>
+        <?php if (!$es_bracket): ?>
+            <div class="info-item">
+                <i class="fas fa-calendar"></i>
+                <span><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($jornada['fecha_jornada'])); ?></span>
+            </div>
+        <?php endif; ?>
         <div class="info-item">
             <i class="fas fa-futbol"></i>
             <span><strong>Partidos:</strong> <?php echo $partidos->num_rows; ?></span>
         </div>
+        <?php if ($es_bracket): ?>
+            <div class="info-item">
+                <i class="fas fa-trophy"></i>
+                <span><strong>Tipo:</strong> Playoffs/Bracket</span>
+            </div>
+        <?php endif; ?>
     </div>
 
     <?php if (isset($_GET['success'])): ?>
@@ -83,7 +150,16 @@ $partidos = $stmt_partidos->get_result();
             <?php while($partido = $partidos->fetch_assoc()): ?>
                 <div class="partido-card">
                     <div class="partido-header">
-                        <span class="partido-fecha"><?php echo date('H:i', strtotime($partido['inicio_partido'])); ?></span>
+                        <div class="partido-header-left">
+                            <?php if ($es_bracket && !empty($partido['nombre_fase'])): ?>
+                                <span class="partido-fase">
+                                    <i class="fas fa-trophy"></i> <?php echo htmlspecialchars($partido['nombre_fase']); ?>
+                                </span>
+                            <?php endif; ?>
+                            <span class="partido-fecha">
+                                <?php echo $partido['inicio_partido'] ? date('d/m/Y H:i', strtotime($partido['inicio_partido'])) : 'Sin fecha'; ?>
+                            </span>
+                        </div>
                         <span class="badge <?php echo getBadgeClass($partido['estado_id']); ?>">
                             <?php echo htmlspecialchars($partido['estado']); ?>
                         </span>
@@ -92,15 +168,20 @@ $partidos = $stmt_partidos->get_result();
                     <div class="partido-body">
                         <div class="equipo">
                             <div class="equipo-logo">
-                                <?php if ($partido['logo_local']): ?>
+                                <?php if ($partido['equipo_local'] && $partido['logo_local']): ?>
                                     <img src="<?php echo htmlspecialchars($partido['logo_local']); ?>" alt="Logo">
                                 <?php else: ?>
-                                    <i class="fas fa-shield-alt"></i>
+                                    <i class="fas fa-<?php echo $partido['equipo_local'] ? 'shield-alt' : 'question-circle'; ?>"></i>
                                 <?php endif; ?>
                             </div>
                             <div class="equipo-nombre">
-                                <strong><?php echo htmlspecialchars($partido['equipo_local']); ?></strong>
-                                <small><?php echo htmlspecialchars($partido['local_corto']); ?></small>
+                                <?php if ($partido['equipo_local']): ?>
+                                    <strong><?php echo htmlspecialchars($partido['equipo_local']); ?></strong>
+                                    <small><?php echo htmlspecialchars($partido['local_corto']); ?></small>
+                                <?php else: ?>
+                                    <strong style="color: #999;">Por definir</strong>
+                                    <small style="color: #999;">Pendiente</small>
+                                <?php endif; ?>
                             </div>
                             <div class="marcador">
                                 <?php echo $partido['marcador_local'] ?? '-'; ?>
@@ -111,15 +192,20 @@ $partidos = $stmt_partidos->get_result();
 
                         <div class="equipo">
                             <div class="equipo-logo">
-                                <?php if ($partido['logo_visitante']): ?>
+                                <?php if ($partido['equipo_visitante'] && $partido['logo_visitante']): ?>
                                     <img src="<?php echo htmlspecialchars($partido['logo_visitante']); ?>" alt="Logo">
                                 <?php else: ?>
-                                    <i class="fas fa-shield-alt"></i>
+                                    <i class="fas fa-<?php echo $partido['equipo_visitante'] ? 'shield-alt' : 'question-circle'; ?>"></i>
                                 <?php endif; ?>
                             </div>
                             <div class="equipo-nombre">
-                                <strong><?php echo htmlspecialchars($partido['equipo_visitante']); ?></strong>
-                                <small><?php echo htmlspecialchars($partido['visitante_corto']); ?></small>
+                                <?php if ($partido['equipo_visitante']): ?>
+                                    <strong><?php echo htmlspecialchars($partido['equipo_visitante']); ?></strong>
+                                    <small><?php echo htmlspecialchars($partido['visitante_corto']); ?></small>
+                                <?php else: ?>
+                                    <strong style="color: #999;">Por definir</strong>
+                                    <small style="color: #999;">Pendiente</small>
+                                <?php endif; ?>
                             </div>
                             <div class="marcador">
                                 <?php echo $partido['marcador_visitante'] ?? '-'; ?>
@@ -128,9 +214,15 @@ $partidos = $stmt_partidos->get_result();
                     </div>
 
                     <div class="partido-footer">
-                        <a href="editar_partido.php?partido_id=<?php echo $partido['id']; ?>" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-edit"></i> Editar Resultado
-                        </a>
+                        <?php if ($partido['equipo_local'] && $partido['equipo_visitante']): ?>
+                            <a href="editar_partido.php?partido_id=<?php echo $partido['id']; ?>" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-edit"></i> Editar Resultado
+                            </a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                <i class="fas fa-lock"></i> Equipos por definir
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -192,9 +284,32 @@ $partidos = $stmt_partidos->get_result();
     border-bottom: 2px solid #dee2e6;
 }
 
+.partido-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.partido-fase {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #1a237e 0%, #303f9f 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.partido-fase i {
+    font-size: 0.8rem;
+}
+
 .partido-fecha {
     font-weight: 600;
     color: #495057;
+    font-size: 0.9rem;
 }
 
 .partido-body {
@@ -309,7 +424,6 @@ function getBadgeClass($estado_id) {
     }
 }
 
-$stmt_jornada->close();
 $stmt_partidos->close();
 require_once 'admin_footer.php';
 ?>

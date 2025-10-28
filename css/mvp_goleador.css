@@ -1,0 +1,318 @@
+/* Estilos para página de MVP y Goleador del Torneo */
+
+.mvp-section, .goleador-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.mvp-section h2, .goleador-section h2 {
+    margin: 0 0 1.5rem 0;
+    color: #1a237e;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+}
+
+.mvp-container, .goleador-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+}
+
+/* MVP Actual */
+.mvp-actual-display, .goleador-actual-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
+    text-align: center;
+    max-width: 500px;
+}
+
+.mvp-badge-large, .goleador-badge-large {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #ffd700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.mvp-foto, .goleador-foto {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mvp-foto img, .goleador-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mvp-foto i, .goleador-foto i {
+    font-size: 4rem;
+    color: #ccc;
+}
+
+.mvp-info-large, .goleador-info-large {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mvp-numero, .goleador-numero {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.mvp-info-large h3, .goleador-info-large h3 {
+    font-size: 1.75rem;
+    margin: 0;
+    color: #333;
+}
+
+.mvp-equipo, .goleador-equipo {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0;
+    font-weight: 600;
+}
+
+.mvp-posicion {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+}
+
+.goleador-goles {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
+
+.goleador-goles strong {
+    color: #d32f2f;
+    font-size: 2rem;
+}
+
+/* MVP/Goleador Vacío */
+.mvp-vacio-display, .goleador-vacio-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #999;
+    text-align: center;
+}
+
+.mvp-vacio-display i, .goleador-vacio-display i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+}
+
+.mvp-vacio-display p, .goleador-vacio-display p {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.1rem;
+}
+
+/* Top Goleadores Sugerencias */
+.top-goleadores-sugerencias {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.top-goleadores-sugerencias h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.top-goleadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.top-goleador-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+}
+
+.top-goleador-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.goleador-foto-small {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.goleador-foto-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.goleador-foto-small i {
+    font-size: 2rem;
+    color: #ccc;
+}
+
+.goleador-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.goleador-datos strong {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.goleador-datos small {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.goles-badge {
+    background: #d32f2f;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    background: #1a237e;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    transform: scale(1.2);
+}
+
+.modal-content form {
+    padding: 1.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.modal-actions .btn {
+    flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mvp-actual-display, .goleador-actual-display {
+        padding: 1.5rem;
+    }
+
+    .mvp-foto, .goleador-foto {
+        width: 120px;
+        height: 120px;
+    }
+
+    .top-goleadores-grid {
+        grid-template-columns: 1fr;
+    }
+}

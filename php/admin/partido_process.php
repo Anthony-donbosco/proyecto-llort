@@ -8,9 +8,16 @@ if (!isset($_POST['action']) || !isset($_POST['partido_id'])) {
 
 $action = $_POST['action'];
 $partido_id = (int)$_POST['partido_id'];
-$jornada_id = (int)$_POST['jornada_id'];
+$jornada_id = isset($_POST['jornada_id']) ? (int)$_POST['jornada_id'] : null;
+$torneo_id = isset($_POST['torneo_id']) ? (int)$_POST['torneo_id'] : null;
+$es_bracket = isset($_POST['es_bracket']) && $_POST['es_bracket'] == '1';
 
 $redirect_url = "editar_partido.php?partido_id=$partido_id";
+
+// URL para volver a la lista de partidos
+$redirect_partidos = $es_bracket
+    ? "gestionar_partidos.php?torneo_id=$torneo_id"
+    : "gestionar_partidos.php?jornada_id=$jornada_id";
 
 if ($action == 'editar') {
     try {
@@ -26,25 +33,42 @@ if ($action == 'editar') {
         $estado_id = (int)$_POST['estado_id'];
         $inicio_partido = $_POST['inicio_partido'];
         $notas = isset($_POST['notas']) ? trim($_POST['notas']) : null;
+        $jugador_local_id = !empty($_POST['jugador_local_id']) ? (int)$_POST['jugador_local_id'] : NULL;
+        $jugador_visitante_id = !empty($_POST['jugador_visitante_id']) ? (int)$_POST['jugador_visitante_id'] : NULL;
+        // Permitir 0 como valor válido para empate/tablas en ajedrez
+        $ganador_individual_id = (isset($_POST['ganador_individual_id']) && $_POST['ganador_individual_id'] !== '') ? (int)$_POST['ganador_individual_id'] : NULL;
 
-        
+
+
         if ($marcador_local < 0 || $marcador_visitante < 0) {
             header("Location: $redirect_url&error=Los marcadores no pueden ser negativos.");
             exit;
         }
 
-        
+        // Construir SQL dinámicamente
         $sql = "UPDATE partidos SET
-                marcador_local = ?,
-                marcador_visitante = ?,
-                estado_id = ?,
-                inicio_partido = ?,
-                notas = ?";
+            marcador_local = ?,
+            marcador_visitante = ?,
+            estado_id = ?,
+            inicio_partido = ?,
+            notas = ?,
+            jugador_local_id = ?,
+            jugador_visitante_id = ?,
+            ganador_individual_id = ?";
 
-        $params = [$marcador_local, $marcador_visitante, $estado_id, $inicio_partido, $notas];
-        $types = "iiiss";
+        $params = [
+            $marcador_local,
+            $marcador_visitante,
+            $estado_id,
+            $inicio_partido,
+            $notas,
+            $jugador_local_id,
+            $jugador_visitante_id,
+            $ganador_individual_id
+        ];
+        $types = "iiissiii";
 
-        
+        // Agregar sets si están presentes
         if (isset($_POST['marcador_local_sets']) && isset($_POST['marcador_visitante_sets'])) {
             $marcador_local_sets = (int)$_POST['marcador_local_sets'];
             $marcador_visitante_sets = (int)$_POST['marcador_visitante_sets'];
@@ -64,14 +88,32 @@ if ($action == 'editar') {
         $params[] = $partido_id;
         $types .= "i";
 
-        
+        // Preparar y ejecutar
         $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            header("Location: $redirect_url&error=Error al preparar consulta: " . $conn->error);
+            exit;
+        }
+
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
 
         if ($stmt->affected_rows >= 0) {
             $stmt->close();
-            header("Location: gestionar_partidos.php?jornada_id=$jornada_id&success=Partido actualizado exitosamente.");
+
+            // Si el partido se marca como "Finalizado" (estado_id = 5), avanzar ganador automáticamente
+            if ($estado_id == 5) {
+                require_once 'avanzar_ganador.php';
+                $resultado_avance = avanzarGanadorSiguienteFase($conn, $partido_id);
+
+                if ($resultado_avance['success']) {
+                    header("Location: $redirect_partidos&success=Partido actualizado exitosamente. " . $resultado_avance['message']);
+                } else {
+                    header("Location: $redirect_partidos&success=Partido actualizado, pero: " . $resultado_avance['message']);
+                }
+            } else {
+                header("Location: $redirect_partidos&success=Partido actualizado exitosamente.");
+            }
         } else {
             $stmt->close();
             header("Location: $redirect_url&error=No se realizaron cambios.");
@@ -83,7 +125,7 @@ if ($action == 'editar') {
 
 } elseif ($action == 'seleccionar_mvp') {
     try {
-        
+
         if (!isset($_POST['mvp_jugador_id']) || empty($_POST['mvp_jugador_id'])) {
             header("Location: $redirect_url&error=Debe seleccionar un jugador para MVP.");
             exit;
@@ -91,18 +133,37 @@ if ($action == 'editar') {
 
         $mvp_jugador_id = (int)$_POST['mvp_jugador_id'];
 
-        
+        // Obtener el MVP anterior (si existe)
+        $stmt_anterior = $conn->prepare("SELECT mvp_miembro_plantel_id FROM partidos WHERE id = ?");
+        $stmt_anterior->bind_param("i", $partido_id);
+        $stmt_anterior->execute();
+        $resultado = $stmt_anterior->get_result()->fetch_assoc();
+        $mvp_anterior_id = $resultado['mvp_miembro_plantel_id'];
+        $stmt_anterior->close();
+
+        // Si hay un MVP anterior y es diferente al nuevo, restar su contador
+        if ($mvp_anterior_id && $mvp_anterior_id != $mvp_jugador_id) {
+            $stmt_restar = $conn->prepare("UPDATE miembros_plantel SET mvps = GREATEST(mvps - 1, 0) WHERE id = ?");
+            $stmt_restar->bind_param("i", $mvp_anterior_id);
+            $stmt_restar->execute();
+            $stmt_restar->close();
+        }
+
+        // Actualizar el partido con el nuevo MVP
         $stmt = $conn->prepare("UPDATE partidos SET mvp_miembro_plantel_id = ? WHERE id = ?");
         $stmt->bind_param("ii", $mvp_jugador_id, $partido_id);
         $stmt->execute();
+        $stmt->close();
 
-        if ($stmt->affected_rows >= 0) {
-            $stmt->close();
-            header("Location: $redirect_url&success=MVP seleccionado exitosamente.");
-        } else {
-            $stmt->close();
-            header("Location: $redirect_url&error=No se pudo seleccionar el MVP.");
+        // Si el nuevo MVP es diferente al anterior, sumar su contador
+        if ($mvp_jugador_id != $mvp_anterior_id) {
+            $stmt_sumar = $conn->prepare("UPDATE miembros_plantel SET mvps = mvps + 1 WHERE id = ?");
+            $stmt_sumar->bind_param("i", $mvp_jugador_id);
+            $stmt_sumar->execute();
+            $stmt_sumar->close();
         }
+
+        header("Location: $redirect_url&success=MVP seleccionado exitosamente. Contadores actualizados.");
 
     } catch (Exception $e) {
         header("Location: $redirect_url&error=Error al seleccionar MVP: " . $e->getMessage());

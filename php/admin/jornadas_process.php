@@ -21,6 +21,12 @@ if ($action == 'generar') {
         exit;
     }
 
+    // Prevenir generación de jornadas en torneos tipo bracket
+    if ($torneo['tipo_torneo'] == 'bracket') {
+        header("Location: asignar_llaves.php?torneo_id=$torneo_id&error=No se pueden generar jornadas en torneos tipo Bracket.");
+        exit;
+    }
+
     
     $stmt_equipos = $conn->prepare("SELECT participante_id FROM torneo_participantes WHERE torneo_id = ? ORDER BY semilla, participante_id");
     $stmt_equipos->bind_param("i", $torneo_id);

@@ -183,7 +183,7 @@ usort($tabla, function($a, $b) {
                             $clase_posicion = 'lider';
                         }
                     ?>
-                        <tr class="<?php echo $clase_posicion; ?>">
+                        <tr class="clickable-row <?php echo $clase_posicion; ?>" data-equipo-id="<?php echo $equipo['id']; ?>">
                             <td class="pos-col">
                                 <span class="posicion-num"><?php echo $posicion; ?></span>
                             </td>
@@ -234,8 +234,21 @@ usort($tabla, function($a, $b) {
             </div>
         </div>
     <?php endif; ?>
+    
 </main>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.tabla-posiciones tbody tr.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            const equipoId = this.dataset.equipoId; // Get ID from data attribute
+            if (equipoId) {
+                window.location.href = `ver_plantel.php?equipo_id=${equipoId}`;
+            }
+        });
+    });
+});
+</script>
 <style>
 .torneo-info-card {
     background: white;
@@ -475,6 +488,11 @@ usort($tabla, function($a, $b) {
     .tabla-posiciones td {
         padding: 0.5rem 0.25rem;
     }
+}
+.clickable-row:hover {
+    cursor: pointer;
+    background-color: #f0f0f0 !important; /* Use !important to override other background styles if necessary */
+    transition: background-color 0.2s ease-in-out;
 }
 </style>
 

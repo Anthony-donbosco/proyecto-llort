@@ -1,0 +1,196 @@
+.inscripcion-info {
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info-card h3 {
+    margin: 0 0 1rem 0;
+    color: #1a237e;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.info-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-grid .label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.info-grid .value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #1a237e;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.inscripcion-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.equipos-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.equipos-section h2 {
+    margin: 0 0 1.5rem 0;
+    color: #1a237e;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.equipos-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.equipo-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.equipo-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.equipo-logo {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.equipo-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.equipo-logo i {
+    font-size: 2rem;
+    color: #999;
+}
+
+.equipo-info {
+    flex: 1;
+}
+
+.equipo-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.equipo-corto {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.equipo-actions {
+    flex-shrink: 0;
+}
+
+.equipos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.equipo-inscrito {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #f9f9f9;
+}
+
+.equipo-logo-small {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.equipo-logo-small img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.equipo-logo-small i {
+    font-size: 1.5rem;
+    color: #999;
+}
+
+.equipo-nombre {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.equipo-nombre strong {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.equipo-nombre small {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.equipo-acciones {
+    flex-shrink: 0;
+}
+
+@media (max-width: 968px) {
+    .inscripcion-container {
+        grid-template-columns: 1fr;
+    }
+}

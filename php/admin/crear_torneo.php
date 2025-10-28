@@ -12,7 +12,10 @@ $torneo = [
     'fecha_inicio' => '',
     'fecha_fin' => '',
     'max_participantes' => 16,
-    'estado_id' => 1
+    'estado_id' => 1,
+    'tipo_torneo' => 'liga',
+    'fase_actual' => 'liga',
+    'ida_y_vuelta' => 0
 ];
 
 if (isset($_GET['edit_id'])) {
@@ -103,11 +106,11 @@ $estados = $conn->query("SELECT id, nombre_mostrado FROM estados_torneo ORDER BY
             <div class="form-row">
                 <div class="form-group">
                     <label for="tipo_torneo">Tipo de Torneo:</label>
-                    <select id="tipo_torneo" name="tipo_torneo" required>
-                        <option value="liga" <?php echo ($torneo['tipo_torneo'] == 'liga') ? 'selected' : ''; ?>>Liga (Inicia como liga)</option>
-                        <option value="bracket" <?php echo ($torneo['tipo_torneo'] == 'bracket') ? 'selected' : ''; ?>>Bracket (Inicia en eliminatoria)</option>
+                    <select id="tipo_torneo" name="tipo_torneo" required onchange="actualizarFaseInicial()">
+                        <option value="liga" <?php echo ($torneo['tipo_torneo'] == 'liga') ? 'selected' : ''; ?>>Liga (Todos contra todos + Playoffs)</option>
+                        <option value="bracket" <?php echo ($torneo['tipo_torneo'] == 'bracket') ? 'selected' : ''; ?>>Bracket (Solo Eliminatorias)</option>
                     </select>
-                    <small>Ajedrez debe ser 'Bracket'. Fútbol/Baloncesto deben ser 'Liga'.</small>
+                    <small>Liga: Genera jornadas de todos contra todos, luego playoffs. Bracket: Solo eliminatorias directas.</small>
                 </div>
                 <div class="form-group">
                     <label for="fase_actual">Fase Inicial:</label>
@@ -117,15 +120,16 @@ $estados = $conn->query("SELECT id, nombre_mostrado FROM estados_torneo ORDER BY
                         <option value="semis" <?php echo ($torneo['fase_actual'] == 'semis') ? 'selected' : ''; ?>>Semifinales</option>
                         <option value="final" <?php echo ($torneo['fase_actual'] == 'final') ? 'selected' : ''; ?>>Final</option>
                     </select>
+                    <small id="fase-hint">Si es Liga, deja en "Liga". Si es Bracket, elige desde qué fase comenzará.</small>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="ida-vuelta-container">
                 <label for="ida_y_vuelta">
                     <input type="checkbox" id="ida_y_vuelta" name="ida_y_vuelta" value="1" <?php echo (isset($torneo['ida_y_vuelta']) && $torneo['ida_y_vuelta']) ? 'checked' : ''; ?>>
                     Torneo con Ida y Vuelta
                 </label>
-                <small>Si se marca, cada equipo jugará 2 veces contra cada oponente (local y visitante)</small>
+                <small>Si se marca, cada equipo jugará 2 veces contra cada oponente (local y visitante). Solo aplica para torneos tipo Liga.</small>
             </div>
 
             <div class="form-row">
@@ -154,6 +158,69 @@ $estados = $conn->query("SELECT id, nombre_mostrado FROM estados_torneo ORDER BY
         </form>
     </div>
 </main>
+
+<script>
+function actualizarFaseInicial() {
+    const tipoTorneo = document.getElementById('tipo_torneo').value;
+    const faseActual = document.getElementById('fase_actual');
+    const faseHint = document.getElementById('fase-hint');
+    const idaVueltaContainer = document.getElementById('ida-vuelta-container');
+    const idaVueltaCheckbox = document.getElementById('ida_y_vuelta');
+
+    if (tipoTorneo === 'bracket') {
+        // Si es bracket, ocultar opción "Liga"
+        faseActual.querySelector('option[value="liga"]').style.display = 'none';
+
+        // Solo cambiar el valor si está en "liga" (incompatible)
+        if (faseActual.value === 'liga') {
+            faseActual.value = 'cuartos';
+        }
+
+        // Ocultar ida y vuelta para brackets
+        idaVueltaContainer.style.display = 'none';
+        idaVueltaCheckbox.checked = false;
+
+        faseHint.textContent = 'Elige desde qué fase de eliminatorias comenzará el torneo.';
+        faseHint.style.color = '#1565c0';
+    } else {
+        // Si es liga, mostrar opción "Liga"
+        faseActual.querySelector('option[value="liga"]').style.display = 'block';
+
+        // Mostrar ida y vuelta para ligas
+        idaVueltaContainer.style.display = 'block';
+
+        // Solo cambiar a "liga" si está en una fase de eliminatoria (sugerencia)
+        if (faseActual.value !== 'liga') {
+            // Solo sugerir, no forzar - el usuario puede querer mantener la fase
+            faseHint.textContent = 'Recomendado: Selecciona "Liga" para torneos de liga. Las fases de eliminatoria se usan después.';
+            faseHint.style.color = '#ff9800';
+        } else {
+            faseHint.textContent = 'Para torneos tipo Liga, se generan jornadas primero.';
+            faseHint.style.color = '#666';
+        }
+    }
+}
+
+// Ejecutar al cargar la página solo para ajustar visibilidad, no valores
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarFaseInicial();
+});
+
+// Debug: Ver qué se está enviando
+document.querySelector('form').addEventListener('submit', function(e) {
+    const tipoTorneo = document.getElementById('tipo_torneo').value;
+    const faseActual = document.getElementById('fase_actual').value;
+    console.log('Enviando formulario:');
+    console.log('Tipo torneo:', tipoTorneo);
+    console.log('Fase actual:', faseActual);
+
+    // Validar que si es bracket, no tenga fase "liga"
+    if (tipoTorneo === 'bracket' && faseActual === 'liga') {
+        alert('Error: Un torneo Bracket no puede tener fase inicial "Liga". Se cambiará automáticamente a "Cuartos".');
+        document.getElementById('fase_actual').value = 'cuartos';
+    }
+});
+</script>
 
 <?php
 require_once 'admin_footer.php';

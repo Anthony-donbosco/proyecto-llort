@@ -27,8 +27,10 @@
                 </button>
                 <a href="dashboard.php"><i class="fas fa-home"></i> Inicio</a>
                 <a href="gestionar_torneos.php"><i class="fas fa-trophy"></i> Torneos</a>
+                <a href="gestionar_temporadas.php"><i class="fas fa-calendar-alt"></i> Temporadas</a>
                 <a href="gestionar_equipos.php"><i class="fas fa-users"></i> Equipos</a>
                 <a href="gestionar_jugadores.php"><i class="fas fa-user"></i> Jugadores</a>
+                <a href="gestionar_noticias.php"><i class="fas fa-newspaper"></i> Noticias</a>
                 <a href="../logout.php" class="nav-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </nav>
 

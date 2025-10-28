@@ -69,9 +69,43 @@ if ($action == 'obtener_estado') {
 
 
 if ($action == 'iniciar') {
+    // Verificar si el partido tiene ambos equipos
+    $stmt_verificar = $conn->prepare("SELECT participante_local_id, participante_visitante_id, torneo_id, fase_id FROM partidos WHERE id = ?");
+    $stmt_verificar->bind_param("i", $partido_id);
+    $stmt_verificar->execute();
+    $partido_data = $stmt_verificar->get_result()->fetch_assoc();
+    $stmt_verificar->close();
+
+    // Si solo hay un equipo (BYE), marcar como ganador automático
+    if (!$partido_data['participante_local_id'] || !$partido_data['participante_visitante_id']) {
+        $ganador_id = $partido_data['participante_local_id'] ?: $partido_data['participante_visitante_id'];
+
+        // Marcar como finalizado con 3-0 (victoria por W.O.)
+        $stmt_wo = $conn->prepare("UPDATE partidos SET
+                                   marcador_local = IF(participante_local_id = ?, 3, 0),
+                                   marcador_visitante = IF(participante_visitante_id = ?, 3, 0),
+                                   estado_id = 5,
+                                   notas = CONCAT(COALESCE(notas, ''), '\nVictoria por W.O. - El equipo rival no se presentó.')
+                                   WHERE id = ?");
+        $stmt_wo->bind_param("iii", $ganador_id, $ganador_id, $partido_id);
+        $stmt_wo->execute();
+        $stmt_wo->close();
+
+        // Avanzar ganador a la siguiente fase
+        require_once 'avanzar_ganador.php';
+        $resultado_avance = avanzarGanadorSiguienteFase($conn, $partido_id);
+
+        echo json_encode([
+            'success' => true,
+            'mensaje' => 'Solo hay un equipo. Se ha marcado como ganador automático y avanza a la siguiente fase.',
+            'avance' => $resultado_avance['message']
+        ]);
+        exit;
+    }
+
     $cronometro = obtenerCronometro($conn, $partido_id);
 
-    
+
     if ($cronometro['estado_cronometro'] == 'pausado') {
         $stmt = $conn->prepare("UPDATE cronometro_partido
                                 SET estado_cronometro = 'corriendo',
@@ -80,7 +114,7 @@ if ($action == 'iniciar') {
                                 WHERE partido_id = ?");
         $stmt->bind_param("i", $partido_id);
     } else {
-        
+
         $stmt = $conn->prepare("UPDATE cronometro_partido
                                 SET estado_cronometro = 'corriendo',
                                     tiempo_inicio = NOW(),
@@ -93,7 +127,7 @@ if ($action == 'iniciar') {
     $stmt->execute();
     $stmt->close();
 
-    
+
     $stmt_partido = $conn->prepare("UPDATE partidos SET estado_id = 3 WHERE id = ?");
     $stmt_partido->bind_param("i", $partido_id);
     $stmt_partido->execute();
