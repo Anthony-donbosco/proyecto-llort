@@ -11,12 +11,10 @@
     <?php
     require_once 'php/db_connect.php';
 
-    // Paginación
     $noticias_por_pagina = 9;
     $pagina_actual = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
     $offset = ($pagina_actual - 1) * $noticias_por_pagina;
 
-    // Filtros
     $deporte_filter = isset($_GET['deporte']) ? (int)$_GET['deporte'] : 0;
 
     $sql_where = " WHERE n.publicada = 1";
@@ -29,7 +27,6 @@
         $types .= "i";
     }
 
-    // Contar total de noticias
     $sql_count = "SELECT COUNT(*) as total FROM noticias n $sql_where";
     $stmt_count = $conn->prepare($sql_count);
     if (!empty($params)) {
@@ -40,7 +37,6 @@
     $total_paginas = ceil($total_noticias / $noticias_por_pagina);
     $stmt_count->close();
 
-    // Obtener noticias destacadas (máximo 3)
     $sql_destacadas = "SELECT n.*, d.nombre_mostrado AS deporte
                        FROM noticias n
                        LEFT JOIN deportes d ON n.deporte_id = d.id
@@ -49,7 +45,6 @@
                        LIMIT 3";
     $destacadas = $conn->query($sql_destacadas);
 
-    // Obtener noticias normales
     $sql_noticias = "SELECT n.*, d.nombre_mostrado AS deporte
                      FROM noticias n
                      LEFT JOIN deportes d ON n.deporte_id = d.id
@@ -69,7 +64,6 @@
     $stmt_noticias->execute();
     $noticias = $stmt_noticias->get_result();
 
-    // Obtener deportes para filtro
     $deportes = $conn->query("SELECT id, nombre_mostrado FROM deportes ORDER BY nombre_mostrado");
     ?>
 
@@ -84,7 +78,6 @@
 
     <main class="main-noticias">
         <div class="container">
-            <!-- Slider de Noticias Destacadas -->
             <?php if ($destacadas->num_rows > 0): ?>
             <section class="noticias-destacadas">
                 <h2>Noticias Destacadas</h2>
@@ -92,7 +85,7 @@
                     <?php while($noticia = $destacadas->fetch_assoc()): ?>
                         <div class="noticia-destacada">
                             <div class="noticia-destacada-imagen">
-                                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? 'img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
                                 <div class="noticia-overlay">
                                     <?php if ($noticia['deporte']): ?>
                                         <span class="noticia-categoria"><?php echo htmlspecialchars($noticia['deporte']); ?></span>
@@ -113,7 +106,6 @@
             </section>
             <?php endif; ?>
 
-            <!-- Filtros -->
             <section class="filtros-noticias">
                 <form method="GET" action="noticias.php" class="filtro-form">
                     <select name="deporte" onchange="this.form.submit()">
@@ -130,13 +122,12 @@
                 </form>
             </section>
 
-            <!-- Grid de Noticias -->
             <section class="noticias-grid">
                 <?php if ($noticias->num_rows > 0): ?>
                     <?php while($noticia = $noticias->fetch_assoc()): ?>
                         <article class="noticia-card">
                             <div class="noticia-imagen">
-                                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? 'img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
                                 <?php if ($noticia['deporte']): ?>
                                     <span class="noticia-deporte-badge"><?php echo htmlspecialchars($noticia['deporte']); ?></span>
                                 <?php endif; ?>
@@ -158,7 +149,6 @@
                 <?php endif; ?>
             </section>
 
-            <!-- Paginación -->
             <?php if ($total_paginas > 1): ?>
             <nav class="paginacion">
                 <?php if ($pagina_actual > 1): ?>

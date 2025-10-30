@@ -86,7 +86,7 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
     <div class="container">
         <article class="noticia-completa">
             <div class="noticia-portada">
-                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
+                <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
             </div>
 
             <div class="noticia-body">
@@ -137,7 +137,7 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             <div class="relacionadas-grid">
                 <?php while($rel = $relacionadas->fetch_assoc()): ?>
                     <div class="noticia-relacionada">
-                        <img src="<?php echo htmlspecialchars($rel['imagen_portada'] ?? '../../img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($rel['titulo']); ?>">
+                        <img src="<?php echo htmlspecialchars($rel['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($rel['titulo']); ?>">
                         <div class="relacionada-info">
                             <span class="relacionada-fecha"><?php echo date('d/m/Y', strtotime($rel['fecha_publicacion'])); ?></span>
                             <h3><a href="noticia_detalle.php?id=<?php echo $rel['id']; ?>"><?php echo htmlspecialchars($rel['titulo']); ?></a></h3>

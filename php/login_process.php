@@ -1,4 +1,8 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -7,7 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     if (empty($email) || empty($password)) {
-        header("Location: ../login.php?error=Email y contraseña son requeridos.");
+        $_SESSION['login_message'] = ['type' => 'error', 'text' => 'Email y contraseña son requeridos.'];
+        header("Location: login.php");
         exit;
     }
 
@@ -26,6 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (password_verify($password, $user['hash_contrasena'])) {
             
+            unset($_SESSION['login_message']); 
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['email'];
             $_SESSION['role_id'] = $user['rol_id'];
@@ -38,11 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
 
         } else {
-            header("Location: ../login.php?error=Contraseña incorrecta.");
+            $_SESSION['login_message'] = ['type' => 'error', 'text' => 'Contraseña incorrecta.'];
+            header("Location: login.php");
             exit;
         }
     } else {
-        header("Location: ../login.php?error=Usuario no encontrado o está inactivo.");
+        $_SESSION['login_message'] = ['type' => 'error', 'text' => 'Usuario no encontrado o está inactivo.'];
+        header("Location: login.php");
         exit;
     }
     
@@ -50,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 
 } else {
-    header("Location: ../login.php");
+    header("Location: login.php");
     exit;
 }
 ?>

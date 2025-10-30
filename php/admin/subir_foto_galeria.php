@@ -159,19 +159,18 @@ $deportes = $conn->query($deportes_sql);
 <script>
 document.getElementById('foto').addEventListener('change', function(event) {
     const files = event.target.files;
-    const isMultiple = event.target.multiple; // Verifica si el input es múltiple
+    const isMultiple = event.target.multiple; 
 
     if (!files || files.length === 0) {
         return;
     }
 
     if (isMultiple) {
-        // --- MODO CREACIÓN (MÚLTIPLE) ---
+        
         const previewContainer = document.getElementById('preview-container');
-        // Limpia vistas previas anteriores
+        
         previewContainer.innerHTML = '<small>Vista previa de las fotos seleccionadas:</small>'; 
 
-        // Limita la vista previa a 50 fotos por rendimiento
         const fileCount = Math.min(files.length, 50); 
         
         for (let i = 0; i < fileCount; i++) {
@@ -179,11 +178,9 @@ document.getElementById('foto').addEventListener('change', function(event) {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // Crea un elemento <img> para cada foto
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.alt = 'Preview ' + (i + 1);
-                    // Añade algo de estilo a las miniaturas
                     img.style.width = '100px'; 
                     img.style.height = '100px';
                     img.style.objectFit = 'cover';
@@ -196,7 +193,6 @@ document.getElementById('foto').addEventListener('change', function(event) {
         }
         
         if (files.length > 50) {
-            // Advierte al usuario si seleccionó demasiadas
             const warning = document.createElement('p');
             warning.textContent = `Advertencia: Seleccionaste ${files.length} fotos. Solo se procesarán las primeras 50.`;
             warning.style.color = 'red';
@@ -205,8 +201,8 @@ document.getElementById('foto').addEventListener('change', function(event) {
         }
 
     } else {
-        // --- MODO EDICIÓN (SIMPLE) ---
-        const file = files[0]; // Solo toma el primer archivo
+        
+        const file = files[0]; 
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {

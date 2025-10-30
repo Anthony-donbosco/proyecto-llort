@@ -3,7 +3,7 @@ require_once 'auth_admin.php';
 require_once 'admin_header.php';
 
 
-$deportes_query = $conn->query("SELECT id, nombre_mostrado FROM deportes WHERE es_por_equipos = 1 ORDER BY nombre_mostrado");
+$deportes_query = $conn->query("SELECT id, nombre_mostrado FROM deportes WHERE es_por_equipos = 1 OR es_por_equipos = 0 ORDER BY nombre_mostrado");
 
 
 $deporte_filtro = isset($_GET['deporte_id']) && $_GET['deporte_id'] != '' ? (int)$_GET['deporte_id'] : null;

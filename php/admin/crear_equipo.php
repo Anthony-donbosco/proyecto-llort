@@ -150,11 +150,9 @@ $todos_deportes_json = json_encode($todos_deportes);
 
 <script>
 const allSports = <?php echo $todos_deportes_json; ?>;
-// Asumimos ID 1 = Equipo, ID 2 = Individual
 const TIPO_EQUIPO = 1;
 const TIPO_INDIVIDUAL = 2; 
 
-// Referencias a elementos del DOM
 const checkbox = document.getElementById('es_individual');
 const tipoHidden = document.getElementById('tipo_participante_id');
 const deporteSelect = document.getElementById('deporte_id');
@@ -166,35 +164,26 @@ const fieldsetLegend = document.getElementById('fieldset_legend_details');
 const saveButtonLabel = document.getElementById('label_btn_guardar');
 const pageTitle = document.querySelector('.page-header h1');
 
-// Función para actualizar el formulario basado en el checkbox
 function updateFormForSportType(isIndividual) {
     
-    // 1. Actualizar valor del ID de tipo
-    // (Asumimos que "Individual" es tipo 2, ajusta si es otro ID)
     tipoHidden.value = isIndividual ? TIPO_INDIVIDUAL : TIPO_EQUIPO;
-
-    // 2. Actualizar etiquetas y visibilidad
     nombreLabel.textContent = isIndividual ? 'Nombre del Participante (Jugador):' : 'Nombre Oficial del Equipo:';
     logoLabel.textContent = isIndividual ? 'Foto del Participante (Opcional):' : 'Logo del Equipo (Opcional):';
     logoSmall.textContent = isIndividual ? 'Subir solo si deseas cambiar la foto.' : 'Subir solo si deseas cambiar el logo. Recomendado: 500x500px, PNG transparente.';
     fieldsetLegend.textContent = isIndividual ? '2. Detalles del Participante' : '2. Detalles del Equipo';
     
-    // Ocultar "Nombre Corto" para individuales
     nombreCortoGroup.style.display = isIndividual ? 'none' : 'block';
     
-    // Actualizar textos del botón y título (solo si NO estamos editando, para no sobreescribir el estado "Actualizar")
     <?php if (!$is_edit): ?>
         saveButtonLabel.textContent = isIndividual ? 'Guardar Participante' : 'Guardar Equipo';
         pageTitle.textContent = isIndividual ? 'Crear Nuevo Participante' : 'Crear Nuevo Equipo';
     <?php endif; ?>
 
-    // 3. Repopular el dropdown de deportes
-    deporteSelect.innerHTML = '<option value="">-- Seleccione --</option>'; // Limpiar opciones
+    deporteSelect.innerHTML = '<option value="">-- Seleccione --</option>';
     
-    const targetSportType = isIndividual ? 0 : 1; // 0 = Individual, 1 = Equipo
+    const targetSportType = isIndividual ? 0 : 1; 
 
     allSports.forEach(sport => {
-        // 'es_por_equipos' viene como string, lo convertimos a número
         if (parseInt(sport.es_por_equipos) === targetSportType) {
             const option = document.createElement('option');
             option.value = sport.id;
@@ -204,12 +193,10 @@ function updateFormForSportType(isIndividual) {
     });
 }
 
-// Añadir el 'listener' al checkbox
 checkbox.addEventListener('change', function() {
     updateFormForSportType(this.checked);
 });
 
-// (Script existente para la preview de la imagen)
 document.getElementById('logo').addEventListener('change', function(event) {
     var reader = new FileReader();
     reader.onload = function(){

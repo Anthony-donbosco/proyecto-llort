@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isiiiisii", $deporte_id, $tipo_destacado, $miembro_plantel_id, $torneo_id, $temporada_id, $descripcion, $fecha_destacado, $orden, $esta_activo);
             $stmt->execute();
-            header("Location: $redirect_url&success=Jugador destacado agregado exitosamente.");
+            header("Location: $redirect_url");
 
         } elseif ($_POST['action'] == 'update' && isset($_POST['destacado_id'])) {
             $destacado_id = (int)$_POST['destacado_id'];
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isiiiisiii", $deporte_id, $tipo_destacado, $miembro_plantel_id, $torneo_id, $temporada_id, $descripcion, $fecha_destacado, $orden, $esta_activo, $destacado_id);
             $stmt->execute();
-            header("Location: $redirect_url&success=Jugador destacado actualizado exitosamente.");
+            header("Location: $redirect_url");
         }
 
         $stmt->close();
@@ -55,9 +55,9 @@ if (isset($_GET['delete_id'])) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            header("Location: $redirect_url&success=Jugador destacado eliminado exitosamente.");
+            header("Location: $redirect_url");
         } else {
-            header("Location: $redirect_url&error=No se pudo eliminar (ID no encontrado).");
+            header("Location: $redirect_url");
         }
 
     } catch (Exception $e) {

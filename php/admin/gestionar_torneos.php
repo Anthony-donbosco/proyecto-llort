@@ -106,6 +106,11 @@ $result = $conn->query($sql);
                             <?php endif; ?>
 
                             <?php if ($estado_lower == 'finalizado'): ?>
+                                <?php if ($es_bracket): ?>
+                                    <a href="asignar_llaves.php?torneo_id=<?php echo $row['id']; ?>#tab-bracket" class="btn btn-info">
+                                        <i class="fas fa-sitemap"></i> Ver Bracket
+                                    </a>
+                                <?php endif; ?>
                                 <a href="asignar_mvp_goleador.php?torneo_id=<?php echo $row['id']; ?>" class="btn btn-warning" style="background: #ffd700; color: #333;">
                                     <i class="fas fa-trophy"></i> MVP/Goleador
                                 </a>

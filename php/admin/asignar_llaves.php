@@ -490,14 +490,12 @@ if ($ganador) {
 <link rel="stylesheet" href="../../css/asignar_llaves.css">
 <script src="../../js/asignar_llaves.js"></script>
 <script>
-// Cargar bracket existente desde PHP
 const bracketExistente = <?php echo json_encode($bracket); ?>;
 const torneoId = <?php echo $torneo_id; ?>;
 const faseInicial = '<?php echo $fase_inicial; ?>';
 const equiposNecesarios = <?php echo $equipos_necesarios; ?>;
 const equiposDisponibles = <?php echo json_encode($equipos_array); ?>;
 
-// Inicializar el bracket cuando el DOM esté listo
 window.addEventListener('DOMContentLoaded', function() {
     inicializarBracket(bracketExistente, torneoId, faseInicial, equiposNecesarios);
 });

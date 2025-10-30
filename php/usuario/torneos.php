@@ -100,7 +100,6 @@ echo "<script>document.title = 'Torneos - Portal Deportivo CFLC';</script>";
 </div>
 
 <script>
-// Script simple para pestañas
 document.addEventListener('DOMContentLoaded', function() {
     const tabLinks = document.querySelectorAll('.tab-link');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -109,11 +108,9 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function() {
             const tabId = this.dataset.tab;
 
-            // Quitar 'active' de todos
             tabLinks.forEach(l => l.classList.remove('active'));
             tabPanes.forEach(p => p.classList.remove('active'));
 
-            // Añadir 'active' al clickeado
             this.classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
         });

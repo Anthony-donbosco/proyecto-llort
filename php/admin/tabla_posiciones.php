@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const rows = document.querySelectorAll('.tabla-posiciones tbody tr.clickable-row');
     rows.forEach(row => {
         row.addEventListener('click', function() {
-            const equipoId = this.dataset.equipoId; // Get ID from data attribute
+            const equipoId = this.dataset.equipoId;
             if (equipoId) {
                 window.location.href = `ver_plantel.php?equipo_id=${equipoId}`;
             }
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 .clickable-row:hover {
     cursor: pointer;
-    background-color: #f0f0f0 !important; /* Use !important to override other background styles if necessary */
+    background-color: #f0f0f0 !important;
     transition: background-color 0.2s ease-in-out;
 }
 </style>

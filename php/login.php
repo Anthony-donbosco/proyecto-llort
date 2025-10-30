@@ -2,23 +2,15 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 if (!empty($_SESSION['user_id'])) {
     
     if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1) {
-         header("Location: php/admin/dashboard.php");
+         header("Location: admin/dashboard.php");
     } else {
          header("Location: usuario/index.php"); 
     }
     exit;
-}
-if (!empty($_SESSION['user_id'])) {
-    if ($_SESSION['role_id'] == 1) {
-        header("Location: admin/dashboard.php");
-        exit;
-    } else {
-        header("Location: login.php?error=Sección de usuario en construcción");
-        exit;
-    }
 }
 
 ?>
@@ -30,7 +22,7 @@ if (!empty($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Sistema Deportivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css"> 
 </head>
 <body>
     <div class="form-container">
@@ -38,13 +30,11 @@ if (!empty($_SESSION['user_id'])) {
         <p>Bienvenido al Sistema de Gestión Deportiva</p>
 
         <?php
-            if (isset($_GET['error'])) {
-                echo '<div class="error-message">' . htmlspecialchars($_GET['error']) . '</div>';
-            }
             if (isset($_SESSION['login_message'])) {
                 $msg = $_SESSION['login_message'];
                 $class = $msg['type'] === 'success' ? 'success-message' : 'error-message';
                 echo '<div class="' . $class . '">' . htmlspecialchars($msg['text']) . '</div>';
+                
                 unset($_SESSION['login_message']);
             }
         ?>

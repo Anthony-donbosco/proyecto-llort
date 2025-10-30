@@ -17,7 +17,7 @@ $noticia = [
     'fecha_publicacion' => date('Y-m-d\TH:i'),
     'orden' => 0
 ];
-$imagen_preview = '../../img/default-noticia.png';
+$imagen_preview = '../../img/noticias/default.png';
 $page_title = 'Crear Noticia';
 
 if (isset($_GET['edit_id'])) {

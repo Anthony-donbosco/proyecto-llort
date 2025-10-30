@@ -77,11 +77,6 @@ $mvp = $mvp_result->fetch_assoc();
             <a href="crear_jugador.php?plantel_id=<?php echo $plantel_id; ?>&equipo_id=<?php echo $equipo_id; ?>" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Agregar Jugador
             </a>
-            <?php if ($torneo_id): ?>
-                <a href="ver-plantel-fifa.php?torneo_id=<?php echo $torneo_id; ?>&participante_id=<?php echo $equipo_id; ?>" class="btn btn-success">
-                    <i class="fas fa-users"></i> Ver Plantilla FIFA
-                </a>
-            <?php endif; ?>
             <a href="gestionar_equipos.php" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver a Equipos
             </a>

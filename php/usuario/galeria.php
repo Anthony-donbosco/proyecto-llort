@@ -113,8 +113,8 @@ echo "<script>document.title = 'Galería - Portal Deportivo CFLC';</script>";
     <div class="galeria-container-user">
         <?php if ($fotos->num_rows > 0): ?>
             <div class="galeria-grid-user">
-                <?php while($foto = $fotos->fetch_assoc()): 
-                    $foto_url = htmlspecialchars(str_replace('../../', '../', $foto['url_foto']));
+                <?php while($foto = $fotos->fetch_assoc()):
+                    $foto_url = htmlspecialchars($foto['url_foto']);
                 ?>
                 <a href="<?php echo $foto_url; ?>" class="galeria-item-user" data-lightbox="galeria" data-title="<?php echo htmlspecialchars($foto['titulo']); ?> - <?php echo htmlspecialchars($foto['descripcion']); ?>">
                     <img src="<?php echo $foto_url; ?>" alt="<?php echo htmlspecialchars($foto['titulo']); ?>" loading="lazy">

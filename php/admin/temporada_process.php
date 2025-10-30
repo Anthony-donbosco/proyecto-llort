@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sissi", $nombre, $ano, $fecha_inicio, $fecha_fin, $es_actual);
             $stmt->execute();
-            header("Location: $redirect_url&success=Temporada agregada exitosamente.");
+            header("Location: $redirect_url");
 
         } elseif ($_POST['action'] == 'update' && isset($_POST['temporada_id'])) {
             $temporada_id = (int)$_POST['temporada_id'];
@@ -33,13 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sissii", $nombre, $ano, $fecha_inicio, $fecha_fin, $es_actual, $temporada_id);
             $stmt->execute();
-            header("Location: $redirect_url&success=Temporada actualizada exitosamente.");
+            header("Location: $redirect_url");
         }
 
         $stmt->close();
 
     } catch (Exception $e) {
-        header("Location: $redirect_url&error=Error de BD: " . $e->getMessage());
+        header("Location: $redirect_url" . $e->getMessage());
     }
 
     $conn->close();
@@ -59,10 +59,10 @@ if (isset($_GET['set_actual'])) {
         $stmt->bind_param("i", $temporada_id);
         $stmt->execute();
 
-        header("Location: $redirect_url&success=Temporada marcada como actual exitosamente.");
+        header("Location: $redirect_url");
 
     } catch (Exception $e) {
-        header("Location: $redirect_url&error=Error de BD: " . $e->getMessage());
+        header("Location: $redirect_url" . $e->getMessage());
     }
 
     $stmt->close();
@@ -80,13 +80,13 @@ if (isset($_GET['delete_id'])) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            header("Location: $redirect_url&success=Temporada eliminada exitosamente.");
+            header("Location: $redirect_url");
         } else {
-            header("Location: $redirect_url&error=No se pudo eliminar (ID no encontrado).");
+            header("Location: $redirect_url");
         }
 
     } catch (Exception $e) {
-        header("Location: $redirect_url&error=Error de BD: " . $e->getMessage());
+        header("Location: $redirect_url" . $e->getMessage());
     }
 
     $stmt->close();
@@ -94,6 +94,6 @@ if (isset($_GET['delete_id'])) {
     exit;
 }
 
-header("Location: $redirect_url&error=Acción no válida.");
+header("Location: $redirect_url");
 exit;
 ?>

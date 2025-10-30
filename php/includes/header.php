@@ -37,6 +37,7 @@ $user_name = $_SESSION['user_name'] ?? 'Usuario';
                 <a href="index.php"><i class="fas fa-home"></i> Inicio</a>
                 <a href="torneos.php"><i class="fas fa-trophy"></i> Torneos</a>
                 <a href="calendario.php"><i class="fas fa-calendar-alt"></i> Calendario</a>
+                <a href="amistosos.php"><i class="fas fa-handshake"></i> Amistosos</a>
                 <a href="jugadores.php"><i class="fas fa-users"></i> Jugadores</a>
                 <a href="noticias.php"><i class="fas fa-newspaper"></i> Noticias</a>
                 <a href="galeria.php"><i class="fas fa-images"></i> Galería</a>

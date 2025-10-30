@@ -205,6 +205,13 @@ echo "<script>document.title = 'Calendario de Partidos - Portal Deportivo';</scr
                                     <span class="badge-user badge-status-<?php echo $partido['estado_id_num']; ?>">
                                         <?php echo htmlspecialchars($partido['estado']); ?>
                                     </span>
+                                    <?php
+                                    if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 2): ?>
+                                        <a href="ver_partido.php?partido_id=<?php echo $partido['id']; ?>&es_amistoso=1"
+                                            class="btn btn-small btn-info" title="Editar Partido">
+                                            <i class="fas fa-futbol"></i> Ver más
+                                        </a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>

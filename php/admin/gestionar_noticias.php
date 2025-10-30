@@ -127,7 +127,7 @@ $deportes = $conn->query($deportes_sql);
                 <?php
                 if ($noticias->num_rows > 0) {
                     while($row = $noticias->fetch_assoc()) {
-                        $imagen = !empty($row['imagen_portada']) ? htmlspecialchars($row['imagen_portada']) : '../../img/default-noticia.png';
+                        $imagen = !empty($row['imagen_portada']) ? htmlspecialchars($row['imagen_portada']) : '../../img/noticias/default.png';
                         $destacada_badge = $row['destacada'] ? '<span class="badge badge-warning"><i class="fas fa-star"></i> Destacada</span>' : '-';
                         $estado_badge = $row['publicada'] ? '<span class="badge badge-success">Publicada</span>' : '<span class="badge badge-secondary">Borrador</span>';
                 ?>

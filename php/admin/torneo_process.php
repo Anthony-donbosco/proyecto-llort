@@ -105,22 +105,156 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
 
 if (isset($_GET['delete_id'])) {
     $torneo_id = (int)$_GET['delete_id'];
-    
+
     try {
-        $sql = "DELETE FROM torneos WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $torneo_id);
-        $stmt->execute();
-        
-        if ($stmt->affected_rows > 0) {
-            header("Location: gestionar_torneos.php?success=Torneo eliminado exitosamente.");
-        } else {
-            header("Location: gestionar_torneos.php?error=No se pudo eliminar el torneo (quizás ya fue eliminado).");
+        $conn->begin_transaction();
+
+        $partidos_eliminados = 0;
+
+        $stmt = $conn->prepare("DELETE ep FROM eventos_partido ep
+                                JOIN partidos p ON ep.partido_id = p.id
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
         }
-        $stmt->close();
-        
+
+        $stmt = $conn->prepare("DELETE cp FROM cronometro_partido cp
+                                JOIN partidos p ON cp.partido_id = p.id
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE ps FROM puntos_set ps
+                                JOIN partidos p ON ps.partido_id = p.id
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE rp FROM resultados_periodo_partido rp
+                                JOIN partidos p ON rp.partido_id = p.id
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE rs FROM resultados_set_partido rs
+                                JOIN partidos p ON rs.partido_id = p.id
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE eb FROM enlaces_bracket eb
+                                JOIN partidos p ON (eb.partido_origen_id = p.id OR eb.partido_destino_id = p.id)
+                                WHERE p.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM partidos WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $partidos_eliminados = $stmt->affected_rows;
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE j FROM jornadas j
+                                JOIN fases f ON j.fase_id = f.id
+                                WHERE f.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM bracket_torneos WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM tabla_posiciones WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM jugadores_destacados WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE mg FROM miembros_grupo mg
+                                JOIN torneo_grupos tg ON mg.grupo_id = tg.id
+                                WHERE tg.torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM torneo_grupos WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM fases WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM torneo_participantes WHERE torneo_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $stmt = $conn->prepare("DELETE FROM torneos WHERE id = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $torneo_id);
+            $stmt->execute();
+            $torneo_eliminado = $stmt->affected_rows;
+            $stmt->close();
+
+            $conn->commit();
+
+            if ($torneo_eliminado > 0) {
+                $mensaje = "Torneo eliminado exitosamente junto con $partidos_eliminados partido(s) y todos sus datos asociados.";
+                header("Location: gestionar_torneos.php?success=" . urlencode($mensaje));
+            } else {
+                header("Location: gestionar_torneos.php?error=No se pudo eliminar el torneo (quizás ya fue eliminado).");
+            }
+        } else {
+            throw new Exception("Error al preparar eliminación del torneo: " . $conn->error);
+        }
+
     } catch (Exception $e) {
-        header("Location: gestionar_torneos.php?error=No se pudo eliminar. Es posible que tenga partidos u otros datos asociados.");
+        $conn->rollback();
+        header("Location: gestionar_torneos.php?error=Error al eliminar el torneo: " . $e->getMessage());
     }
 
     $conn->close();

@@ -86,7 +86,7 @@ echo '<link rel="stylesheet" href="../../css/noticias.css">';
             <h2>Noticias Destacadas</h2>
             <div class="slider-destacadas">
                 <?php while($noticia = $destacadas->fetch_assoc()): 
-                    $imagen_url = htmlspecialchars($noticia['imagen_portada'] ?? '../../img/default-noticia.png');
+                    $imagen_url = htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png');
                 ?>
                     <div class="noticia-destacada">
                         <div class="noticia-destacada-imagen">
@@ -130,7 +130,7 @@ echo '<link rel="stylesheet" href="../../css/noticias.css">';
         <section class="noticias-grid">
             <?php if ($noticias->num_rows > 0): ?>
                 <?php while($noticia = $noticias->fetch_assoc()): 
-                    $imagen_url = htmlspecialchars($noticia['imagen_portada'] ?? '../../img/default-noticia.png');
+                    $imagen_url = htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png');
                 ?>
                     <article class="noticia-card">
                         <div class="noticia-imagen">

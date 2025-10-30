@@ -18,13 +18,11 @@
 
     $noticia_id = (int)$_GET['id'];
 
-    // Incrementar contador de visitas
     $stmt_visita = $conn->prepare("UPDATE noticias SET visitas = visitas + 1 WHERE id = ?");
     $stmt_visita->bind_param("i", $noticia_id);
     $stmt_visita->execute();
     $stmt_visita->close();
 
-    // Obtener noticia
     $stmt = $conn->prepare("SELECT n.*, d.nombre_mostrado AS deporte, temp.nombre AS temporada
                             FROM noticias n
                             LEFT JOIN deportes d ON n.deporte_id = d.id
@@ -41,20 +39,18 @@
 
     $noticia = $result->fetch_assoc();
 
-    // Procesar contenido con formato básico
     $contenido = htmlspecialchars($noticia['contenido']);
-    $contenido = nl2br($contenido); // Saltos de línea
-    // Negritas **texto**
+    $contenido = nl2br($contenido);
+    
     $contenido = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $contenido);
-    // Cursivas *texto*
+    
     $contenido = preg_replace('/\*(.+?)\*/', '<em>$1</em>', $contenido);
-    // Listas (- al inicio)
+    
     $contenido = preg_replace('/^- (.+)$/m', '<li>$1</li>', $contenido);
     if (strpos($contenido, '<li>') !== false) {
         $contenido = '<ul>' . $contenido . '</ul>';
     }
 
-    // Obtener noticias relacionadas
     $sql_relacionadas = "SELECT id, titulo, imagen_portada, fecha_publicacion
                          FROM noticias
                          WHERE publicada = 1 AND id != ?";
@@ -86,14 +82,11 @@
     <main class="main-noticia-detalle">
         <div class="container">
             <article class="noticia-completa">
-                <!-- Imagen de portada -->
                 <div class="noticia-portada">
-                    <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? 'img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
+                    <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
                 </div>
 
-                <!-- Contenido principal -->
                 <div class="noticia-body">
-                    <!-- Metadata -->
                     <div class="noticia-metadata">
                         <?php if ($noticia['deporte']): ?>
                             <span class="noticia-deporte-tag"><?php echo htmlspecialchars($noticia['deporte']); ?></span>
@@ -112,18 +105,15 @@
                         </span>
                     </div>
 
-                    <!-- Título y subtítulo -->
                     <h1 class="noticia-titulo"><?php echo htmlspecialchars($noticia['titulo']); ?></h1>
                     <?php if ($noticia['subtitulo']): ?>
                         <p class="noticia-subtitulo"><?php echo htmlspecialchars($noticia['subtitulo']); ?></p>
                     <?php endif; ?>
 
-                    <!-- Contenido -->
                     <div class="noticia-contenido">
                         <?php echo $contenido; ?>
                     </div>
 
-                    <!-- Etiquetas -->
                     <?php if ($noticia['etiquetas']): ?>
                         <div class="noticia-etiquetas">
                             <i class="fas fa-tags"></i>
@@ -137,7 +127,6 @@
                         </div>
                     <?php endif; ?>
 
-                    <!-- Compartir -->
                     <div class="noticia-compartir">
                         <p><strong>Compartir:</strong></p>
                         <div class="share-buttons">
@@ -155,14 +144,13 @@
                 </div>
             </article>
 
-            <!-- Noticias relacionadas -->
             <?php if ($relacionadas->num_rows > 0): ?>
             <aside class="noticias-relacionadas">
                 <h2>Noticias Relacionadas</h2>
                 <div class="relacionadas-grid">
                     <?php while($rel = $relacionadas->fetch_assoc()): ?>
                         <div class="noticia-relacionada">
-                            <img src="<?php echo htmlspecialchars($rel['imagen_portada'] ?? 'img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($rel['titulo']); ?>">
+                            <img src="<?php echo htmlspecialchars($rel['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($rel['titulo']); ?>">
                             <div class="relacionada-info">
                                 <span class="relacionada-fecha"><?php echo date('d/m/Y', strtotime($rel['fecha_publicacion'])); ?></span>
                                 <h3><a href="noticia_detalle.php?id=<?php echo $rel['id']; ?>"><?php echo htmlspecialchars($rel['titulo']); ?></a></h3>
@@ -173,7 +161,6 @@
             </aside>
             <?php endif; ?>
 
-            <!-- Botón volver -->
             <div class="noticia-volver">
                 <a href="noticias.php" class="btn-volver">
                     <i class="fas fa-arrow-left"></i> Volver a Noticias
@@ -193,7 +180,6 @@
     $stmt_rel->close();
     $conn->close();
 
-    // Configurar locale para español
     setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
     ?>
 </body>

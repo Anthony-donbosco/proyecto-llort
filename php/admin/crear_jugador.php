@@ -8,6 +8,14 @@ if (!isset($_GET['equipo_id'])) {
 }
 $equipo_id = (int)$_GET['equipo_id'];
 
+$stmt_deporte = $conn->prepare("SELECT d.codigo FROM participantes p JOIN deportes d ON p.deporte_id = d.id WHERE p.id = ?");
+$stmt_deporte->bind_param("i", $equipo_id);
+$stmt_deporte->execute();
+$result_deporte = $stmt_deporte->get_result();
+$deporte_info = $result_deporte->fetch_assoc();
+$codigo_deporte = $deporte_info['codigo'] ?? 'football';
+$stmt_deporte->close();
+
 $is_edit = false;
 $jugador = [
     'nombre_jugador' => '',
@@ -36,7 +44,7 @@ if (isset($_GET['edit_id'])) {
     if ($result->num_rows > 0) {
         $jugador = $result->fetch_assoc();
         if (!empty($jugador['url_foto'])) {
-            $foto_preview = '../' . htmlspecialchars($jugador['url_foto']);
+            $foto_preview = htmlspecialchars($jugador['url_foto']);
         }
     } else {
         header("Location: ver_plantel.php?equipo_id=$equipo_id&error=Jugador no encontrado.");
@@ -81,14 +89,53 @@ if (isset($_GET['edit_id'])) {
                     <label for="posicion">Posición:</label>
                     <select id="posicion" name="posicion" required>
                         <option value="">Seleccione una posición</option>
-                        <option value="Portero" <?php echo ($jugador['posicion'] == 'Portero') ? 'selected' : ''; ?>>Portero</option>
-                        <option value="Defensa" <?php echo ($jugador['posicion'] == 'Defensa') ? 'selected' : ''; ?>>Defensa</option>
-                        <option value="Mediocampista" <?php echo ($jugador['posicion'] == 'Mediocampista') ? 'selected' : ''; ?>>Mediocampista</option>
-                        <option value="Delantero" <?php echo ($jugador['posicion'] == 'Delantero') ? 'selected' : ''; ?>>Delantero</option>
-                        <option value="Suplente Portero" <?php echo ($jugador['posicion'] == 'Suplente Portero') ? 'selected' : ''; ?>>Suplente Portero</option>
-                        <option value="Suplente Defensa" <?php echo ($jugador['posicion'] == 'Suplente Defensa') ? 'selected' : ''; ?>>Suplente Defensa</option>
-                        <option value="Suplente Mediocampista" <?php echo ($jugador['posicion'] == 'Suplente Mediocampista') ? 'selected' : ''; ?>>Suplente Mediocampista</option>
-                        <option value="Suplente Delantero" <?php echo ($jugador['posicion'] == 'Suplente Delantero') ? 'selected' : ''; ?>>Suplente Delantero</option>
+                        <?php
+                        $posiciones = [];
+                        
+                        $posicion_actual = $jugador['posicion'] ?? ''; 
+
+                        switch($codigo_deporte) {
+                            case 'football':
+                            case 'futsal_3':
+                            case 'futsal_4':
+                            case 'futsal_5':
+                                $posiciones = [
+                                    'Portero', 'Defensa', 'Mediocampista', 'Delantero',
+                                    'Suplente Portero', 'Suplente Defensa', 'Suplente Mediocampista', 'Suplente Delantero'
+                                ];
+                                break;
+
+                            case 'basketball':
+                            case 'basketball_3':
+                            case 'basketball_4':
+                            case 'basketball_5':
+                                $posiciones = [
+                                    'Base', 'Escolta', 'Alero', 'Ala-Pívot', 'Pívot',
+                                    'Suplente Base', 'Suplente Escolta', 'Suplente Alero', 'Suplente Ala-Pívot', 'Suplente Pívot'
+                                ];
+                                break;
+
+                            case 'volleyball':
+                                $posiciones = [
+                                    'Colocador', 'Atacante Externo', 'Central', 'Opuesto', 'Líbero',
+                                    'Suplente Colocador', 'Suplente Atacante', 'Suplente Central', 'Suplente Opuesto', 'Suplente Líbero'
+                                ];
+                                break;
+
+                            case 'table_tennis':
+                            case 'chess':
+                            default:
+                                $posiciones = [
+                                    'Jugador', 'Suplente'
+                                ];
+                                break;
+                        }
+
+                        foreach($posiciones as $pos) {
+                            $selected = ($posicion_actual == $pos) ? 'selected' : '';
+                            echo "<option value=\"$pos\" $selected>$pos</option>\n";
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">

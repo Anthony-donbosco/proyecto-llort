@@ -108,6 +108,12 @@ if ($jornada_id) {
         </h1>
         <div>
             <?php if ($es_bracket): ?>
+                <a href="asignar_llaves.php?torneo_id=<?php echo $torneo_id; ?>#tab-bracket" class="btn btn-info" style="margin-right: 0.5rem;">
+                    <i class="fas fa-sitemap"></i> Ver Bracket Público
+                </a>
+                <a href="asignar_llaves.php?torneo_id=<?php echo $torneo_id; ?>" class="btn btn-warning" style="margin-right: 0.5rem;">
+                    <i class="fas fa-edit"></i> Editar Llaves
+                </a>
                 <a href="gestionar_torneos.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver a Torneos
                 </a>

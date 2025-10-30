@@ -11,10 +11,20 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $torneo_id = (int)$_GET['id'];
 
 
-$stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte, e.nombre_mostrado AS estado, e.codigo AS estado_codigo
+$stmt_torneo = $conn->prepare("SELECT t.*, d.nombre_mostrado AS deporte, d.codigo AS codigo_deporte, e.nombre_mostrado AS estado, e.codigo AS estado_codigo,
+                              mvp.nombre_jugador AS mvp_nombre, mvp.numero_camiseta AS mvp_numero, mvp.url_foto AS mvp_foto, mvp.posicion AS mvp_posicion,
+                              p_mvp.nombre_mostrado AS mvp_equipo, p_mvp.url_logo AS mvp_equipo_logo,
+                              gol.nombre_jugador AS goleador_nombre, gol.numero_camiseta AS goleador_numero, gol.url_foto AS goleador_foto, gol.posicion AS goleador_posicion,
+                              p_gol.nombre_mostrado AS goleador_equipo, p_gol.url_logo AS goleador_equipo_logo, t.goles_goleador
                               FROM torneos t
                               JOIN deportes d ON t.deporte_id = d.id
                               JOIN estados_torneo e ON t.estado_id = e.id
+                              LEFT JOIN miembros_plantel mvp ON t.mvp_torneo_miembro_id = mvp.id
+                              LEFT JOIN planteles_equipo pe_mvp ON mvp.plantel_id = pe_mvp.id
+                              LEFT JOIN participantes p_mvp ON pe_mvp.participante_id = p_mvp.id
+                              LEFT JOIN miembros_plantel gol ON t.goleador_torneo_miembro_id = gol.id
+                              LEFT JOIN planteles_equipo pe_gol ON gol.plantel_id = pe_gol.id
+                              LEFT JOIN participantes p_gol ON pe_gol.participante_id = p_gol.id
                               WHERE t.id = ?");
 $stmt_torneo->bind_param("i", $torneo_id);
 $stmt_torneo->execute();
@@ -149,7 +159,7 @@ echo "<script>document.title = '" . htmlspecialchars($torneo['nombre']) . " - Po
 ?>
 
 <div class="container page-container">
-    <div class="torneo-detalle-header" style="background-image: url('../../img/jugadores/68feb14d34109-Screenshot 2025-10-26 161932.png');">
+    <div class="torneo-detalle-header" style="background-image: url('../../img/jugadores/Screenshot 2025-10-29 172607.png');">
         <div class="torneo-header-overlay">
             <span class="torneo-estado-badge <?php echo htmlspecialchars($torneo['estado_codigo']); ?>">
                 <?php echo htmlspecialchars($torneo['estado']); ?>
@@ -176,6 +186,11 @@ echo "<script>document.title = '" . htmlspecialchars($torneo['nombre']) . " - Po
         <?php endif; ?>
         <?php if ($es_bracket || $partidos_playoff): ?>
              <button class="tab-link" data-tab="bracket"><i class="fas fa-sitemap"></i> Playoffs / Bracket</button>
+        <?php endif; ?>
+        <?php if (!empty($torneo['mvp_nombre']) || !empty($torneo['goleador_nombre'])): ?>
+            <button class="tab-link" data-tab="premios" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; font-weight: 600;">
+                <i class="fas fa-trophy"></i> MVP / Goleador
+            </button>
         <?php endif; ?>
     </div>
 
@@ -240,6 +255,13 @@ echo "<script>document.title = '" . htmlspecialchars($torneo['nombre']) . " - Po
                             <img src="<?php echo htmlspecialchars($partido['visitante_logo'] ?: '../../img/logos/default.png'); ?>" alt="Logo">
                         </div>
                     </div>
+                    <?php
+                        if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 2): ?>
+                            <a href="ver_partido.php?partido_id=<?php echo $partido['id']; ?>&es_amistoso=1"
+                                class="btn btn-small btn-info" title="Editar Partido">
+                                <i class="fas fa-futbol"></i> Ver más
+                            </a>
+                    <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -345,17 +367,137 @@ echo "<script>document.title = '" . htmlspecialchars($torneo['nombre']) . " - Po
         <div class="tab-pane" id="tab-bracket">
             <h2 class="section-title-sub">Fase de Eliminatorias</h2>
             <?php
-            
-            
+
+
             require_once 'includes/bracket_usuario.php';
             ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($torneo['mvp_nombre']) || !empty($torneo['goleador_nombre'])): ?>
+        <div class="tab-pane" id="tab-premios">
+            <h2 class="section-title-sub" style="text-align: center; color: #ffd700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                <i class="fas fa-trophy"></i> Premios del Torneo
+            </h2>
+
+            <div class="premios-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; padding: 0 1rem;">
+
+                <?php if (!empty($torneo['mvp_nombre'])): ?>
+                <div class="premio-card mvp-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: white; text-align: center; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; font-size: 200px; opacity: 0.1;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <i class="fas fa-crown" style="font-size: 3rem; color: #ffd700;"></i>
+                            <h3 style="margin: 0.5rem 0; font-size: 1.5rem; font-weight: bold;">MVP DEL TORNEO</h3>
+                        </div>
+
+                        <div class="jugador-foto-container" style="margin: 1.5rem auto; width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 5px solid #ffd700; box-shadow: 0 5px 20px rgba(255,215,0,0.5);">
+                            <img src="<?php echo htmlspecialchars($torneo['mvp_foto'] ?: '../../img/jugadores/default.png'); ?>"
+                                 alt="<?php echo htmlspecialchars($torneo['mvp_nombre']); ?>"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+
+                        <div class="jugador-info" style="margin-top: 1rem;">
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 1rem; margin-bottom: 0.5rem;">
+                                <p style="font-size: 0.9rem; opacity: 0.9; margin: 0;">
+                                    <i class="fas fa-hashtag"></i> <?php echo htmlspecialchars($torneo['mvp_numero']); ?>
+                                </p>
+                                <h4 style="font-size: 1.8rem; margin: 0.5rem 0; font-weight: bold;">
+                                    <?php echo htmlspecialchars($torneo['mvp_nombre']); ?>
+                                </h4>
+                                <p style="font-size: 1rem; opacity: 0.9; margin: 0;">
+                                    <i class="fas fa-running"></i> <?php echo htmlspecialchars($torneo['mvp_posicion']); ?>
+                                </p>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                                <?php if (!empty($torneo['mvp_equipo_logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($torneo['mvp_equipo_logo']); ?>"
+                                         alt="Logo"
+                                         style="width: 40px; height: 40px; object-fit: contain; background: white; border-radius: 50%; padding: 5px;">
+                                <?php endif; ?>
+                                <span style="font-size: 1.1rem; font-weight: 600;">
+                                    <?php echo htmlspecialchars($torneo['mvp_equipo']); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($torneo['goleador_nombre']) && in_array($torneo['codigo_deporte'], ['football', 'basketball'])): ?>
+                <div class="premio-card goleador-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 15px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: white; text-align: center; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; font-size: 200px; opacity: 0.1;">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <i class="fas fa-futbol" style="font-size: 3rem; color: #ffd700;"></i>
+                            <h3 style="margin: 0.5rem 0; font-size: 1.5rem; font-weight: bold;">
+                                <?php echo ($torneo['codigo_deporte'] == 'basketball') ? 'MÁXIMO ANOTADOR' : 'GOLEADOR'; ?>
+                            </h3>
+                        </div>
+
+                        <div class="jugador-foto-container" style="margin: 1.5rem auto; width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 5px solid #ffd700; box-shadow: 0 5px 20px rgba(255,215,0,0.5);">
+                            <img src="<?php echo htmlspecialchars($torneo['goleador_foto'] ?: '../../img/jugadores/default.png'); ?>"
+                                 alt="<?php echo htmlspecialchars($torneo['goleador_nombre']); ?>"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+
+                        <div class="jugador-info" style="margin-top: 1rem;">
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 1rem; margin-bottom: 0.5rem;">
+                                <p style="font-size: 0.9rem; opacity: 0.9; margin: 0;">
+                                    <i class="fas fa-hashtag"></i> <?php echo htmlspecialchars($torneo['goleador_numero']); ?>
+                                </p>
+                                <h4 style="font-size: 1.8rem; margin: 0.5rem 0; font-weight: bold;">
+                                    <?php echo htmlspecialchars($torneo['goleador_nombre']); ?>
+                                </h4>
+                                <p style="font-size: 1rem; opacity: 0.9; margin: 0;">
+                                    <i class="fas fa-running"></i> <?php echo htmlspecialchars($torneo['goleador_posicion']); ?>
+                                </p>
+                            </div>
+
+                            <div style="background: rgba(255,215,0,0.3); border-radius: 10px; padding: 1rem; margin: 1rem 0;">
+                                <p style="font-size: 2.5rem; font-weight: bold; margin: 0; color: #ffd700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                                    <?php echo (int)$torneo['goles_goleador']; ?>
+                                </p>
+                                <p style="font-size: 0.9rem; margin: 0; opacity: 0.9;">
+                                    <?php echo ($torneo['codigo_deporte'] == 'basketball') ? 'Puntos' : 'Goles'; ?>
+                                </p>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <?php if (!empty($torneo['goleador_equipo_logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($torneo['goleador_equipo_logo']); ?>"
+                                         alt="Logo"
+                                         style="width: 40px; height: 40px; object-fit: contain; background: white; border-radius: 50%; padding: 5px;">
+                                <?php endif; ?>
+                                <span style="font-size: 1.1rem; font-weight: 600;">
+                                    <?php echo htmlspecialchars($torneo['goleador_equipo']); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if (empty($torneo['mvp_nombre']) && empty($torneo['goleador_nombre'])): ?>
+            <div class="info-box" style="text-align: center; padding: 3rem; margin-top: 2rem;">
+                <i class="fas fa-trophy" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <p style="font-size: 1.2rem; color: #666;">
+                    Los premios del torneo aún no han sido asignados.
+                </p>
+            </div>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
     </div> </div>
 
 <script>
-// Script simple para pestañas
 document.addEventListener('DOMContentLoaded', function() {
     const tabLinks = document.querySelectorAll('.tab-link');
     const tabPanes = document.querySelectorAll('.tab-pane');

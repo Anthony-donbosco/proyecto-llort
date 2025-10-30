@@ -290,8 +290,10 @@ $top_goleadores = $stmt_top_goleadores->get_result();
 
             <div class="form-group">
                 <label for="total_goles">Total de Goles/Puntos *</label>
-                <input type="number" id="total_goles" name="total_goles" class="form-input" min="0" required placeholder="Ej: 15">
-                <small>Ingrese el total de goles o puntos anotados</small>
+                <input type="number" id="total_goles" name="total_goles" class="form-input" min="0" required placeholder="Se completará automáticamente">
+                <small style="color: #2196F3;">
+                    <i class="fas fa-info-circle"></i> Se autocompleta con los goles/puntos del jugador en este torneo. Puede modificarlo si es necesario.
+                </small>
             </div>
 
             <div class="modal-actions">
@@ -309,6 +311,8 @@ $top_goleadores = $stmt_top_goleadores->get_result();
 <link rel="stylesheet" href="../../css/mvp_goleador.css">
 <script>
 const torneoId = <?php echo $torneo_id; ?>;
+const tipoPuntuacion = '<?php echo $tipo_puntuacion; ?>';
+const nombreGoles = tipoPuntuacion === 'puntos' ? 'puntos' : 'goles';
 
 function abrirModalMVP() {
     document.getElementById('modalMVP').style.display = 'flex';
@@ -322,6 +326,7 @@ function cerrarModalMVP() {
 
 function abrirModalGoleador() {
     document.getElementById('modalGoleador').style.display = 'flex';
+    cargarGolesJugadores();
 }
 
 function cerrarModalGoleador() {
@@ -353,23 +358,49 @@ function cargarJugadoresMVP(equipoId) {
 function cargarJugadoresGoleador(equipoId) {
     if (!equipoId) return;
 
-    fetch(`../get_jugadores.php?participante_id=${equipoId}`)
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('jugador_goleador_id');
-            select.innerHTML = '<option value="">Seleccione un jugador</option>';
+    Promise.all([
+        fetch(`../get_jugadores.php?participante_id=${equipoId}`).then(r => r.json()),
+        fetch(`get_goles_jugadores.php?torneo_id=${torneoId}`).then(r => r.json())
+    ]).then(([jugadores, golesData]) => {
+        window.golesJugadores = golesData;
 
-            data.forEach(jugador => {
-                const option = document.createElement('option');
-                option.value = jugador.id;
-                option.textContent = `#${jugador.numero_camiseta} - ${jugador.nombre_jugador} (${jugador.posicion})`;
-                select.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error:', error));
+        const select = document.getElementById('jugador_goleador_id');
+        select.innerHTML = '<option value="">Seleccione un jugador</option>';
+
+        jugadores.forEach(jugador => {
+            const option = document.createElement('option');
+            option.value = jugador.id;
+            const goles = golesData[jugador.id] || 0;
+            option.textContent = `#${jugador.numero_camiseta} - ${jugador.nombre_jugador} (${jugador.posicion}) - ${goles} ${nombreGoles}`;
+            select.appendChild(option);
+        });
+    }).catch(error => console.error('Error:', error));
 }
 
-// Cerrar modal al hacer clic fuera
+function cargarGolesJugadores() {
+    fetch(`get_goles_jugadores.php?torneo_id=${torneoId}`)
+        .then(response => response.json())
+        .then(golesData => {
+            window.golesJugadores = golesData;
+        })
+        .catch(error => console.error('Error cargando goles:', error));
+}
+
+document.getElementById('jugador_goleador_id')?.addEventListener('change', function() {
+    const jugadorId = this.value;
+    const totalGolesInput = document.getElementById('total_goles');
+
+    if (jugadorId && window.golesJugadores && window.golesJugadores[jugadorId]) {
+        totalGolesInput.value = window.golesJugadores[jugadorId];
+        totalGolesInput.style.backgroundColor = '#e8f5e9';
+        setTimeout(() => {
+            totalGolesInput.style.backgroundColor = '';
+        }, 1000);
+    } else {
+        totalGolesInput.value = '0';
+    }
+});
+
 document.getElementById('modalMVP')?.addEventListener('click', function(e) {
     if (e.target === this) cerrarModalMVP();
 });

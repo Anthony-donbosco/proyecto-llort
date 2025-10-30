@@ -168,30 +168,23 @@ function actualizarFaseInicial() {
     const idaVueltaCheckbox = document.getElementById('ida_y_vuelta');
 
     if (tipoTorneo === 'bracket') {
-        // Si es bracket, ocultar opción "Liga"
         faseActual.querySelector('option[value="liga"]').style.display = 'none';
 
-        // Solo cambiar el valor si está en "liga" (incompatible)
         if (faseActual.value === 'liga') {
             faseActual.value = 'cuartos';
         }
 
-        // Ocultar ida y vuelta para brackets
         idaVueltaContainer.style.display = 'none';
         idaVueltaCheckbox.checked = false;
 
         faseHint.textContent = 'Elige desde qué fase de eliminatorias comenzará el torneo.';
         faseHint.style.color = '#1565c0';
     } else {
-        // Si es liga, mostrar opción "Liga"
         faseActual.querySelector('option[value="liga"]').style.display = 'block';
 
-        // Mostrar ida y vuelta para ligas
         idaVueltaContainer.style.display = 'block';
 
-        // Solo cambiar a "liga" si está en una fase de eliminatoria (sugerencia)
         if (faseActual.value !== 'liga') {
-            // Solo sugerir, no forzar - el usuario puede querer mantener la fase
             faseHint.textContent = 'Recomendado: Selecciona "Liga" para torneos de liga. Las fases de eliminatoria se usan después.';
             faseHint.style.color = '#ff9800';
         } else {
@@ -201,12 +194,10 @@ function actualizarFaseInicial() {
     }
 }
 
-// Ejecutar al cargar la página solo para ajustar visibilidad, no valores
 document.addEventListener('DOMContentLoaded', function() {
     actualizarFaseInicial();
 });
 
-// Debug: Ver qué se está enviando
 document.querySelector('form').addEventListener('submit', function(e) {
     const tipoTorneo = document.getElementById('tipo_torneo').value;
     const faseActual = document.getElementById('fase_actual').value;
@@ -214,7 +205,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
     console.log('Tipo torneo:', tipoTorneo);
     console.log('Fase actual:', faseActual);
 
-    // Validar que si es bracket, no tenga fase "liga"
     if (tipoTorneo === 'bracket' && faseActual === 'liga') {
         alert('Error: Un torneo Bracket no puede tener fase inicial "Liga". Se cambiará automáticamente a "Cuartos".');
         document.getElementById('fase_actual').value = 'cuartos';

@@ -342,6 +342,656 @@ if ($es_pingpong) {
 
 ?>
 
+<script>
+
+const jugadoresLocal = <?php echo json_encode($jugadores_local->fetch_all(MYSQLI_ASSOC)); ?>;
+const jugadoresVisitante = <?php echo json_encode($jugadores_visitante->fetch_all(MYSQLI_ASSOC)); ?>;
+
+function abrirModalGol(tipo) {
+    const modal = document.getElementById('modalGol');
+    const select = document.getElementById('jugador_id');
+    const selectAsistencia = document.getElementById('asistencia_id');
+    const equipoTipo = document.getElementById('equipoTipo');
+    const modalTitle = document.getElementById('modalTitle');
+
+
+    select.innerHTML = '<option value="">Seleccione un jugador</option>';
+    if (selectAsistencia) {
+        selectAsistencia.innerHTML = '<option value="">Sin asistencia</option>';
+    }
+
+
+    const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
+    const nombreEquipo = tipo === 'local' ? '<?php echo addslashes($partido['equipo_local']); ?>' : '<?php echo addslashes($partido['equipo_visitante']); ?>';
+
+
+    jugadores.forEach(jugador => {
+        const option = document.createElement('option');
+        option.value = jugador.id;
+        option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
+        select.appendChild(option);
+    });
+
+
+    if (selectAsistencia) {
+        jugadores.forEach(jugador => {
+            const option = document.createElement('option');
+            option.value = jugador.id;
+            option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
+            selectAsistencia.appendChild(option);
+        });
+    }
+
+    equipoTipo.value = tipo;
+    modalTitle.textContent = `Agregar <?php echo $nombre_evento_singular; ?> - ${nombreEquipo}`;
+    modal.style.display = 'flex';
+
+    <?php if ($tipo_puntuacion == 'puntos'): ?>
+    actualizarValorPuntos();
+    <?php endif; ?>
+}
+
+function cerrarModalGol() {
+    const modal = document.getElementById('modalGol');
+    modal.style.display = 'none';
+    document.getElementById('formAgregarGol').reset();
+}
+
+function eliminarGol(eventoId) {
+    const tipoEventoStr = '<?php echo $tipo_puntuacion == "goles" ? " gol" : ($tipo_puntuacion == "puntos" ? " evento" : " registro"); ?>';
+    if (confirm(`¿Eliminar este${tipoEventoStr}?`)) {
+
+        const formData = new FormData();
+        formData.append('action', 'eliminar_gol');
+        formData.append('evento_id', eventoId);
+        formData.append('partido_id', <?php echo $partido_id; ?>);
+        const targetUrl = 'evento_partido_process.php';
+        console.log("Intentando eliminar en:", targetUrl);
+
+        fetch(targetUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarAlerta('Evento eliminado exitosamente', 'success');
+
+                if (data.nuevoMarcadorLocal !== undefined && data.nuevoMarcadorVisitante !== undefined) {
+                    actualizarMarcadorPrincipalDisplay(data.nuevoMarcadorLocal, data.nuevoMarcadorVisitante);
+                }
+
+                location.reload();
+
+            } else {
+                mostrarAlerta('Error al eliminar evento: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarAlerta('Error de conexión al eliminar evento.', 'error');
+        });
+    }
+}
+
+function actualizarValorPuntos() {
+    const tipoEvento = document.getElementById('tipo_evento');
+    const valorPuntosInput = document.getElementById('valor_puntos');
+
+    if (tipoEvento && valorPuntosInput) {
+        const selectedOption = tipoEvento.options[tipoEvento.selectedIndex];
+        const puntos = selectedOption.getAttribute('data-puntos');
+        valorPuntosInput.value = puntos || 1;
+    }
+}
+
+const modalGolElement = document.getElementById('modalGol');
+if (modalGolElement) {
+    modalGolElement.addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalGol();
+        }
+    });
+}
+
+
+let equipoMVPActual = 'local';
+
+function abrirModalMVP() {
+    const modal = document.getElementById('modalMVP');
+    equipoMVPActual = 'local';
+    cargarJugadoresMVP('local');
+    modal.style.display = 'flex';
+}
+
+function cerrarModalMVP() {
+    const modal = document.getElementById('modalMVP');
+    modal.style.display = 'none';
+    document.getElementById('formSeleccionarMVP').reset();
+}
+
+function cambiarEquipoMVP(tipo) {
+    equipoMVPActual = tipo;
+
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+
+
+    cargarJugadoresMVP(tipo);
+}
+
+function cargarJugadoresMVP(tipo) {
+    const select = document.getElementById('mvp_jugador_id');
+    select.innerHTML = '<option value="">Seleccione un jugador</option>';
+
+    const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
+
+    jugadores.forEach(jugador => {
+        const option = document.createElement('option');
+        option.value = jugador.id;
+        option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
+        select.appendChild(option);
+    });
+}
+
+
+const modalMVPElement = document.getElementById('modalMVP');
+if (modalMVPElement) {
+    modalMVPElement.addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalMVP();
+        }
+    });
+}
+
+
+const PARTIDO_ID = <?php echo $partido_id; ?>;
+let intervaloCronometro = null;
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    obtenerEstadoCronometro();
+
+    intervaloCronometro = setInterval(obtenerEstadoCronometro, 1000);
+});
+
+function obtenerEstadoCronometro() {
+    fetch(`cronometro_process.php?action=obtener_estado&partido_id=${PARTIDO_ID}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                actualizarDisplayCronometro(data.cronometro);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function actualizarDisplayCronometro(cronometro) {
+    const tiempoDisplay = document.getElementById('cronometroTiempo');
+    const periodoDisplay = document.getElementById('cronometroPeriodo');
+    const estadoDisplay = document.getElementById('cronometroEstado');
+    const btnIniciar = document.getElementById('btnIniciar');
+    const btnPausar = document.getElementById('btnPausar');
+    const btnReanudar = document.getElementById('btnReanudar');
+
+
+    const tiempo = formatearTiempoPartido(cronometro.tiempo_transcurrido, cronometro.tiempo_agregado);
+    tiempoDisplay.textContent = tiempo;
+    periodoDisplay.textContent = cronometro.periodo_actual;
+
+
+    const estado = cronometro.estado_cronometro;
+    let badgeHTML = '';
+
+    if (estado === 'corriendo') {
+        badgeHTML = '<span class="estado-badge estado-corriendo"><i class="fas fa-play-circle"></i> En Curso</span>';
+        btnIniciar.style.display = 'none';
+        btnPausar.style.display = 'block';
+        btnReanudar.style.display = 'none';
+    } else if (estado === 'pausado') {
+        badgeHTML = '<span class="estado-badge estado-pausado"><i class="fas fa-pause-circle"></i> Pausado</span>';
+        btnIniciar.style.display = 'none';
+        btnPausar.style.display = 'none';
+        btnReanudar.style.display = 'block';
+    } else {
+        badgeHTML = '<span class="estado-badge estado-detenido"><i class="fas fa-stop-circle"></i> Detenido</span>';
+        btnIniciar.style.display = 'block';
+        btnPausar.style.display = 'none';
+        btnReanudar.style.display = 'none';
+    }
+
+    estadoDisplay.innerHTML = badgeHTML;
+}
+
+function formatearTiempoPartido(segundos, tiempoAgregado) {
+    const minutos = Math.floor(segundos / 60);
+    const segs = segundos % 60;
+    const codigoDeporte = '<?php echo $partido['codigo_deporte']; ?>';
+
+    if (codigoDeporte === 'basketball') {
+        return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+    }
+
+    if (codigoDeporte === 'table_tennis') {
+        return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+    }
+
+    if (codigoDeporte === 'football' || codigoDeporte === 'volleyball') {
+        if (minutos < 45) {
+            return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+        }
+        else if (minutos >= 45 && minutos < 46) {
+            if (tiempoAgregado > 0 && segs > 0) {
+                return `45+${Math.ceil(segs / 60)}'`;
+            }
+            return `45:00`;
+        }
+        else if (minutos < 90) {
+            return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+        }
+        else if (minutos >= 90) {
+            const minutosExtra = minutos - 90;
+            if (tiempoAgregado > 0 && (minutosExtra > 0 || segs > 0)) {
+                const totalExtra = minutosExtra + Math.ceil(segs / 60);
+                return `90+${totalExtra}'`;
+            }
+            return `90:00`;
+        }
+    }
+
+    return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+}
+
+function iniciarCronometro() {
+    if (confirm('¿Iniciar el partido? Esto cambiará el estado del partido a "En Curso".')) {
+        enviarAccionCronometro('iniciar');
+    }
+}
+
+function pausarCronometro() {
+    enviarAccionCronometro('pausar');
+}
+
+function reanudarCronometro() {
+    enviarAccionCronometro('iniciar');
+}
+
+function cambiarPeriodo(periodo) {
+    const formData = new FormData();
+    formData.append('action', 'cambiar_periodo');
+    formData.append('partido_id', PARTIDO_ID);
+    formData.append('periodo', periodo);
+
+    fetch('cronometro_process.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            obtenerEstadoCronometro();
+            mostrarAlerta('Periodo cambiado a: ' + periodo, 'success');
+        } else {
+            mostrarAlerta('Error: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarAlerta('Error al cambiar periodo', 'error');
+    });
+}
+
+function agregarTiempo() {
+    const minutos = document.getElementById('tiempoAgregado').value;
+
+    const formData = new FormData();
+    formData.append('action', 'agregar_tiempo');
+    formData.append('partido_id', PARTIDO_ID);
+    formData.append('minutos', minutos);
+
+    fetch('cronometro_process.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            obtenerEstadoCronometro();
+            mostrarAlerta('Tiempo agregado: ' + minutos + ' minutos', 'success');
+        } else {
+            mostrarAlerta('Error: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarAlerta('Error al agregar tiempo', 'error');
+    });
+}
+
+function reiniciarCronometro() {
+    if (confirm('¿Reiniciar el cronómetro? Esto pondrá el tiempo en 00:00.')) {
+        enviarAccionCronometro('reiniciar');
+    }
+}
+
+function enviarAccionCronometro(accion) {
+    const formData = new FormData();
+    formData.append('action', accion);
+    formData.append('partido_id', PARTIDO_ID);
+
+    fetch('cronometro_process.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error('HTTP error! status: ' + response.status);
+        }
+        return response.text();
+    })
+    .then(text => {
+        console.log('Respuesta del servidor:', text);
+        try {
+            const data = JSON.parse(text);
+            if (data.success) {
+                obtenerEstadoCronometro();
+                if (accion === 'iniciar') {
+                    if (data.mensaje) {
+                        alert('⚠️ ' + data.mensaje + '\n\n' + (data.avance || ''));
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        mostrarAlerta('Cronómetro iniciado', 'success');
+                    }
+                }
+            } else {
+                mostrarAlerta('Error: ' + (data.error || 'Error desconocido'), 'error');
+            }
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            console.error('Texto recibido:', text);
+            mostrarAlerta('Error: Respuesta inválida del servidor', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error completo:', error);
+        mostrarAlerta('Error al ejecutar acción: ' + error.message, 'error');
+    });
+}
+
+function mostrarAlerta(mensaje, tipo) {
+
+    const alerta = document.createElement('div');
+    alerta.className = 'alert alert-' + tipo;
+    alerta.textContent = mensaje;
+    alerta.style.position = 'fixed';
+    alerta.style.top = '80px';
+    alerta.style.right = '20px';
+    alerta.style.zIndex = '10000';
+    alerta.style.minWidth = '300px';
+
+    document.body.appendChild(alerta);
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
+}
+
+const partidoId = <?php echo $partido_id; ?>;
+
+function cambiarSet(setNumero) {
+    document.querySelectorAll('.set-content').forEach(content => {
+        content.style.display = 'none';
+    });
+
+    document.querySelectorAll('.set-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    document.getElementById('set-' + setNumero).style.display = 'block';
+    document.querySelector(`.set-tab[data-set="${setNumero}"]`).classList.add('active');
+}
+
+function sumarPunto(setNumero, tipo) {
+    fetch('pingpong_process.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `action=sumar_punto&partido_id=${partidoId}&set_numero=${setNumero}&tipo=${tipo}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('puntos-local-set-' + setNumero).textContent = data.puntos_local;
+            document.getElementById('puntos-visitante-set-' + setNumero).textContent = data.puntos_visitante;
+
+            const puntosL = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
+            const puntosV = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
+            const accionesSetDiv = document.querySelector(`#set-${setNumero} .set-acciones`);
+            const badgeFinalizado = document.querySelector(`#set-${setNumero} .set-finalizado-badge`);
+
+            if (accionesSetDiv && !badgeFinalizado) {
+                if (puntosL > 0 || puntosV > 0) {
+                    accionesSetDiv.style.display = 'block';
+                } else {
+                    accionesSetDiv.style.display = 'none';
+                }
+            }
+
+            if (data.set_finalizado) {
+                alert('Set ' + setNumero + ' finalizado!');
+                location.reload();
+            }
+
+            if (data.sets_ganados) {
+                const setsLocal = data.sets_ganados.sets_ganados_local;
+                const setsVisitante = data.sets_ganados.sets_ganados_visitante;
+
+                document.getElementById('sets-local').textContent = setsLocal;
+                document.getElementById('sets-visitante').textContent = setsVisitante;
+
+                document.querySelector('.marcadores-grid .marcador-group:first-child .marcador-calculado').textContent = setsLocal;
+                document.querySelector('.marcadores-grid .marcador-group:last-child .marcador-calculado').textContent = setsVisitante;
+
+                document.querySelector('form.admin-form input[name="marcador_local"]').value = setsLocal;
+                document.querySelector('form.admin-form input[name="marcador_visitante"]').value = setsVisitante;
+
+            }
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function restarPunto(setNumero, tipo) {
+    if (!confirm('¿Restar 1 punto?')) return;
+
+    fetch('pingpong_process.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `action=restar_punto&partido_id=${partidoId}&set_numero=${setNumero}&tipo=${tipo}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('puntos-local-set-' + setNumero).textContent = data.puntos_local;
+            document.getElementById('puntos-visitante-set-' + setNumero).textContent = data.puntos_visitante;
+            const puntosL = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
+            const puntosV = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
+            const accionesSetDiv = document.querySelector(`#set-${setNumero} .set-acciones`);
+            const badgeFinalizado = document.querySelector(`#set-${setNumero} .set-finalizado-badge`);
+
+            if (accionesSetDiv && !badgeFinalizado) {
+                 if (puntosL > 0 || puntosV > 0) {
+                    accionesSetDiv.style.display = 'block';
+                } else {
+                    accionesSetDiv.style.display = 'none';
+                }
+            }
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function finalizarSetManual(setNumero) {
+    const puntosLocal = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
+    const puntosVisitante = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
+
+    if (puntosLocal === puntosVisitante) {
+        alert('No se puede finalizar un set empatado. Debe haber un ganador.');
+        return;
+    }
+
+    const ganador = puntosLocal > puntosVisitante ? 'Local' : 'Visitante';
+    const mensaje = `¿Finalizar Set ${setNumero} con el marcador actual?\n\n` +
+                    `Local: ${puntosLocal} - Visitante: ${puntosVisitante}\n` +
+                    `Ganador: ${ganador}`;
+
+    if (!confirm(mensaje)) return;
+
+    fetch('pingpong_process.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `action=finalizar_set_manual&partido_id=${partidoId}&set_numero=${setNumero}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Set ' + setNumero + ' finalizado correctamente!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al finalizar el set');
+    });
+}
+
+function actualizarMarcadorPrincipalDisplay(nuevoMarcadorLocal, nuevoMarcadorVisitante) {
+    const marcadorLocalDisplay = document.querySelector('.marcadores-grid .marcador-group:first-child .marcador-calculado');
+    const marcadorVisitanteDisplay = document.querySelector('.marcadores-grid .marcador-group:last-child .marcador-calculado');
+    if (marcadorLocalDisplay) marcadorLocalDisplay.textContent = nuevoMarcadorLocal;
+    if (marcadorVisitanteDisplay) marcadorVisitanteDisplay.textContent = nuevoMarcadorVisitante;
+
+    const marcadorLocalInput = document.querySelector('form.admin-form input[name="marcador_local"]');
+    const marcadorVisitanteInput = document.querySelector('form.admin-form input[name="marcador_visitante"]');
+    if (marcadorLocalInput) marcadorLocalInput.value = nuevoMarcadorLocal;
+    if (marcadorVisitanteInput) marcadorVisitanteInput.value = nuevoMarcadorVisitante;
+
+    console.log(`Marcador actualizado a: ${nuevoMarcadorLocal} - ${nuevoMarcadorVisitante}`);
+}
+
+function enviarFormularioEvento(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const modal = document.getElementById('modalGol');
+
+    const targetUrl = 'evento_partido_process.php';
+    console.log("Intentando enviar a:", targetUrl);
+
+    console.log("Intentando enviar a:", form.action);
+
+    fetch(targetUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            cerrarModalGol();
+            mostrarAlerta('Evento agregado exitosamente', 'success');
+
+            if (data.nuevoMarcadorLocal !== undefined && data.nuevoMarcadorVisitante !== undefined) {
+                actualizarMarcadorPrincipalDisplay(data.nuevoMarcadorLocal, data.nuevoMarcadorVisitante);
+            }
+
+            location.reload();
+
+        } else {
+            mostrarAlerta('Error al agregar evento: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarAlerta('Error de conexión al agregar evento.', 'error');
+    });
+}
+
+function definirGanadorAjedrez(tipoResultado) {
+    const partidoId = <?php echo $partido_id; ?>;
+
+    let mensajeConfirmacion = '';
+    let nombreGanador = '';
+
+    switch(tipoResultado) {
+        case 'local':
+            nombreGanador = '<?php echo addslashes($jugador_local_seleccionado['nombre_jugador'] ?? 'Local'); ?>';
+            mensajeConfirmacion = `¿Confirmar victoria de ${nombreGanador}?\n\nMarcador: 1 - 0\nEl partido se marcará como finalizado.`;
+            break;
+        case 'visitante':
+            nombreGanador = '<?php echo addslashes($jugador_visitante_seleccionado['nombre_jugador'] ?? 'Visitante'); ?>';
+            mensajeConfirmacion = `¿Confirmar victoria de ${nombreGanador}?\n\nMarcador: 0 - 1\nEl partido se marcará como finalizado.`;
+            break;
+        case 'empate':
+            mensajeConfirmacion = '¿Confirmar empate / tablas?\n\nMarcador: 0 - 0\nEl partido se marcará como finalizado.';
+            break;
+    }
+
+    if (!confirm(mensajeConfirmacion)) {
+        return;
+    }
+
+    const botones = document.querySelectorAll('.btn-ajedrez');
+    botones.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+    });
+
+    fetch('ajedrez_process.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `action=definir_ganador&partido_id=${partidoId}&tipo_resultado=${tipoResultado}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.marcador_local !== undefined && data.marcador_visitante !== undefined) {
+                actualizarMarcadorPrincipalDisplay(data.marcador_local, data.marcador_visitante);
+            }
+
+            mostrarAlerta('Resultado guardado exitosamente', 'success');
+
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            mostrarAlerta('Error: ' + data.error, 'error');
+            botones.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarAlerta('Error de conexión al guardar el resultado', 'error');
+        botones.forEach(btn => {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        });
+    });
+}
+</script>
+
 <main class="admin-page">
     <div class="page-header">
         <h1>Editar Partido</h1>
@@ -1939,7 +2589,6 @@ if ($es_pingpong) {
     font-size: 3rem;
 }
 
-/* Ping Pong */
 .pingpong-section {
     background: white;
     padding: 2rem;
@@ -2135,7 +2784,6 @@ if ($es_pingpong) {
     font-size: 1.3rem;
 }
 
-/* Estilos para Ajedrez - Definir Ganador */
 .ajedrez-botones-ganador {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -2280,690 +2928,6 @@ if ($es_pingpong) {
 }
 </style>
 
-<script>
-
-const jugadoresLocal = <?php echo json_encode($jugadores_local->fetch_all(MYSQLI_ASSOC)); ?>;
-const jugadoresVisitante = <?php echo json_encode($jugadores_visitante->fetch_all(MYSQLI_ASSOC)); ?>;
-
-function abrirModalGol(tipo) {
-    const modal = document.getElementById('modalGol');
-    const select = document.getElementById('jugador_id');
-    const selectAsistencia = document.getElementById('asistencia_id');
-    const equipoTipo = document.getElementById('equipoTipo');
-    const modalTitle = document.getElementById('modalTitle');
-
-    
-    select.innerHTML = '<option value="">Seleccione un jugador</option>';
-    if (selectAsistencia) {
-        selectAsistencia.innerHTML = '<option value="">Sin asistencia</option>';
-    }
-
-    
-    const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
-    const nombreEquipo = tipo === 'local' ? '<?php echo addslashes($partido['equipo_local']); ?>' : '<?php echo addslashes($partido['equipo_visitante']); ?>';
-
-    
-    jugadores.forEach(jugador => {
-        const option = document.createElement('option');
-        option.value = jugador.id;
-        option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
-        select.appendChild(option);
-    });
-
-    
-    if (selectAsistencia) {
-        jugadores.forEach(jugador => {
-            const option = document.createElement('option');
-            option.value = jugador.id;
-            option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
-            selectAsistencia.appendChild(option);
-        });
-    }
-
-    equipoTipo.value = tipo;
-    modalTitle.textContent = `Agregar <?php echo $nombre_evento_singular; ?> - ${nombreEquipo}`;
-    modal.style.display = 'flex';
-
-    // Actualizar valor de puntos inicial si es necesario
-    <?php if ($tipo_puntuacion == 'puntos'): ?>
-    actualizarValorPuntos();
-    <?php endif; ?>
-}
-
-function cerrarModalGol() {
-    const modal = document.getElementById('modalGol');
-    modal.style.display = 'none';
-    document.getElementById('formAgregarGol').reset();
-}
-
-function eliminarGol(eventoId) {
-    const tipoEventoStr = '<?php echo $tipo_puntuacion == "goles" ? " gol" : ($tipo_puntuacion == "puntos" ? " evento" : " registro"); ?>';
-    if (confirm(`¿Eliminar este${tipoEventoStr}?`)) {
-
-        const formData = new FormData();
-        formData.append('action', 'eliminar_gol');
-        formData.append('evento_id', eventoId);
-        formData.append('partido_id', <?php echo $partido_id; ?>);
-        const targetUrl = 'evento_partido_process.php'; // Ruta relativa simple
-        console.log("Intentando eliminar en:", targetUrl);
-
-        fetch(targetUrl, { // <-- Usa la variable targetUrl
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                mostrarAlerta('Evento eliminado exitosamente', 'success');
-
-                // Actualizar el marcador dinámicamente ANTES de recargar
-                if (data.nuevoMarcadorLocal !== undefined && data.nuevoMarcadorVisitante !== undefined) {
-                    actualizarMarcadorPrincipalDisplay(data.nuevoMarcadorLocal, data.nuevoMarcadorVisitante);
-                }
-
-                // Recargar la página para actualizar la lista de goles
-                location.reload();
-
-            } else {
-                mostrarAlerta('Error al eliminar evento: ' + data.error, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            mostrarAlerta('Error de conexión al eliminar evento.', 'error');
-        });
-    }
-}
-
-// Función para actualizar el valor de puntos según el tipo de evento
-function actualizarValorPuntos() {
-    const tipoEvento = document.getElementById('tipo_evento');
-    const valorPuntosInput = document.getElementById('valor_puntos');
-
-    if (tipoEvento && valorPuntosInput) {
-        const selectedOption = tipoEvento.options[tipoEvento.selectedIndex];
-        const puntos = selectedOption.getAttribute('data-puntos');
-        valorPuntosInput.value = puntos || 1;
-    }
-}
-
-document.getElementById('modalGol')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        cerrarModalGol();
-    }
-});
-
-
-let equipoMVPActual = 'local';
-
-function abrirModalMVP() {
-    const modal = document.getElementById('modalMVP');
-    equipoMVPActual = 'local';
-    cargarJugadoresMVP('local');
-    modal.style.display = 'flex';
-}
-
-function cerrarModalMVP() {
-    const modal = document.getElementById('modalMVP');
-    modal.style.display = 'none';
-    document.getElementById('formSeleccionarMVP').reset();
-}
-
-function cambiarEquipoMVP(tipo) {
-    equipoMVPActual = tipo;
-
-    
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    event.target.classList.add('active');
-
-    
-    cargarJugadoresMVP(tipo);
-}
-
-function cargarJugadoresMVP(tipo) {
-    const select = document.getElementById('mvp_jugador_id');
-    select.innerHTML = '<option value="">Seleccione un jugador</option>';
-
-    const jugadores = tipo === 'local' ? jugadoresLocal : jugadoresVisitante;
-
-    jugadores.forEach(jugador => {
-        const option = document.createElement('option');
-        option.value = jugador.id;
-        option.textContent = `#${jugador.numero_camiseta || '0'} - ${jugador.nombre_jugador} (${jugador.posicion || 'Sin posición'})`;
-        select.appendChild(option);
-    });
-}
-
-
-document.getElementById('modalMVP')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        cerrarModalMVP();
-    }
-});
-
-
-const PARTIDO_ID = <?php echo $partido_id; ?>;
-let intervaloCronometro = null;
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    obtenerEstadoCronometro();
-    
-    intervaloCronometro = setInterval(obtenerEstadoCronometro, 1000);
-});
-
-function obtenerEstadoCronometro() {
-    fetch(`cronometro_process.php?action=obtener_estado&partido_id=${PARTIDO_ID}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                actualizarDisplayCronometro(data.cronometro);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function actualizarDisplayCronometro(cronometro) {
-    const tiempoDisplay = document.getElementById('cronometroTiempo');
-    const periodoDisplay = document.getElementById('cronometroPeriodo');
-    const estadoDisplay = document.getElementById('cronometroEstado');
-    const btnIniciar = document.getElementById('btnIniciar');
-    const btnPausar = document.getElementById('btnPausar');
-    const btnReanudar = document.getElementById('btnReanudar');
-
-    
-    const tiempo = formatearTiempoPartido(cronometro.tiempo_transcurrido, cronometro.tiempo_agregado);
-    tiempoDisplay.textContent = tiempo;
-    periodoDisplay.textContent = cronometro.periodo_actual;
-
-    
-    const estado = cronometro.estado_cronometro;
-    let badgeHTML = '';
-
-    if (estado === 'corriendo') {
-        badgeHTML = '<span class="estado-badge estado-corriendo"><i class="fas fa-play-circle"></i> En Curso</span>';
-        btnIniciar.style.display = 'none';
-        btnPausar.style.display = 'block';
-        btnReanudar.style.display = 'none';
-    } else if (estado === 'pausado') {
-        badgeHTML = '<span class="estado-badge estado-pausado"><i class="fas fa-pause-circle"></i> Pausado</span>';
-        btnIniciar.style.display = 'none';
-        btnPausar.style.display = 'none';
-        btnReanudar.style.display = 'block';
-    } else {
-        badgeHTML = '<span class="estado-badge estado-detenido"><i class="fas fa-stop-circle"></i> Detenido</span>';
-        btnIniciar.style.display = 'block';
-        btnPausar.style.display = 'none';
-        btnReanudar.style.display = 'none';
-    }
-
-    estadoDisplay.innerHTML = badgeHTML;
-}
-
-function formatearTiempoPartido(segundos, tiempoAgregado) {
-    const minutos = Math.floor(segundos / 60);
-    const segs = segundos % 60;
-    const codigoDeporte = '<?php echo $partido['codigo_deporte']; ?>';
-
-    // Basketball: mostrar MM:SS simple (cuartos de 10-12 min)
-    if (codigoDeporte === 'basketball') {
-        return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-    }
-
-    // Table Tennis / Ping Pong: mostrar solo puntos (no tiempo)
-    if (codigoDeporte === 'table_tennis') {
-        return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-    }
-
-    // Fútbol y otros deportes con tiempos agregados
-    if (codigoDeporte === 'football' || codigoDeporte === 'volleyball') {
-        // Primer tiempo (0-45 min)
-        if (minutos < 45) {
-            return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-        }
-        // Fin del primer tiempo con tiempo agregado
-        else if (minutos >= 45 && minutos < 46) {
-            if (tiempoAgregado > 0 && segs > 0) {
-                return `45+${Math.ceil(segs / 60)}'`;
-            }
-            return `45:00`;
-        }
-        // Segundo tiempo (45-90 min)
-        else if (minutos < 90) {
-            return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-        }
-        // Fin del segundo tiempo con tiempo agregado
-        else if (minutos >= 90) {
-            const minutosExtra = minutos - 90;
-            if (tiempoAgregado > 0 && (minutosExtra > 0 || segs > 0)) {
-                const totalExtra = minutosExtra + Math.ceil(segs / 60);
-                return `90+${totalExtra}'`;
-            }
-            return `90:00`;
-        }
-    }
-
-    // Por defecto
-    return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-}
-
-function iniciarCronometro() {
-    if (confirm('¿Iniciar el partido? Esto cambiará el estado del partido a "En Curso".')) {
-        enviarAccionCronometro('iniciar');
-    }
-}
-
-function pausarCronometro() {
-    enviarAccionCronometro('pausar');
-}
-
-function reanudarCronometro() {
-    enviarAccionCronometro('iniciar');
-}
-
-function cambiarPeriodo(periodo) {
-    const formData = new FormData();
-    formData.append('action', 'cambiar_periodo');
-    formData.append('partido_id', PARTIDO_ID);
-    formData.append('periodo', periodo);
-
-    fetch('cronometro_process.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            obtenerEstadoCronometro();
-            mostrarAlerta('Periodo cambiado a: ' + periodo, 'success');
-        } else {
-            mostrarAlerta('Error: ' + data.error, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error al cambiar periodo', 'error');
-    });
-}
-
-function agregarTiempo() {
-    const minutos = document.getElementById('tiempoAgregado').value;
-
-    const formData = new FormData();
-    formData.append('action', 'agregar_tiempo');
-    formData.append('partido_id', PARTIDO_ID);
-    formData.append('minutos', minutos);
-
-    fetch('cronometro_process.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            obtenerEstadoCronometro();
-            mostrarAlerta('Tiempo agregado: ' + minutos + ' minutos', 'success');
-        } else {
-            mostrarAlerta('Error: ' + data.error, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error al agregar tiempo', 'error');
-    });
-}
-
-function reiniciarCronometro() {
-    if (confirm('¿Reiniciar el cronómetro? Esto pondrá el tiempo en 00:00.')) {
-        enviarAccionCronometro('reiniciar');
-    }
-}
-
-function enviarAccionCronometro(accion) {
-    const formData = new FormData();
-    formData.append('action', accion);
-    formData.append('partido_id', PARTIDO_ID);
-
-    fetch('cronometro_process.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        
-        if (!response.ok) {
-            throw new Error('HTTP error! status: ' + response.status);
-        }
-        return response.text(); 
-    })
-    .then(text => {
-        console.log('Respuesta del servidor:', text); 
-        try {
-            const data = JSON.parse(text);
-            if (data.success) {
-                obtenerEstadoCronometro();
-                if (accion === 'iniciar') {
-                    // Si hay mensaje especial sobre BYE o avance automático
-                    if (data.mensaje) {
-                        alert('⚠️ ' + data.mensaje + '\n\n' + (data.avance || ''));
-                        // Recargar la página para reflejar los cambios
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    } else {
-                        mostrarAlerta('Cronómetro iniciado', 'success');
-                    }
-                }
-            } else {
-                mostrarAlerta('Error: ' + (data.error || 'Error desconocido'), 'error');
-            }
-        } catch (e) {
-            console.error('Error parsing JSON:', e);
-            console.error('Texto recibido:', text);
-            mostrarAlerta('Error: Respuesta inválida del servidor', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error completo:', error);
-        mostrarAlerta('Error al ejecutar acción: ' + error.message, 'error');
-    });
-}
-
-function mostrarAlerta(mensaje, tipo) {
-    
-    const alerta = document.createElement('div');
-    alerta.className = 'alert alert-' + tipo;
-    alerta.textContent = mensaje;
-    alerta.style.position = 'fixed';
-    alerta.style.top = '80px';
-    alerta.style.right = '20px';
-    alerta.style.zIndex = '10000';
-    alerta.style.minWidth = '300px';
-
-    document.body.appendChild(alerta);
-
-    setTimeout(() => {
-        alerta.remove();
-    }, 3000);
-}
-
-const partidoId = <?php echo $partido_id; ?>;
-
-function cambiarSet(setNumero) {
-    // Ocultar todos los sets
-    document.querySelectorAll('.set-content').forEach(content => {
-        content.style.display = 'none';
-    });
-
-    // Remover clase active de todos los tabs
-    document.querySelectorAll('.set-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
-    // Mostrar set seleccionado
-    document.getElementById('set-' + setNumero).style.display = 'block';
-    document.querySelector(`.set-tab[data-set="${setNumero}"]`).classList.add('active');
-}
-
-function sumarPunto(setNumero, tipo) {
-    fetch('pingpong_process.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=sumar_punto&partido_id=${partidoId}&set_numero=${setNumero}&tipo=${tipo}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('puntos-local-set-' + setNumero).textContent = data.puntos_local;
-            document.getElementById('puntos-visitante-set-' + setNumero).textContent = data.puntos_visitante;
-
-            const puntosL = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
-            const puntosV = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
-            const accionesSetDiv = document.querySelector(`#set-${setNumero} .set-acciones`);
-            const badgeFinalizado = document.querySelector(`#set-${setNumero} .set-finalizado-badge`);
-
-            if (accionesSetDiv && !badgeFinalizado) { // Si existe el div de acciones y el set NO está finalizado
-                if (puntosL > 0 || puntosV > 0) {
-                    accionesSetDiv.style.display = 'block'; // Mostrar si hay puntos
-                } else {
-                    accionesSetDiv.style.display = 'none'; // Ocultar si vuelve a 0-0
-                }
-            }
-            // --- FIN DE AÑADIDO ---
-
-            if (data.set_finalizado) {
-                alert('Set ' + setNumero + ' finalizado!');
-                location.reload();
-            }
-
-            if (data.sets_ganados) {
-                const setsLocal = data.sets_ganados.sets_ganados_local;
-                const setsVisitante = data.sets_ganados.sets_ganados_visitante;
-
-                // Actualizar spans de resumen
-                document.getElementById('sets-local').textContent = setsLocal;
-                document.getElementById('sets-visitante').textContent = setsVisitante;
-
-                // --- AÑADE ESTAS LÍNEAS ---
-                // Actualizar display principal (los cuadros azules)
-                // Actualizar display principal (los cuadros azules)
-                document.querySelector('.marcadores-grid .marcador-group:first-child .marcador-calculado').textContent = setsLocal; // O data.sets_ganados.sets_ganados_local
-                document.querySelector('.marcadores-grid .marcador-group:last-child .marcador-calculado').textContent = setsVisitante; // O data.sets_ganados.sets_ganados_visitante
-
-                // Actualizar campos ocultos del formulario principal
-                document.querySelector('form.admin-form input[name="marcador_local"]').value = setsLocal; // O data.sets_ganados.sets_ganados_local
-                document.querySelector('form.admin-form input[name="marcador_visitante"]').value = setsVisitante; // O data.sets_ganados.sets_ganados_visitante
-                 // --- FIN DE AÑADIDO ---
-            }
-        } else {
-            alert('Error: ' + data.error);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function restarPunto(setNumero, tipo) {
-    if (!confirm('¿Restar 1 punto?')) return;
-
-    fetch('pingpong_process.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=restar_punto&partido_id=${partidoId}&set_numero=${setNumero}&tipo=${tipo}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('puntos-local-set-' + setNumero).textContent = data.puntos_local;
-            document.getElementById('puntos-visitante-set-' + setNumero).textContent = data.puntos_visitante;
-            const puntosL = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
-            const puntosV = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
-            const accionesSetDiv = document.querySelector(`#set-${setNumero} .set-acciones`);
-            const badgeFinalizado = document.querySelector(`#set-${setNumero} .set-finalizado-badge`); // Re-chequear por si acaso
-
-            if (accionesSetDiv && !badgeFinalizado) {
-                 if (puntosL > 0 || puntosV > 0) {
-                    accionesSetDiv.style.display = 'block';
-                } else {
-                    accionesSetDiv.style.display = 'none';
-                }
-            }
-        } else {
-            alert('Error: ' + data.error);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function finalizarSetManual(setNumero) {
-    const puntosLocal = parseInt(document.getElementById('puntos-local-set-' + setNumero).textContent);
-    const puntosVisitante = parseInt(document.getElementById('puntos-visitante-set-' + setNumero).textContent);
-
-    if (puntosLocal === puntosVisitante) {
-        alert('No se puede finalizar un set empatado. Debe haber un ganador.');
-        return;
-    }
-
-    const ganador = puntosLocal > puntosVisitante ? 'Local' : 'Visitante';
-    const mensaje = `¿Finalizar Set ${setNumero} con el marcador actual?\n\n` +
-                    `Local: ${puntosLocal} - Visitante: ${puntosVisitante}\n` +
-                    `Ganador: ${ganador}`;
-
-    if (!confirm(mensaje)) return;
-
-    fetch('pingpong_process.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=finalizar_set_manual&partido_id=${partidoId}&set_numero=${setNumero}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Set ' + setNumero + ' finalizado correctamente!');
-            location.reload();
-        } else {
-            alert('Error: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al finalizar el set');
-    });
-}
-/**
- * Actualiza el display del marcador principal y los campos ocultos.
- * @param {number} nuevoMarcadorLocal - El nuevo marcador para el equipo local.
- * @param {number} nuevoMarcadorVisitante - El nuevo marcador para el equipo visitante.
- */
-function actualizarMarcadorPrincipalDisplay(nuevoMarcadorLocal, nuevoMarcadorVisitante) {
-    // Actualizar display principal (los cuadros azules)
-    const marcadorLocalDisplay = document.querySelector('.marcadores-grid .marcador-group:first-child .marcador-calculado');
-    const marcadorVisitanteDisplay = document.querySelector('.marcadores-grid .marcador-group:last-child .marcador-calculado');
-    if (marcadorLocalDisplay) marcadorLocalDisplay.textContent = nuevoMarcadorLocal;
-    if (marcadorVisitanteDisplay) marcadorVisitanteDisplay.textContent = nuevoMarcadorVisitante;
-
-    // Actualizar campos ocultos del formulario principal
-    const marcadorLocalInput = document.querySelector('form.admin-form input[name="marcador_local"]');
-    const marcadorVisitanteInput = document.querySelector('form.admin-form input[name="marcador_visitante"]');
-    if (marcadorLocalInput) marcadorLocalInput.value = nuevoMarcadorLocal;
-    if (marcadorVisitanteInput) marcadorVisitanteInput.value = nuevoMarcadorVisitante;
-
-    console.log(`Marcador actualizado a: ${nuevoMarcadorLocal} - ${nuevoMarcadorVisitante}`);
-}
-
-function enviarFormularioEvento(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const modal = document.getElementById('modalGol');
-
-    const targetUrl = 'evento_partido_process.php'; // Ruta relativa simple
-    console.log("Intentando enviar a:", targetUrl);
-
-    // Asegúrate que form.action apunta al archivo correcto
-    // Si están en el mismo directorio, esto debería ser 'evento_partido_process.php'
-    console.log("Intentando enviar a:", form.action); // Añade esto para depurar
-
-    fetch(targetUrl, { // <-- Usa la variable targetUrl
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            cerrarModalGol();
-            mostrarAlerta('Evento agregado exitosamente', 'success');
-
-            // Actualizar el marcador dinámicamente ANTES de recargar
-            if (data.nuevoMarcadorLocal !== undefined && data.nuevoMarcadorVisitante !== undefined) {
-                actualizarMarcadorPrincipalDisplay(data.nuevoMarcadorLocal, data.nuevoMarcadorVisitante);
-            }
-            
-            // Recargar la página para actualizar la lista de goles
-            location.reload();
-
-        } else {
-            mostrarAlerta('Error al agregar evento: ' + data.error, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error de conexión al agregar evento.', 'error');
-    });
-}
-
-// Función para definir ganador en Ajedrez
-function definirGanadorAjedrez(tipoResultado) {
-    const partidoId = <?php echo $partido_id; ?>;
-
-    let mensajeConfirmacion = '';
-    let nombreGanador = '';
-
-    switch(tipoResultado) {
-        case 'local':
-            nombreGanador = '<?php echo addslashes($jugador_local_seleccionado['nombre_jugador'] ?? 'Local'); ?>';
-            mensajeConfirmacion = `¿Confirmar victoria de ${nombreGanador}?\n\nMarcador: 1 - 0\nEl partido se marcará como finalizado.`;
-            break;
-        case 'visitante':
-            nombreGanador = '<?php echo addslashes($jugador_visitante_seleccionado['nombre_jugador'] ?? 'Visitante'); ?>';
-            mensajeConfirmacion = `¿Confirmar victoria de ${nombreGanador}?\n\nMarcador: 0 - 1\nEl partido se marcará como finalizado.`;
-            break;
-        case 'empate':
-            mensajeConfirmacion = '¿Confirmar empate / tablas?\n\nMarcador: 0 - 0\nEl partido se marcará como finalizado.';
-            break;
-    }
-
-    if (!confirm(mensajeConfirmacion)) {
-        return;
-    }
-
-    // Mostrar loading
-    const botones = document.querySelectorAll('.btn-ajedrez');
-    botones.forEach(btn => {
-        btn.disabled = true;
-        btn.style.opacity = '0.6';
-    });
-
-    // Enviar petición AJAX
-    fetch('ajedrez_process.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=definir_ganador&partido_id=${partidoId}&tipo_resultado=${tipoResultado}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Actualizar marcadores en pantalla
-            if (data.marcador_local !== undefined && data.marcador_visitante !== undefined) {
-                actualizarMarcadorPrincipalDisplay(data.marcador_local, data.marcador_visitante);
-            }
-
-            // Mostrar mensaje de éxito
-            mostrarAlerta('Resultado guardado exitosamente', 'success');
-
-            // Recargar página después de 1 segundo
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
-        } else {
-            mostrarAlerta('Error: ' + data.error, 'error');
-            // Reactivar botones
-            botones.forEach(btn => {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error de conexión al guardar el resultado', 'error');
-        // Reactivar botones
-        botones.forEach(btn => {
-            btn.disabled = false;
-            btn.style.opacity = '1';
-        });
-    });
-}
-</script>
 
 <?php
 $stmt_partido->close();

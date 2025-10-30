@@ -162,33 +162,6 @@
 
      <hr class="section-divider">
 
-    <?php if (!empty($destacados)): ?>
-    <section class="destacados-section">
-        <h2 class="section-title">Jugadores Destacados</h2>
-        <div class="destacados-grid">
-            <?php foreach($destacados as $destacado):
-                 $foto_url = !empty($destacado['url_foto']) ? htmlspecialchars($destacado['url_foto']) : 'img/jugadores/default.png';
-            ?>
-                <div class="destacado-card">
-                    <div class="destacado-img-container">
-                        <img src="<?php echo $foto_url; ?>" alt="<?php echo htmlspecialchars($destacado['nombre_jugador']); ?>" class="destacado-img">
-                         <span class="destacado-posicion"><?php echo htmlspecialchars($destacado['posicion']); ?></span>
-                    </div>
-                    <div class="destacado-info">
-                        <h3><?php echo htmlspecialchars($destacado['nombre_jugador']); ?></h3>
-                        <p class="destacado-contexto"><?php echo htmlspecialchars($destacado['contexto']); ?></p>
-                        <p class="destacado-descripcion"><?php echo htmlspecialchars($destacado['descripcion']); ?></p>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-         <div class="text-center">
-            <a href="jugadores.php" class="btn btn-secondary"><i class="fas fa-users"></i> Ver Todos los Jugadores</a>
-        </div>
-    </section>
-     <hr class="section-divider">
-    <?php endif; ?>
-
     <?php if (!empty($noticias_recientes)): ?>
     <section class="noticias-recientes-section">
         <h2 class="section-title">Últimas Noticias</h2>
@@ -196,7 +169,7 @@
             <?php foreach($noticias_recientes as $noticia): ?>
                  <article class="noticia-card-preview card">
                      <div class="card-image">
-                         <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? 'img/default-noticia.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
+                         <img src="<?php echo htmlspecialchars($noticia['imagen_portada'] ?? '../../img/noticias/default.png'); ?>" alt="<?php echo htmlspecialchars($noticia['titulo']); ?>">
                      </div>
                      <div class="card-content">
                          <h3 class="card-title"><a href="noticia_detalle.php?id=<?php echo $noticia['id']; ?>"><?php echo htmlspecialchars($noticia['titulo']); ?></a></h3>
@@ -220,11 +193,6 @@
                 <i class="fas fa-trophy"></i>
                 <h3>Torneos</h3>
                 <p>Explora los torneos activos y finalizados.</p>
-            </a>
-             <a href="seleccion.php" class="quick-link-card">
-                <i class="fas fa-flag"></i>
-                <h3>Selección</h3>
-                <p>Conoce más sobre nuestra selección y sus partidos.</p>
             </a>
             <a href="calendario.php" class="quick-link-card">
                  <i class="fas fa-calendar-alt"></i>

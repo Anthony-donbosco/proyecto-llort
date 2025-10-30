@@ -2,12 +2,8 @@
 
 session_start();
 require_once '../db_connect.php';
-
-
-if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'admin') {
-    header("Location: ../login.php");
-    exit();
-}
+require_once 'admin_header.php';
+require_once 'auth_admin.php'; 
 
 $torneo_id = isset($_GET['torneo_id']) ? (int)$_GET['torneo_id'] : 0;
 $participante_id = isset($_GET['participante_id']) ? (int)$_GET['participante_id'] : 0;
@@ -36,20 +32,30 @@ if (!$info) {
 
 
 if ($info['es_por_equipos'] == 1 && $participante_id > 0) {
-    
-    $query_jugadores = "SELECT j.*, pos.codigo as posicion_codigo, pos.nombre_mostrado as posicion_nombre,
-                       pos.coordenada_x, pos.coordenada_y, pos.es_titular as posicion_titular
-                       FROM jugadores j 
-                       LEFT JOIN posiciones_deporte pos ON j.posicion_id = pos.id
-                       WHERE j.torneo_id = ? AND j.participante_id = ?
-                       ORDER BY j.es_titular DESC, pos.orden_visualizacion ASC, j.numero_camiseta ASC";
+
+    $query_jugadores = "SELECT mp.id, mp.nombre_jugador, mp.numero_camiseta,
+                       mp.url_foto, mp.edad, mp.grado, mp.goles, mp.asistencias,
+                       mp.posicion,
+                       pos.coordenada_x,
+                       pos.coordenada_y,
+                       pos.nombre_mostrado as posicion_nombre,
+                       pos.codigo as posicion_codigo,
+                       1 as es_titular,
+                       0 as es_capitan
+                FROM miembros_plantel mp
+                JOIN planteles_equipo pe ON mp.plantel_id = pe.id
+                LEFT JOIN posiciones_deporte pos ON mp.posicion = pos.nombre_mostrado
+                    AND pos.deporte_id = ?
+                WHERE pe.participante_id = ? AND pe.esta_activo = 1
+                ORDER BY mp.numero_camiseta ASC";
+
     $stmt_jug = $conn->prepare($query_jugadores);
-    $stmt_jug->bind_param("ii", $torneo_id, $participante_id);
+    $stmt_jug->bind_param("ii", $info['deporte_id'], $participante_id);
 } else {
-    
+
     $query_jugadores = "SELECT j.*, NULL as posicion_codigo, NULL as posicion_nombre,
                        NULL as coordenada_x, NULL as coordenada_y, 1 as posicion_titular
-                       FROM jugadores j 
+                       FROM jugadores j
                        WHERE j.torneo_id = ? AND j.participante_id IS NULL
                        ORDER BY j.nombre ASC";
     $stmt_jug = $conn->prepare($query_jugadores);
@@ -57,7 +63,60 @@ if ($info['es_por_equipos'] == 1 && $participante_id > 0) {
 }
 
 $stmt_jug->execute();
-$jugadores = $stmt_jug->get_result()->fetch_all(MYSQLI_ASSOC);
+$resultado = $stmt_jug->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$jugadores = [];
+$posiciones_counter = [
+    'Portero' => 0,
+    'Defensa' => 0,
+    'Mediocampista' => 0,
+    'Delantero' => 0,
+    'Otro' => 0
+];
+
+foreach ($resultado as $row) {
+    if (isset($row['nombre_jugador'])) {
+        $partes_nombre = explode(' ', trim($row['nombre_jugador']), 2);
+        $row['nombre'] = $partes_nombre[0];
+        $row['apellido'] = isset($partes_nombre[1]) ? $partes_nombre[1] : '';
+
+        if ($row['coordenada_x'] === null && $row['coordenada_y'] === null) {
+            $posicion = $row['posicion'] ?? 'Otro';
+            $posicion_limpia = ucfirst(strtolower(trim($posicion)));
+
+            if (!isset($posiciones_counter[$posicion_limpia])) {
+                $posicion_limpia = 'Otro';
+            }
+
+            $index = $posiciones_counter[$posicion_limpia];
+            $posiciones_counter[$posicion_limpia]++;
+
+            switch ($posicion_limpia) {
+                case 'Portero':
+                    $row['coordenada_x'] = 50;
+                    $row['coordenada_y'] = 90 - ($index * 5);
+                    break;
+                case 'Defensa':
+                    $row['coordenada_x'] = 20 + ($index * 15);
+                    $row['coordenada_y'] = 70;
+                    break;
+                case 'Mediocampista':
+                    $row['coordenada_x'] = 20 + ($index * 15);
+                    $row['coordenada_y'] = 45;
+                    break;
+                case 'Delantero':
+                    $row['coordenada_x'] = 25 + ($index * 16);
+                    $row['coordenada_y'] = 20;
+                    break;
+                default:
+                    $row['coordenada_x'] = 30 + ($index * 10);
+                    $row['coordenada_y'] = 50;
+                    break;
+            }
+        }
+    }
+    $jugadores[] = $row;
+}
 
 
 $titulares = [];
@@ -337,7 +396,7 @@ foreach ($jugadores as $jugador) {
         }
     </style>
 </head>
-<body>
+<main class="admin-page"> <div class="plantel-container">
     <div class="plantel-container">
         <div class="equipo-header">
             <div class="equipo-logo">
@@ -410,15 +469,14 @@ foreach ($jugadores as $jugador) {
                                     <?php echo strtoupper(substr($jugador['nombre'], 0, 1) . substr($jugador['apellido'], 0, 1)); ?>
                                 </div>
                                 <strong><?php echo htmlspecialchars($jugador['nombre'] . ' ' . $jugador['apellido']); ?></strong>
-                                <?php if ($jugador['fecha_nacimiento']): ?>
-                                    <br><small>Edad: <?php echo date('Y') - date('Y', strtotime($jugador['fecha_nacimiento'])); ?> años</small>
+                                <?php if ($jugador['edad']): ?>
+                                    <br><small>Edad: <?php echo htmlspecialchars($jugador['edad']); ?> años</small>
                                 <?php endif; ?>
-                                <?php if ($jugador['peso'] || $jugador['altura']): ?>
-                                    <br><small>
-                                        <?php if ($jugador['altura']): echo $jugador['altura'] . 'm'; endif; ?>
-                                        <?php if ($jugador['peso'] && $jugador['altura']): echo ' | '; endif; ?>
-                                        <?php if ($jugador['peso']): echo $jugador['peso'] . 'kg'; endif; ?>
-                                    </small>
+                                <?php if (isset($jugador['grado']) && $jugador['grado']): ?>
+                                    <br><small>Grado: <?php echo htmlspecialchars($jugador['grado']); ?></small>
+                                <?php endif; ?>
+                                <?php if (isset($jugador['posicion']) && $jugador['posicion']): ?>
+                                    <br><small><?php echo htmlspecialchars($jugador['posicion']); ?></small>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -429,10 +487,18 @@ foreach ($jugadores as $jugador) {
             </div>
         <?php endif; ?>
         
-        <div class="actions" style="text-align: center; margin-top: 30px;">
-            <a href="gestionar_jugadores.php?torneo_id=<?php echo $torneo_id; ?>&participante_id=<?php echo $participante_id; ?>" class="btn btn-primary">Editar Plantel</a>
-            <a href="gestionar_torneos.php" class="btn btn-secondary">Volver a Torneos</a>
+        <div class="actions" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 1rem;">
+    
+            <a href="ver_plantel.php?equipo_id=<?php echo $participante_id; ?>" class="btn btn-primary">
+                <i class="fas fa-list-ol"></i> Ver Plantel (Lista)
+            </a>
+
+            <a href="gestionar_equipos.php" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Equipos
+            </a>
         </div>
     </div>
-</body>
+</main>
+<link rel="stylesheet" href="../../css/ver-plantel-fifa.css"> <?php
+require_once 'admin_footer.php'; ?>
 </html>

@@ -51,9 +51,6 @@ $deportes = $conn->query($deportes_sql);
     <div class="page-header">
         <h1>Gestionar Jugadores Destacados</h1>
         <div>
-            <a href="crear_destacado.php" class="btn btn-primary">
-                <i class="fas fa-star"></i> Agregar Destacado
-            </a>
             <a href="dashboard.php" class="btn btn-secondary">
                 <i class="fas fa-home"></i> Volver a Inicio
             </a>
@@ -182,61 +179,6 @@ $deportes = $conn->query($deportes_sql);
 
     <hr style="margin: 2rem 0; border: 1px solid #e0e0e0;">
 
-    <h2><i class="fas fa-star"></i> Jugadores Destacados Individuales</h2>
-
-    <div class="table-container">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Jugador</th>
-                    <th>Deporte</th>
-                    <th>Tipo</th>
-                    <th>Torneo/Temporada</th>
-                    <th>Descripción</th>
-                    <th>Orden</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if ($destacados->num_rows > 0) {
-                    while($row = $destacados->fetch_assoc()) {
-                        $foto_url = !empty($row['url_foto']) ? htmlspecialchars($row['url_foto']) : '../../img/jugadores/default.png';
-                        $estado_badge = $row['esta_activo'] ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>';
-                        $torneo_temp = $row['nombre_torneo'] ?? $row['nombre_temporada'] ?? 'N/A';
-                ?>
-                    <tr>
-                        <td><img src="<?php echo $foto_url; ?>" alt="Foto" class="table-avatar"></td>
-                        <td>
-                            <strong><?php echo htmlspecialchars($row['nombre_jugador']); ?></strong><br>
-                            <small><?php echo htmlspecialchars($row['posicion']); ?></small>
-                        </td>
-                        <td><?php echo htmlspecialchars($row['nombre_deporte']); ?></td>
-                        <td><?php echo ucfirst(htmlspecialchars($row['tipo_destacado'])); ?></td>
-                        <td><?php echo htmlspecialchars($torneo_temp); ?></td>
-                        <td><?php echo htmlspecialchars(substr($row['descripcion'], 0, 50)) . '...'; ?></td>
-                        <td><?php echo htmlspecialchars($row['orden']); ?></td>
-                        <td><?php echo $estado_badge; ?></td>
-                        <td class="action-buttons">
-                            <a href="crear_destacado.php?edit_id=<?php echo $row['id']; ?>" class="btn btn-secondary">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a href="destacado_process.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-danger" onclick="return confirm('¿Seguro que quieres eliminar este destacado?');">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                <?php
-                    }
-                } else {
-                    echo "<tr><td colspan='9'>No se encontraron jugadores destacados.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
 </main>
 
 <style>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2025 at 06:13 AM
+-- Generation Time: Oct 30, 2025 at 12:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -42,34 +42,10 @@ CREATE TABLE `bracket_torneos` (
 --
 
 INSERT INTO `bracket_torneos` (`id`, `torneo_id`, `fase`, `posicion_bracket`, `participante_id`, `ganador_de_partido_id`, `creado_en`) VALUES
-(17, 2, 'semis', 1, 16, NULL, '2025-10-27 14:58:35'),
-(18, 2, 'semis', 2, 18, NULL, '2025-10-27 14:58:35'),
-(19, 2, 'semis', 3, 15, NULL, '2025-10-27 14:58:35'),
-(20, 2, 'semis', 4, 17, NULL, '2025-10-27 14:58:35'),
-(21, 3, 'semis', 1, 22, NULL, '2025-10-27 18:09:19'),
-(22, 3, 'semis', 2, 21, NULL, '2025-10-27 18:09:19'),
-(23, 3, 'semis', 3, 20, NULL, '2025-10-27 18:09:19'),
-(24, 3, 'semis', 4, 19, NULL, '2025-10-27 18:09:19'),
-(25, 6, 'semis', 1, 33, NULL, '2025-10-27 20:48:23'),
-(26, 6, 'semis', 2, 32, NULL, '2025-10-27 20:48:23'),
-(27, 6, 'semis', 3, 34, NULL, '2025-10-27 20:48:23'),
-(28, 6, 'semis', 4, 31, NULL, '2025-10-27 20:48:23'),
-(29, 5, 'semis', 1, 29, NULL, '2025-10-27 21:32:15'),
-(30, 5, 'semis', 2, 28, NULL, '2025-10-27 21:32:15'),
-(31, 5, 'semis', 3, 30, NULL, '2025-10-27 21:32:15'),
-(32, 5, 'semis', 4, 27, NULL, '2025-10-27 21:32:15'),
-(33, 8, 'semis', 1, 37, NULL, '2025-10-27 23:35:46'),
-(34, 8, 'semis', 2, 29, NULL, '2025-10-27 23:35:46'),
-(35, 8, 'semis', 3, 36, NULL, '2025-10-27 23:35:46'),
-(36, 8, 'semis', 4, 35, NULL, '2025-10-27 23:35:46'),
-(37, 9, 'semis', 1, 42, NULL, '2025-10-28 03:01:57'),
-(38, 9, 'semis', 2, 41, NULL, '2025-10-28 03:01:57'),
-(39, 9, 'semis', 3, 40, NULL, '2025-10-28 03:01:57'),
-(40, 9, 'semis', 4, 39, NULL, '2025-10-28 03:01:57'),
-(49, 10, 'semis', 1, 37, NULL, '2025-10-28 23:34:08'),
-(50, 10, 'semis', 2, 35, NULL, '2025-10-28 23:34:08'),
-(51, 10, 'semis', 3, 38, NULL, '2025-10-28 23:34:08'),
-(52, 10, 'semis', 4, 36, NULL, '2025-10-28 23:34:08');
+(53, 13, 'semis', 1, 42, NULL, '2025-10-29 23:12:39'),
+(54, 13, 'semis', 2, 40, NULL, '2025-10-29 23:12:39'),
+(55, 13, 'semis', 3, 39, NULL, '2025-10-29 23:12:39'),
+(56, 13, 'semis', 4, 41, NULL, '2025-10-29 23:12:39');
 
 -- --------------------------------------------------------
 
@@ -142,33 +118,12 @@ CREATE TABLE `cronometro_partido` (
 --
 
 INSERT INTO `cronometro_partido` (`id`, `partido_id`, `estado_cronometro`, `tiempo_transcurrido`, `tiempo_inicio`, `tiempo_pausa`, `periodo_actual`, `tiempo_agregado`, `actualizado_en`) VALUES
-(1, 1, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-26 19:00:10'),
-(3, 5, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-28 02:26:11'),
-(4, 3, 'pausado', 121, '2025-10-26 23:37:32', '2025-10-26 23:38:56', '1er Tiempo', 0, '2025-10-26 23:38:56'),
-(5, 6, 'pausado', 5401, '2025-10-26 21:02:26', '2025-10-26 21:36:05', '2do Tiempo', 0, '2025-10-26 21:36:05'),
-(6, 4, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-26 23:08:41'),
-(7, 7, 'corriendo', 86, '2025-10-28 02:03:52', NULL, '2do Tiempo', 0, '2025-10-28 02:03:52'),
-(8, 2, 'corriendo', 0, '2025-10-28 23:47:53', NULL, '1er Tiempo', 0, '2025-10-28 23:47:53'),
-(9, 18, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-26 23:53:53'),
-(10, 87, 'pausado', 19, '2025-10-27 15:43:30', '2025-10-27 15:43:32', '2do Tiempo', 0, '2025-10-27 15:43:32'),
-(11, 88, 'corriendo', 0, '2025-10-27 15:52:28', NULL, '1er Tiempo', 0, '2025-10-27 15:52:28'),
-(12, 91, 'pausado', 1401, '2025-10-27 15:58:06', '2025-10-27 16:21:27', '2do Tiempo', 0, '2025-10-27 16:21:27'),
-(13, 98, 'corriendo', 90, '2025-10-27 18:23:09', NULL, '2do Tiempo', 2, '2025-10-27 19:06:06'),
-(14, 8, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-27 18:23:42'),
-(15, 101, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-27 22:21:43'),
-(17, 113, 'pausado', 76512, '2025-10-28 02:43:51', '2025-10-28 23:58:08', '1er Tiempo', 0, '2025-10-28 23:58:08'),
-(18, 116, 'pausado', 68, '2025-10-27 21:32:25', '2025-10-27 21:33:33', 'Set 1', 0, '2025-10-27 21:33:33'),
-(19, 102, 'pausado', 75785, '2025-10-29 00:00:54', '2025-10-29 00:00:59', '1er Tiempo', 0, '2025-10-29 00:00:59'),
-(20, 119, 'pausado', 80, '2025-10-27 23:36:13', '2025-10-27 23:37:33', 'Set 2', 0, '2025-10-27 23:37:33'),
-(21, 120, 'pausado', 2487, '2025-10-27 23:47:36', '2025-10-28 00:29:03', 'Set 2', 0, '2025-10-28 00:29:03'),
-(22, 117, 'corriendo', 0, '2025-10-28 02:44:35', NULL, '1er Tiempo', 0, '2025-10-28 02:44:35'),
-(23, 99, 'pausado', 18324, '2025-10-28 02:45:23', '2025-10-28 07:50:47', '1er Tiempo', 0, '2025-10-28 07:50:47'),
-(24, 121, 'pausado', 8, '2025-10-28 02:57:16', '2025-10-28 02:57:24', '1er Tiempo', 0, '2025-10-28 02:57:24'),
-(25, 122, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-28 03:02:08'),
-(27, 123, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-28 03:19:29'),
-(28, 118, 'corriendo', 0, '2025-10-28 23:51:37', NULL, '1er Tiempo', 0, '2025-10-28 23:51:37'),
-(29, 114, 'corriendo', 0, '2025-10-28 23:58:20', NULL, '1er Tiempo', 0, '2025-10-28 23:58:20'),
-(30, 100, 'corriendo', 0, '2025-10-29 00:02:21', NULL, '1er Tiempo', 0, '2025-10-29 00:02:21');
+(43, 137, 'pausado', 4846, '2025-10-29 22:20:50', '2025-10-29 22:21:48', '1er Tiempo', 0, '2025-10-29 22:21:48'),
+(50, 140, 'pausado', 356, '2025-10-29 23:01:28', '2025-10-29 23:07:24', '1er Tiempo', 0, '2025-10-29 23:07:24'),
+(51, 206, 'pausado', 7, '2025-10-29 23:12:52', '2025-10-29 23:12:59', '1er Tiempo', 0, '2025-10-29 23:12:59'),
+(52, 207, 'pausado', 6, '2025-10-29 23:13:04', '2025-10-29 23:13:10', '1er Tiempo', 0, '2025-10-29 23:13:10'),
+(53, 208, 'pausado', 5, '2025-10-29 23:13:36', '2025-10-29 23:13:41', '1er Tiempo', 0, '2025-10-29 23:13:41'),
+(54, 146, 'detenido', 0, NULL, NULL, '1er Tiempo', 0, '2025-10-29 23:14:34');
 
 -- --------------------------------------------------------
 
@@ -322,37 +277,9 @@ CREATE TABLE `eventos_partido` (
 --
 
 INSERT INTO `eventos_partido` (`id`, `partido_id`, `miembro_plantel_id`, `asistencia_miembro_plantel_id`, `tipo_evento`, `valor_puntos`, `minuto`, `periodo`, `notas`, `creado_en`) VALUES
-(1, 1, 10, NULL, 'gol', 1, '12', NULL, NULL, '2025-10-26 18:13:49'),
-(2, 1, 56, NULL, 'penal_anotado', 1, '15', NULL, NULL, '2025-10-26 18:14:04'),
-(3, 1, 6, NULL, 'gol', 1, '56', NULL, NULL, '2025-10-26 18:54:12'),
-(4, 6, 40, NULL, 'gol', 1, '1', NULL, NULL, '2025-10-26 20:07:26'),
-(5, 6, 41, NULL, 'penal_anotado', 1, '56', NULL, NULL, '2025-10-26 21:02:47'),
-(6, 6, 39, 40, 'gol', 1, '89', NULL, NULL, '2025-10-26 21:35:53'),
-(7, 3, 30, 31, 'gol', 1, '1', NULL, NULL, '2025-10-26 23:24:17'),
-(8, 7, 11, 4, 'gol', 1, '2', NULL, NULL, '2025-10-26 23:25:38'),
-(9, 3, 29, NULL, 'gol', 1, NULL, NULL, NULL, '2025-10-26 23:38:44'),
-(10, 3, 29, NULL, 'gol', 1, NULL, NULL, NULL, '2025-10-26 23:38:52'),
-(11, 87, 66, 63, 'gol', 1, '1', NULL, NULL, '2025-10-27 15:42:37'),
-(12, 88, 60, 59, 'gol', 1, '1', NULL, NULL, '2025-10-27 15:52:39'),
-(13, 91, 64, 65, 'gol', 1, '5', NULL, NULL, '2025-10-27 15:58:19'),
-(14, 98, 88, NULL, '', 3, '36', NULL, NULL, '2025-10-27 19:00:43'),
-(15, 101, 94, NULL, '', 1, NULL, NULL, NULL, '2025-10-27 22:42:49'),
-(17, 101, 113, NULL, '', 1, NULL, NULL, NULL, '2025-10-28 01:04:34'),
-(18, 101, 95, NULL, '', 1, NULL, NULL, NULL, '2025-10-28 01:04:43'),
-(27, 7, 54, 55, '', 1, '90', NULL, NULL, '2025-10-28 02:25:21'),
-(33, 5, 36, 35, 'gol', 1, '56', NULL, NULL, '2025-10-28 02:41:40'),
-(34, 5, 46, 45, 'gol', 1, '90', NULL, NULL, '2025-10-28 02:41:51'),
-(36, 4, 33, 32, 'gol', 1, '90', NULL, NULL, '2025-10-28 02:56:55'),
-(37, 99, 81, NULL, 'canasta_2pt', 2, '56', NULL, NULL, '2025-10-28 02:57:38'),
-(38, 102, 100, NULL, 'ace', 1, NULL, NULL, NULL, '2025-10-28 02:57:59'),
-(40, 2, 26, 27, 'gol', 1, '45+1', NULL, NULL, '2025-10-28 23:48:35'),
-(41, 7, 3, 11, 'gol', 1, '84', NULL, NULL, '2025-10-28 23:54:48'),
-(42, 7, 11, 9, 'gol', 1, '23', NULL, NULL, '2025-10-28 23:55:02'),
-(43, 7, 11, 4, 'gol', 1, '78', NULL, NULL, '2025-10-28 23:55:10'),
-(44, 7, 11, 5, 'gol', 1, '90', NULL, NULL, '2025-10-28 23:55:18'),
-(45, 102, 99, NULL, 'ace', 1, NULL, NULL, NULL, '2025-10-29 00:01:25'),
-(46, 102, 105, NULL, 'punto', 1, NULL, NULL, NULL, '2025-10-29 00:01:33'),
-(47, 100, 89, NULL, 'canasta_3pt', 3, '14', NULL, NULL, '2025-10-29 00:02:43');
+(82, 137, 28, 27, 'gol', 1, '1', NULL, NULL, '2025-10-29 20:55:21'),
+(83, 137, 29, 30, 'gol', 1, '09', NULL, NULL, '2025-10-29 22:21:04'),
+(84, 140, 6, 3, 'gol', 1, '2', NULL, NULL, '2025-10-29 23:01:59');
 
 --
 -- Triggers `eventos_partido`
@@ -497,22 +424,9 @@ CREATE TABLE `fases` (
 --
 
 INSERT INTO `fases` (`id`, `torneo_id`, `tipo_fase_id`, `grupo_id`, `orden_fase`, `nombre`, `fecha_inicio`, `fecha_fin`, `creado_en`) VALUES
-(1, 1, 1, NULL, 1, 'Fase de Liga', '2025-10-17', NULL, '2025-10-26 17:57:06'),
-(3, 2, 3, NULL, 3, 'Semifinales', '2025-10-27', '2025-11-03', '2025-10-27 14:17:14'),
-(4, 2, 4, NULL, 4, 'Final', '2025-10-30', '2025-11-06', '2025-10-27 15:42:59'),
-(5, 2, 4, NULL, 4, 'Final', '2025-10-27', '2025-11-03', '2025-10-27 15:55:32'),
-(6, 2, 4, NULL, 4, 'Final', '2025-10-27', '2025-11-03', '2025-10-27 15:55:42'),
-(8, 3, 3, NULL, 3, 'Semifinales', '2025-11-03', '2025-11-10', '2025-10-27 18:09:19'),
-(9, 3, 4, NULL, 4, 'Final', '2025-11-10', '2025-11-17', '2025-10-27 18:09:19'),
-(10, 4, 1, NULL, 1, 'Fase de Liga', '2025-11-10', NULL, '2025-10-27 20:43:01'),
-(12, 6, 3, NULL, 3, 'Semifinales', '2025-11-03', '2025-11-10', '2025-10-27 20:48:23'),
-(13, 6, 4, NULL, 4, 'Final', '2025-11-10', '2025-11-17', '2025-10-27 20:48:23'),
-(14, 5, 3, NULL, 3, 'Semifinales', '2025-11-03', '2025-11-10', '2025-10-27 21:32:15'),
-(15, 5, 4, NULL, 4, 'Final', '2025-11-10', '2025-11-17', '2025-10-27 21:32:15'),
-(16, 8, 3, NULL, 3, 'Semifinales', '2025-11-03', '2025-11-10', '2025-10-27 23:35:46'),
-(17, 8, 4, NULL, 4, 'Final', '2025-11-10', '2025-11-17', '2025-10-27 23:35:46'),
-(18, 9, 3, NULL, 3, 'Semifinales', '2025-11-03', '2025-11-10', '2025-10-28 03:01:57'),
-(19, 9, 4, NULL, 4, 'Final', '2025-11-10', '2025-11-17', '2025-10-28 03:01:57');
+(27, 12, 1, NULL, 1, 'Fase de Liga', '2025-10-29', NULL, '2025-10-29 23:01:21'),
+(28, 13, 3, NULL, 3, 'Semifinales', '2025-11-05', '2025-11-12', '2025-10-29 23:12:39'),
+(29, 13, 4, NULL, 4, 'Final', '2025-11-12', '2025-11-19', '2025-10-29 23:12:39');
 
 -- --------------------------------------------------------
 
@@ -603,20 +517,17 @@ CREATE TABLE `jornadas` (
 --
 
 INSERT INTO `jornadas` (`id`, `fase_id`, `numero_jornada`, `fecha_jornada`, `nombre`, `creado_en`) VALUES
-(1, 1, 1, '2025-10-17', 'Jornada 1', '2025-10-26 17:57:06'),
-(2, 1, 2, '2025-10-24', 'Jornada 2', '2025-10-26 17:57:06'),
-(3, 1, 3, '2025-10-31', 'Jornada 3', '2025-10-26 17:57:06'),
-(4, 1, 4, '2025-11-07', 'Jornada 4', '2025-10-26 17:57:06'),
-(5, 1, 5, '2025-11-14', 'Jornada 5', '2025-10-26 17:57:06'),
-(6, 1, 6, '2025-11-21', 'Jornada 6', '2025-10-26 17:57:06'),
-(7, 1, 7, '2025-11-28', 'Jornada 7', '2025-10-26 17:57:06'),
-(8, 1, 8, '2025-12-05', 'Jornada 8', '2025-10-26 17:57:06'),
-(9, 1, 9, '2025-12-12', 'Jornada 9', '2025-10-26 17:57:06'),
-(10, 1, 10, '2025-12-19', 'Jornada 10', '2025-10-26 17:57:06'),
-(11, 1, 11, '2025-12-26', 'Jornada 11', '2025-10-26 17:57:06'),
-(21, 10, 1, '2025-11-10', 'Jornada 1', '2025-10-27 20:43:01'),
-(22, 10, 2, '2025-11-17', 'Jornada 2', '2025-10-27 20:43:01'),
-(23, 10, 3, '2025-11-24', 'Jornada 3', '2025-10-27 20:43:01');
+(33, 27, 1, '2025-10-29', 'Jornada 1', '2025-10-29 23:01:21'),
+(34, 27, 2, '2025-11-05', 'Jornada 2', '2025-10-29 23:01:21'),
+(35, 27, 3, '2025-11-12', 'Jornada 3', '2025-10-29 23:01:21'),
+(36, 27, 4, '2025-11-19', 'Jornada 4', '2025-10-29 23:01:21'),
+(37, 27, 5, '2025-11-26', 'Jornada 5', '2025-10-29 23:01:21'),
+(38, 27, 6, '2025-12-03', 'Jornada 6', '2025-10-29 23:01:21'),
+(39, 27, 7, '2025-12-10', 'Jornada 7', '2025-10-29 23:01:21'),
+(40, 27, 8, '2025-12-17', 'Jornada 8', '2025-10-29 23:01:21'),
+(41, 27, 9, '2025-12-24', 'Jornada 9', '2025-10-29 23:01:21'),
+(42, 27, 10, '2025-12-31', 'Jornada 10', '2025-10-29 23:01:21'),
+(43, 27, 11, '2026-01-07', 'Jornada 11', '2025-10-29 23:01:21');
 
 -- --------------------------------------------------------
 
@@ -703,37 +614,37 @@ CREATE TABLE `miembros_plantel` (
 
 INSERT INTO `miembros_plantel` (`id`, `plantel_id`, `nombre_jugador`, `posicion`, `url_foto`, `edad`, `grado`, `numero_camiseta`, `goles`, `asistencias`, `mvps`, `porterias_cero`, `creado_en`) VALUES
 (1, 1, 'Steven Lopez', 'Mediocampista', '../../img/jugadores/68fbca6494b3f-jugadorSteven.jpg', 18, '2° B', 10, 0, 0, 0, 0, '2025-10-24 18:50:12'),
-(3, 1, 'Edgardo Rojas', 'Defensa', '../../img/jugadores/68feb15bb092e-jugadorEdgardo.jpg', 16, '1°A', 2, 1, 0, 0, 0, '2025-10-26 15:07:36'),
-(4, 1, 'Isaac Escamilla', 'Delantero', '../../img/jugadores/68fe45bc34d4a-jugadorIsaac.jpg', 16, '1°A', 9, 0, 2, 0, 0, '2025-10-26 15:07:36'),
-(5, 1, 'Alexis Mendoza', 'Defensa', '../../img/jugadores/68fe457a77207-jugadorAlexis.jpg', 17, '1°B', 3, 0, 1, 0, 0, '2025-10-26 15:07:36'),
+(3, 1, 'Edgardo Rojas', 'Defensa', '../../img/jugadores/68feb15bb092e-jugadorEdgardo.jpg', 16, '1°A', 2, 0, 1, 0, 0, '2025-10-26 15:07:36'),
+(4, 1, 'Isaac Escamilla', 'Delantero', '../../img/jugadores/68fe45bc34d4a-jugadorIsaac.jpg', 16, '1°A', 9, 0, 0, 0, 0, '2025-10-26 15:07:36'),
+(5, 1, 'Alexis Mendoza', 'Defensa', '../../img/jugadores/68fe457a77207-jugadorAlexis.jpg', 17, '1°B', 3, 0, 0, 0, 0, '2025-10-26 15:07:36'),
 (6, 1, 'Jefferson Mejía', 'Defensa', '../../img/jugadores/68fe4582411e8-jugadorJeffMejia.jpg', 16, '1°B', 4, 1, 0, 0, 0, '2025-10-26 15:07:36'),
 (7, 1, 'Byron Segovia', 'Delantero', '../../img/jugadores/68fe45a869c6f-jugadorByron.jpg', 17, '1°A', 7, 0, 0, 0, 0, '2025-10-26 15:07:36'),
 (8, 1, 'Oscar Vázquez', 'Mediocampista', '../../img/jugadores/68fe45b1dedda-judadorOscar.jpg', 20, '1°A', 8, 0, 0, 0, 0, '2025-10-26 15:07:36'),
-(9, 1, 'Javier Barrera', 'Portero', '../../img/jugadores/68fe4348b9d18-jugadorJavier.jpg', 17, '2°B', 1, 0, 1, 0, 0, '2025-10-26 15:07:36'),
-(10, 1, 'Kevin Lopez', 'Delantero', '../../img/jugadores/68fe45c912aeb-jugadorKevin.jpg', 17, '2°A', 11, 1, 0, 0, 0, '2025-10-26 15:07:36'),
-(11, 1, 'Jasson López', 'Defensa', '../../img/jugadores/68fe459441f71-jugadorJasson.jpg', 17, '2°A', 5, 4, 1, 4, 0, '2025-10-26 15:07:36'),
+(9, 1, 'Javier Barrera', 'Portero', '../../img/jugadores/68fe4348b9d18-jugadorJavier.jpg', 17, '2°B', 1, 0, 0, 0, 0, '2025-10-26 15:07:36'),
+(10, 1, 'Kevin Lopez', 'Delantero', '../../img/jugadores/68fe45c912aeb-jugadorKevin.jpg', 17, '2°A', 11, 0, 0, 0, 0, '2025-10-26 15:07:36'),
+(11, 1, 'Jasson López', 'Defensa', '../../img/jugadores/68fe459441f71-jugadorJasson.jpg', 17, '2°A', 5, 0, 0, 2, 0, '2025-10-26 15:07:36'),
 (12, 1, 'Aldo Flores', 'Mediocampista', '../../img/jugadores/68fe459d4643e-jugadorAldo.jpg', 17, '2°A', 6, 0, 0, 0, 0, '2025-10-26 15:07:36'),
-(26, 14, 'Carlos Ramírez', 'Portero', '../../img/jugadores/690070f46bd6b-IMG-20251024-WA0374.jpg', 18, '2° A', 1, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(26, 14, 'Carlos Ramírez', 'Portero', '../../img/jugadores/690070f46bd6b-IMG-20251024-WA0374.jpg', 18, '2° A', 1, 0, 0, 2, 0, '2025-10-26 15:22:57'),
 (27, 14, 'Miguel Torres', 'Defensa', NULL, 17, '2° B', 4, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(28, 14, 'Luis Hernández', 'Delantero', '', 16, '1° A', 9, 0, 0, 2, 0, '2025-10-26 15:22:57'),
-(29, 15, 'Roberto Gómez', 'Portero', '', 17, '2° A', 1, 2, 0, 0, 0, '2025-10-26 15:22:57'),
-(30, 15, 'Pedro Martínez', 'Mediocampista', '', 18, '2° B', 8, 1, 0, 0, 0, '2025-10-26 15:22:57'),
-(31, 15, 'Juan Pérez', 'Delantero', '', 17, '2° A', 10, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(32, 16, 'Antonio Silva', 'Portero', NULL, 16, '1° B', 1, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(33, 16, 'Fernando Castro', 'Defensa', NULL, 17, '2° A', 3, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(28, 14, 'Luis Hernández', 'Delantero', '', 16, '1° A', 9, 1, 0, 1, 0, '2025-10-26 15:22:57'),
+(29, 15, 'Roberto Gómez', 'Portero', '', 17, '2° A', 1, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(30, 15, 'Pedro Martínez', 'Mediocampista', '', 18, '2° B', 8, 0, 1, 0, 0, '2025-10-26 15:22:57'),
+(31, 15, 'Juan Pérez', 'Delantero', '', 17, '2° A', 10, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(32, 16, 'Antonio Silva', 'Portero', NULL, 16, '1° B', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(33, 16, 'Fernando Castro', 'Defensa', NULL, 17, '2° A', 3, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (34, 16, 'Diego Morales', 'Delantero', NULL, 18, '2° B', 11, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(35, 17, 'Sergio Ruiz', 'Portero', NULL, 17, '2° A', 1, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(36, 17, 'Mario Vargas', 'Mediocampista', NULL, 16, '1° A', 6, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(35, 17, 'Sergio Ruiz', 'Portero', NULL, 17, '2° A', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(36, 17, 'Mario Vargas', 'Mediocampista', NULL, 16, '1° A', 6, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (37, 17, 'Ricardo Delgado', 'Delantero', NULL, 17, '2° B', 9, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (38, 18, 'Andrés Ortiz', 'Portero', '', 18, '2° B', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(39, 18, 'Gabriel Medina', 'Defensa', NULL, 17, '2° A', 5, 1, 0, 0, 0, '2025-10-26 15:22:57'),
-(40, 18, 'Daniel Ramos', 'Delantero', NULL, 16, '1° B', 7, 1, 1, 0, 0, '2025-10-26 15:22:57'),
-(41, 19, 'Javier Soto', 'Portero', NULL, 17, '2° A', 1, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(39, 18, 'Gabriel Medina', 'Defensa', NULL, 17, '2° A', 5, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(40, 18, 'Daniel Ramos', 'Delantero', NULL, 16, '1° B', 7, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(41, 19, 'Javier Soto', 'Portero', NULL, 17, '2° A', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (42, 19, 'Alberto Jimenez', 'Mediocampista', '', 18, '2° B', 10, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(43, 19, 'Rafael Cordero', 'Delantero', '', 17, '2° A', 9, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(43, 19, 'Rafael Cordero', 'Delantero', '', 17, '2° A', 9, 0, 0, 1, 0, '2025-10-26 15:22:57'),
 (44, 20, 'Cristian Vega', 'Portero', NULL, 16, '1° A', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(45, 20, 'Manuel Navarro', 'Defensa', NULL, 17, '2° B', 2, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(46, 20, 'Pablo Guzmán', 'Delantero', '', 18, '2° A', 11, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(45, 20, 'Manuel Navarro', 'Defensa', NULL, 17, '2° B', 2, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(46, 20, 'Pablo Guzmán', 'Delantero', '', 18, '2° A', 11, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (47, 21, 'Esteban Reyes', 'Portero', NULL, 17, '2° A', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (48, 21, 'Alejandro Cruz', 'Mediocampista', NULL, 16, '1° B', 8, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (49, 21, 'Francisco Díaz', 'Delantero', '', 17, '2° B', 9, 0, 0, 0, 0, '2025-10-26 15:22:57'),
@@ -742,22 +653,18 @@ INSERT INTO `miembros_plantel` (`id`, `plantel_id`, `nombre_jugador`, `posicion`
 (52, 22, 'Marcos Salazar', 'Delantero', NULL, 16, '1° A', 10, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (53, 23, 'Rodrigo Campos', 'Portero', NULL, 17, '2° A', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (54, 23, 'Iván Fuentes', 'Mediocampista', '', 18, '2° B', 6, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(55, 23, 'Oscar Peña', 'Delantero', '', 17, '2° A', 11, 0, 1, 0, 0, '2025-10-26 15:22:57'),
-(56, 24, 'Victor Acosta', 'Portero', '', 16, '1° B', 1, 1, 0, 0, 0, '2025-10-26 15:22:57'),
+(55, 23, 'Oscar Peña', 'Delantero', '', 17, '2° A', 11, 0, 0, 0, 0, '2025-10-26 15:22:57'),
+(56, 24, 'Victor Acosta', 'Portero', '', 16, '1° B', 1, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (57, 24, 'César Molina', 'Defensa', '', 17, '2° A', 3, 0, 0, 0, 0, '2025-10-26 15:22:57'),
 (58, 24, 'Ernesto Ponce', 'Delantero', NULL, 18, '2° B', 9, 0, 0, 0, 0, '2025-10-26 15:22:57'),
-(59, 25, 'Carlos Veloz', 'Portero', NULL, 17, '2°B', 1, 0, 1, 0, 0, '2025-10-27 01:07:12'),
-(60, 25, 'Miguel Rámirez', 'Ala', NULL, 16, '1°A', 7, 1, 0, 0, 0, '2025-10-27 01:07:12'),
+(59, 25, 'Carlos Veloz', 'Portero', NULL, 17, '2°B', 1, 0, 0, 0, 0, '2025-10-27 01:07:12'),
+(60, 25, 'Miguel Rámirez', 'Ala', NULL, 16, '1°A', 7, 0, 0, 0, 0, '2025-10-27 01:07:12'),
 (61, 25, 'Jorge Flash', 'Pivote', NULL, 17, '2°B', 10, 0, 0, 0, 0, '2025-10-27 01:07:12'),
 (62, 25, 'Luis Trueno', 'Ala', NULL, 16, '1°A', 9, 0, 0, 0, 0, '2025-10-27 01:07:12'),
-(63, 26, 'Pedro Azul', 'Portero', NULL, 16, '1°A', 1, 0, 1, 0, 0, '2025-10-27 01:07:12'),
-(64, 26, 'Roberto Cielo', 'Ala', NULL, 17, '2°B', 8, 1, 0, 0, 0, '2025-10-27 01:07:12'),
-(65, 26, 'Antonio Mar', 'Pivote', NULL, 16, '1°A', 11, 0, 1, 0, 0, '2025-10-27 01:07:12'),
-(66, 26, 'Diego Ocano', 'Ala', NULL, 17, '2°B', 7, 1, 0, 0, 0, '2025-10-27 01:07:12'),
-(67, 27, 'Fernando Estrella', 'Portero', NULL, 17, '2°B', 1, 0, 0, 0, 0, '2025-10-27 01:07:12'),
-(68, 27, 'Ricardo Cometa', 'Ala', NULL, 16, '1°A', 9, 0, 0, 0, 0, '2025-10-27 01:07:12'),
-(69, 27, 'Javier Astro', 'Pivote', NULL, 17, '2°B', 10, 0, 0, 0, 0, '2025-10-27 01:07:12'),
-(70, 27, 'Manuel Cosmos', 'Ala', NULL, 16, '1°A', 8, 0, 0, 0, 0, '2025-10-27 01:07:12'),
+(63, 26, 'Pedro Azul', 'Portero', NULL, 16, '1°A', 1, 0, 0, 0, 0, '2025-10-27 01:07:12'),
+(64, 26, 'Roberto Cielo', 'Ala', NULL, 17, '2°B', 8, 0, 0, 0, 0, '2025-10-27 01:07:12'),
+(65, 26, 'Antonio Mar', 'Pivote', NULL, 16, '1°A', 11, 0, 0, 0, 0, '2025-10-27 01:07:12'),
+(66, 26, 'Diego Ocano', 'Ala', NULL, 17, '2°B', 7, 0, 0, 0, 0, '2025-10-27 01:07:12'),
 (71, 28, 'Pablo Brillante', 'Portero', NULL, 16, '1°A', 1, 0, 0, 0, 0, '2025-10-27 01:07:12'),
 (72, 28, 'Andrés Luz', 'Ala', NULL, 17, '2°B', 7, 0, 0, 0, 0, '2025-10-27 01:07:12'),
 (73, 28, 'Gabriel Destello', 'Pivote', NULL, 16, '1°A', 11, 0, 0, 0, 0, '2025-10-27 01:07:12'),
@@ -775,22 +682,16 @@ INSERT INTO `miembros_plantel` (`id`, `plantel_id`, `nombre_jugador`, `posicion`
 (85, 31, 'Kyrie Irving Jr.', 'Base', NULL, 16, '1°A', 11, 0, 0, 0, 0, '2025-10-27 01:07:17'),
 (86, 31, 'Damian Lillard Jr.', 'Base', NULL, 17, '2°B', 0, 0, 0, 0, 0, '2025-10-27 01:07:17'),
 (87, 32, 'Russell Westbrook Jr.', 'Base', NULL, 17, '2°B', 0, 0, 0, 0, 0, '2025-10-27 01:07:17'),
-(88, 32, 'Anthony Davis Jr.', 'Ala-Pívot', NULL, 16, '1°A', 3, 0, 0, 2, 0, '2025-10-27 01:07:17'),
-(89, 32, 'Kawhi Leonard Jr.', 'Alero', NULL, 17, '2°B', 2, 0, 0, 2, 0, '2025-10-27 01:07:17'),
+(88, 32, 'Anthony Davis Jr.', 'Ala-Pívot', NULL, 16, '1°A', 3, 0, 0, 1, 0, '2025-10-27 01:07:17'),
+(89, 32, 'Kawhi Leonard Jr.', 'Alero', NULL, 17, '2°B', 2, 0, 0, 1, 0, '2025-10-27 01:07:17'),
 (90, 32, 'Giannis Antetokounmpo Jr.', 'Ala-Pívot', NULL, 16, '1°A', 34, 0, 0, 0, 0, '2025-10-27 01:07:17'),
-(91, 33, 'Ana Martínez', 'Colocadora', NULL, 16, '1°A', 5, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(92, 33, 'Laura Sánchez', 'Opuesta', NULL, 17, '2°B', 9, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(93, 33, 'María González', 'Central', NULL, 16, '1°A', 12, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(94, 33, 'Carmen López', 'Receptora', NULL, 17, '2°B', 7, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(95, 33, 'Elena Rodríguez', 'Líbero', NULL, 16, '1°A', 1, 0, 0, 2, 0, '2025-10-27 01:07:38'),
-(96, 33, 'Isabel Fernández', 'Central', NULL, 17, '2°B', 11, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (97, 34, 'Sofía Ruiz', 'Colocadora', NULL, 17, '1°B', 3, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (98, 34, 'Lucía Moreno', 'Opuesta', NULL, 16, '1°A', 15, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (99, 34, 'Paula JimÚnez', 'Central', NULL, 17, '2°B', 13, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (100, 34, 'Andrea Álvarez', 'Receptora', NULL, 16, '1°A', 6, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (101, 34, 'Cristina Romero', 'Líbero', NULL, 17, '2°B', 2, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (102, 34, 'Marta Navarro', 'Central', NULL, 16, '1°A', 14, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(103, 35, 'Natalia Castro', 'Colocadora', NULL, 16, '1°A', 5, 0, 0, 2, 0, '2025-10-27 01:07:38'),
+(103, 35, 'Natalia Castro', 'Colocadora', NULL, 16, '1°A', 5, 0, 0, 1, 0, '2025-10-27 01:07:38'),
 (104, 35, 'Verónica Ortiz', 'Opuesta', NULL, 17, '2°B', 18, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (105, 35, 'Julia Rubio', 'Central', NULL, 16, '1°A', 17, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (106, 35, 'Alicia Sanz', 'Receptora', NULL, 17, '2°B', 9, 0, 0, 0, 0, '2025-10-27 01:07:38'),
@@ -802,12 +703,12 @@ INSERT INTO `miembros_plantel` (`id`, `plantel_id`, `nombre_jugador`, `posicion`
 (112, 36, 'Diana Medina', 'Receptora', NULL, 16, '1°A', 8, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (113, 36, 'Rocío Vega', 'Líbero', NULL, 17, '2°B', 2, 0, 0, 0, 0, '2025-10-27 01:07:38'),
 (114, 36, 'Lorena CortÚs', 'Central', NULL, 16, '1°A', 13, 0, 0, 0, 0, '2025-10-27 01:07:38'),
-(115, 38, 'ELPINGPONG2', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 2, 0, '2025-10-27 23:42:58'),
+(115, 38, 'ELPINGPONG2', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 1, 0, '2025-10-27 23:42:58'),
 (116, 37, 'ELPINGPONG', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-27 23:42:58'),
 (117, 41, 'Bobby Fischer Jr.', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 00:29:33'),
 (118, 42, 'Garry King', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 00:29:33'),
 (119, 39, 'ELPINGPONG3', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 00:30:30'),
-(120, 43, 'Daniel Loop', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 2, 0, '2025-10-28 00:30:30'),
+(120, 43, 'Daniel Loop', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 1, 0, '2025-10-28 00:30:30'),
 (121, 44, 'Alejandro Spin', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 02:35:30'),
 (122, 48, 'Roberto Smash', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 02:35:30'),
 (123, 46, 'Francisco Drive', 'Jugador', NULL, NULL, NULL, 1, 0, 0, 0, 0, '2025-10-28 02:35:30'),
@@ -853,8 +754,7 @@ INSERT INTO `noticias` (`id`, `titulo`, `subtitulo`, `contenido`, `imagen_portad
 (1, 'Inicio de la Temporada 2025', 'Los equipos se preparan para un nuevo año de competencia', 'Comienza una nueva temporada deportiva con gran entusiasmo. Los equipos de fútbol, baloncesto y voleibol han comenzado sus entrenamientos preparándose para los desafíos que vienen.\n\nEste año promete ser muy competitivo con la incorporación de nuevos talentos y la renovación de varias categorías.', NULL, 'Redacción', NULL, NULL, NULL, 1, 1, '2025-10-27 15:19:26', '2025-10-28 21:36:58', 2, 0, '2025-10-27 21:19:26', '2025-10-29 03:36:58'),
 (2, 'Inauguración del Nuevo Gimnasio', 'Instalaciones renovadas para mejorar la experiencia deportiva', 'Se inauguró el gimnasio renovado con nuevas facilidades para los equipos de baloncesto y voleibol. Las mejoras incluyen pisos nuevos, marcadores electrónicos y gradas ampliadas.\n\nLa comunidad estudiantil podrá disfrutar de estas instalaciones durante toda la temporada.', NULL, 'Redacción', NULL, NULL, NULL, 0, 1, '2025-10-24 15:19:26', NULL, 0, 0, '2025-10-27 21:19:26', '2025-10-27 21:19:26'),
 (3, 'LE HICIERON FALTA AL JASSOOOON', 'FALTA GRAVE', 'GGS', '../../img/noticias/69003e4935816-la falta del siglo.png', 'Redacción', NULL, NULL, '', 1, 1, '0000-00-00 00:00:00', '2025-10-28 21:37:08', 4, 0, '2025-10-28 03:53:45', '2025-10-29 03:37:08'),
-(4, 'LE HICIERON FALTA AL JASSOOOON', 'FALTA GRAVISISISISISISISIMA', 'Se le va la carrera a nuestra estrella?', '../../img/noticias/69007152a8431-la falta del siglo.png', 'Redacción', NULL, NULL, '', 0, 1, '0000-00-00 00:00:00', '2025-10-28 21:37:12', 6, 2, '2025-10-28 07:31:30', '2025-10-29 03:37:12'),
-(5, 'otra prueba', 'a ver que pasa', '1234etryrfds', '../../img/noticias/690150b70cf16-widgets.png', 'Redacción', NULL, NULL, 'En las semis', 0, 1, '0000-00-00 00:00:00', NULL, 0, 0, '2025-10-28 23:24:39', '2025-10-28 23:24:39');
+(4, 'LE HICIERON FALTA AL JASSOOOON', 'FALTA GRAVISISISISISISISIMA', 'Se le va la carrera a nuestra estrella?', '../../img/noticias/69007152a8431-la falta del siglo.png', 'Redacción', NULL, NULL, '', 0, 1, '0000-00-00 00:00:00', '2025-10-28 21:37:12', 6, 2, '2025-10-28 07:31:30', '2025-10-29 03:37:12');
 
 -- --------------------------------------------------------
 
@@ -913,13 +813,11 @@ INSERT INTO `participantes` (`id`, `deporte_id`, `tipo_participante_id`, `nombre
 (13, 1, 1, 'Osos Pardos', 'OSOS', NULL, '2025-10-26 15:07:36'),
 (15, 6, 1, 'Relámpagos FS', 'REL', NULL, '2025-10-27 01:05:46'),
 (16, 6, 1, 'Rayos Azules FS', 'RAZ', NULL, '2025-10-27 01:05:46'),
-(17, 6, 1, 'Meteoros FS', 'MET', NULL, '2025-10-27 01:05:46'),
 (18, 6, 1, 'Cometas FS', 'COM', NULL, '2025-10-27 01:05:46'),
 (19, 9, 1, 'Aces 3x3', 'ACE', NULL, '2025-10-27 01:05:46'),
 (20, 9, 1, 'Dunkers 3x3', 'DUN', NULL, '2025-10-27 01:05:46'),
 (21, 9, 1, 'Shooters 3x3', 'SHO', NULL, '2025-10-27 01:05:46'),
 (22, 9, 1, 'Ballers 3x3', 'BAL', NULL, '2025-10-27 01:05:46'),
-(23, 2, 1, 'Ases del Aire', 'ADA', NULL, '2025-10-27 01:05:46'),
 (24, 2, 1, 'Bloqueadores Pro', 'BLP', NULL, '2025-10-27 01:05:46'),
 (25, 2, 1, 'Rematadores FC', 'REM', NULL, '2025-10-27 01:05:46'),
 (26, 2, 1, 'Defensores VB', 'DEF', NULL, '2025-10-27 01:05:46'),
@@ -949,8 +847,8 @@ INSERT INTO `participantes` (`id`, `deporte_id`, `tipo_participante_id`, `nombre
 
 CREATE TABLE `partidos` (
   `id` int(11) NOT NULL,
-  `torneo_id` int(11) NOT NULL,
-  `fase_id` int(11) NOT NULL,
+  `torneo_id` int(11) DEFAULT NULL COMMENT 'NULL para partidos amistosos',
+  `fase_id` int(11) DEFAULT NULL COMMENT 'NULL para partidos amistosos',
   `jornada_id` int(11) DEFAULT NULL,
   `sede_id` int(11) DEFAULT NULL,
   `participante_local_id` int(11) DEFAULT NULL,
@@ -980,96 +878,76 @@ CREATE TABLE `partidos` (
 --
 
 INSERT INTO `partidos` (`id`, `torneo_id`, `fase_id`, `jornada_id`, `sede_id`, `participante_local_id`, `participante_visitante_id`, `inicio_partido`, `estado_id`, `marcador_local`, `marcador_visitante`, `marcador_local_sets`, `marcador_visitante_sets`, `mvp_miembro_plantel_id`, `notas`, `creado_en`, `actualizado_en`, `jugador_local_id`, `jugador_visitante_id`, `sets_ganados_local`, `sets_ganados_visitante`, `ganador_individual_id`, `set_actual`) VALUES
-(1, 1, 1, 1, NULL, 1, 13, '2025-10-26 12:00:00', 5, 2, 1, NULL, NULL, 11, '', '2025-10-26 17:57:06', '2025-10-28 23:56:11', NULL, NULL, 0, 0, NULL, 1),
-(2, 1, 1, 1, NULL, 3, 12, '2025-10-17 15:00:00', 5, 1, 0, NULL, NULL, 28, '', '2025-10-26 17:57:06', '2025-10-28 23:50:42', NULL, NULL, 0, 0, NULL, 1),
-(3, 1, 1, 1, NULL, 4, 11, '2025-10-17 15:00:00', 5, 3, 0, NULL, NULL, NULL, '', '2025-10-26 17:57:06', '2025-10-26 23:39:02', NULL, NULL, 0, 0, NULL, 1),
-(4, 1, 1, 1, NULL, 5, 10, '2025-10-17 15:00:00', 1, 1, 0, NULL, NULL, NULL, '', '2025-10-26 17:57:06', '2025-10-28 02:56:58', NULL, NULL, 0, 0, NULL, 1),
-(5, 1, 1, 1, NULL, 6, 9, '2025-10-17 15:00:00', 5, 1, 1, NULL, NULL, NULL, '', '2025-10-26 17:57:06', '2025-10-28 02:43:43', NULL, NULL, 0, 0, NULL, 1),
-(6, 1, 1, 1, NULL, 7, 8, '2025-10-26 14:05:00', 5, 2, 1, NULL, NULL, 40, '', '2025-10-26 17:57:06', '2025-10-26 21:36:31', NULL, NULL, 0, 0, NULL, 1),
-(7, 1, 1, 2, NULL, 1, 12, '2025-10-24 15:00:00', 5, 5, 0, NULL, NULL, 11, '', '2025-10-26 17:57:06', '2025-10-28 23:55:36', NULL, NULL, 0, 0, NULL, 1),
-(8, 1, 1, 2, NULL, 13, 11, '2025-10-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(9, 1, 1, 2, NULL, 3, 10, '2025-10-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(10, 1, 1, 2, NULL, 4, 9, '2025-10-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(11, 1, 1, 2, NULL, 5, 8, '2025-10-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(12, 1, 1, 2, NULL, 6, 7, '2025-10-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(13, 1, 1, 3, NULL, 1, 11, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(14, 1, 1, 3, NULL, 12, 10, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(15, 1, 1, 3, NULL, 13, 9, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(16, 1, 1, 3, NULL, 3, 8, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(17, 1, 1, 3, NULL, 4, 7, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(18, 1, 1, 3, NULL, 5, 6, '2025-10-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(19, 1, 1, 4, NULL, 1, 10, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(20, 1, 1, 4, NULL, 11, 9, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(21, 1, 1, 4, NULL, 12, 8, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(22, 1, 1, 4, NULL, 13, 7, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(23, 1, 1, 4, NULL, 3, 6, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(24, 1, 1, 4, NULL, 4, 5, '2025-11-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(25, 1, 1, 5, NULL, 1, 9, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(26, 1, 1, 5, NULL, 10, 8, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(27, 1, 1, 5, NULL, 11, 7, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(28, 1, 1, 5, NULL, 12, 6, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(29, 1, 1, 5, NULL, 13, 5, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(30, 1, 1, 5, NULL, 3, 4, '2025-11-14 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(31, 1, 1, 6, NULL, 1, 8, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(32, 1, 1, 6, NULL, 9, 7, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(33, 1, 1, 6, NULL, 10, 6, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(34, 1, 1, 6, NULL, 11, 5, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(35, 1, 1, 6, NULL, 12, 4, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(36, 1, 1, 6, NULL, 13, 3, '2025-11-21 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(37, 1, 1, 7, NULL, 1, 7, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(38, 1, 1, 7, NULL, 8, 6, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(39, 1, 1, 7, NULL, 9, 5, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(40, 1, 1, 7, NULL, 10, 4, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(41, 1, 1, 7, NULL, 11, 3, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(42, 1, 1, 7, NULL, 12, 13, '2025-11-28 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(43, 1, 1, 8, NULL, 1, 6, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(44, 1, 1, 8, NULL, 7, 5, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(45, 1, 1, 8, NULL, 8, 4, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(46, 1, 1, 8, NULL, 9, 3, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(47, 1, 1, 8, NULL, 10, 13, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(48, 1, 1, 8, NULL, 11, 12, '2025-12-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(49, 1, 1, 9, NULL, 1, 5, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(50, 1, 1, 9, NULL, 6, 4, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(51, 1, 1, 9, NULL, 7, 3, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(52, 1, 1, 9, NULL, 8, 13, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(53, 1, 1, 9, NULL, 9, 12, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(54, 1, 1, 9, NULL, 10, 11, '2025-12-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(55, 1, 1, 10, NULL, 1, 4, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(56, 1, 1, 10, NULL, 5, 3, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(57, 1, 1, 10, NULL, 6, 13, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(58, 1, 1, 10, NULL, 7, 12, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(59, 1, 1, 10, NULL, 8, 11, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(60, 1, 1, 10, NULL, 9, 10, '2025-12-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(61, 1, 1, 11, NULL, 1, 3, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(62, 1, 1, 11, NULL, 4, 13, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(63, 1, 1, 11, NULL, 5, 12, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(64, 1, 1, 11, NULL, 6, 11, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(65, 1, 1, 11, NULL, 7, 10, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(66, 1, 1, 11, NULL, 8, 9, '2025-12-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-26 17:57:06', '2025-10-26 17:57:06', NULL, NULL, 0, 0, NULL, 1),
-(87, 2, 3, NULL, NULL, 16, 18, '2025-10-28 08:58:00', 5, 1, 0, NULL, NULL, 63, '', '2025-10-27 14:58:35', '2025-10-27 15:43:38', NULL, NULL, 0, 0, NULL, 1),
-(88, 2, 3, NULL, NULL, 15, 17, '2025-10-29 08:58:00', 5, 1, 0, NULL, NULL, 59, '', '2025-10-27 14:58:35', '2025-10-27 15:52:49', NULL, NULL, 0, 0, NULL, 1),
-(91, 2, 4, NULL, NULL, 16, 15, '2025-11-03 09:56:00', 5, 1, 0, NULL, NULL, 66, '', '2025-10-27 15:56:27', '2025-10-27 16:21:32', NULL, NULL, 0, 0, NULL, 1),
-(98, 3, 8, NULL, NULL, 22, 21, '2025-10-28 12:09:00', 5, 3, 0, NULL, NULL, 88, '', '2025-10-27 18:09:19', '2025-10-27 19:08:40', NULL, NULL, 0, 0, NULL, 1),
-(99, 3, 8, NULL, NULL, 20, 19, '2025-10-29 12:09:00', 5, 2, 0, NULL, NULL, NULL, '', '2025-10-27 18:09:19', '2025-10-28 07:50:54', NULL, NULL, 0, 0, NULL, 1),
-(100, 3, 9, NULL, NULL, 22, 20, '2025-11-10 12:09:00', 5, 3, 0, NULL, NULL, 89, '', '2025-10-27 18:09:19', '2025-10-29 00:03:04', NULL, NULL, 0, 0, NULL, 1),
-(101, 4, 10, 21, NULL, 23, 26, '2025-11-10 15:00:00', 5, 2, 1, 0, 0, 95, '', '2025-10-27 20:43:01', '2025-10-28 01:04:53', NULL, NULL, 0, 0, NULL, 1),
-(102, 4, 10, 21, NULL, 24, 25, '2025-11-10 15:00:00', 5, 2, 1, 0, 0, 103, '', '2025-10-27 20:43:01', '2025-10-29 00:01:46', NULL, NULL, 0, 0, NULL, 1),
-(103, 4, 10, 22, NULL, 23, 25, '2025-11-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 20:43:01', '2025-10-27 20:43:01', NULL, NULL, 0, 0, NULL, 1),
-(104, 4, 10, 22, NULL, 26, 24, '2025-11-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 20:43:01', '2025-10-27 20:43:01', NULL, NULL, 0, 0, NULL, 1),
-(105, 4, 10, 23, NULL, 23, 24, '2025-11-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 20:43:01', '2025-10-27 20:43:01', NULL, NULL, 0, 0, NULL, 1),
-(106, 4, 10, 23, NULL, 25, 26, '2025-11-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 20:43:01', '2025-10-27 20:43:01', NULL, NULL, 0, 0, NULL, 1),
-(113, 6, 12, NULL, NULL, 33, 32, '2025-10-28 14:48:00', 5, 1, 0, NULL, NULL, NULL, '', '2025-10-27 20:48:23', '2025-10-28 23:58:14', NULL, NULL, 0, 0, NULL, 1),
-(114, 6, 12, NULL, NULL, 34, 31, '2025-10-29 14:48:00', 5, 0, 1, NULL, NULL, NULL, '', '2025-10-27 20:48:23', '2025-10-28 23:58:26', NULL, NULL, 0, 0, NULL, 1),
-(115, 6, 13, NULL, NULL, 33, 31, '2025-11-10 14:48:23', 2, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 20:48:23', '2025-10-28 23:58:26', NULL, NULL, 0, 0, NULL, 1),
-(116, 5, 14, NULL, NULL, 29, 28, '2025-10-28 15:32:00', 5, 5, 0, NULL, NULL, NULL, '', '2025-10-27 21:32:15', '2025-10-28 23:51:26', NULL, NULL, 5, 0, NULL, 6),
-(117, 5, 14, NULL, NULL, 30, 27, '2025-10-29 15:32:00', 5, 2, 3, NULL, NULL, NULL, '', '2025-10-27 21:32:15', '2025-10-28 02:45:10', NULL, NULL, 2, 3, NULL, 6),
-(118, 5, 15, NULL, NULL, 29, 27, '2025-11-10 15:32:00', 5, 3, 2, NULL, NULL, 120, '', '2025-10-27 21:32:15', '2025-10-28 23:59:42', NULL, NULL, 3, 2, NULL, 6),
-(119, 8, 16, NULL, NULL, 37, 29, '2025-10-28 17:35:00', 5, 2, 1, NULL, NULL, NULL, '', '2025-10-27 23:35:46', '2025-10-28 02:35:30', 119, 120, 2, 1, NULL, 6),
-(120, 8, 16, NULL, NULL, 36, 35, '2025-10-29 17:35:00', 5, 3, 2, NULL, NULL, 115, '', '2025-10-27 23:35:46', '2025-10-28 02:35:30', 115, 116, 3, 2, NULL, 6),
-(121, 8, 17, NULL, NULL, 37, 36, '2025-11-10 17:35:46', 3, 0, 0, NULL, NULL, NULL, NULL, '2025-10-27 23:35:46', '2025-10-28 02:57:20', 119, 115, 1, 0, NULL, 2),
-(122, 9, 18, NULL, NULL, 42, 41, '2025-10-28 21:01:00', 5, 1, 0, NULL, NULL, NULL, '', '2025-10-28 03:01:57', '2025-10-28 03:18:57', NULL, NULL, 0, 0, NULL, 1),
-(123, 9, 18, NULL, NULL, 40, 39, '2025-10-29 21:01:57', 2, 0, 0, NULL, NULL, NULL, NULL, '2025-10-28 03:01:57', '2025-10-28 03:19:29', 130, 131, 0, 0, NULL, 1),
-(124, 9, 19, NULL, NULL, 42, NULL, '2025-11-10 21:01:57', 2, 0, 0, NULL, NULL, NULL, NULL, '2025-10-28 03:01:57', '2025-10-28 03:09:46', NULL, NULL, 0, 0, NULL, 1);
+(137, NULL, NULL, NULL, NULL, 3, 4, '2025-10-10 16:21:00', 3, 1, 1, NULL, NULL, 26, '', '2025-10-29 15:20:04', '2025-10-29 22:21:41', NULL, NULL, 0, 0, NULL, 1),
+(140, 12, 27, 33, NULL, 1, 13, '2025-10-29 15:00:00', 5, 1, 0, NULL, NULL, NULL, '', '2025-10-29 23:01:21', '2025-10-29 23:02:15', NULL, NULL, 0, 0, NULL, 1),
+(141, 12, 27, 33, NULL, 3, 12, '2025-10-29 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(142, 12, 27, 33, NULL, 4, 11, '2025-10-29 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(143, 12, 27, 33, NULL, 5, 10, '2025-10-29 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(144, 12, 27, 33, NULL, 6, 9, '2025-10-29 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(145, 12, 27, 33, NULL, 7, 8, '2025-10-29 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(146, 12, 27, 34, NULL, 1, 12, '2025-11-18 06:00:00', 1, 0, 0, NULL, NULL, NULL, '', '2025-10-29 23:01:21', '2025-10-29 23:14:47', NULL, NULL, 0, 0, NULL, 1),
+(147, 12, 27, 34, NULL, 13, 11, '2025-11-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(148, 12, 27, 34, NULL, 3, 10, '2025-11-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(149, 12, 27, 34, NULL, 4, 9, '2025-11-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(150, 12, 27, 34, NULL, 5, 8, '2025-11-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(151, 12, 27, 34, NULL, 6, 7, '2025-11-05 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(152, 12, 27, 35, NULL, 1, 11, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(153, 12, 27, 35, NULL, 12, 10, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(154, 12, 27, 35, NULL, 13, 9, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(155, 12, 27, 35, NULL, 3, 8, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(156, 12, 27, 35, NULL, 4, 7, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(157, 12, 27, 35, NULL, 5, 6, '2025-11-12 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(158, 12, 27, 36, NULL, 1, 10, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(159, 12, 27, 36, NULL, 11, 9, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(160, 12, 27, 36, NULL, 12, 8, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(161, 12, 27, 36, NULL, 13, 7, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(162, 12, 27, 36, NULL, 3, 6, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(163, 12, 27, 36, NULL, 4, 5, '2025-11-19 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(164, 12, 27, 37, NULL, 1, 9, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(165, 12, 27, 37, NULL, 10, 8, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(166, 12, 27, 37, NULL, 11, 7, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(167, 12, 27, 37, NULL, 12, 6, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(168, 12, 27, 37, NULL, 13, 5, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(169, 12, 27, 37, NULL, 3, 4, '2025-11-26 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(170, 12, 27, 38, NULL, 1, 8, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(171, 12, 27, 38, NULL, 9, 7, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(172, 12, 27, 38, NULL, 10, 6, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(173, 12, 27, 38, NULL, 11, 5, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(174, 12, 27, 38, NULL, 12, 4, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(175, 12, 27, 38, NULL, 13, 3, '2025-12-03 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(176, 12, 27, 39, NULL, 1, 7, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(177, 12, 27, 39, NULL, 8, 6, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(178, 12, 27, 39, NULL, 9, 5, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(179, 12, 27, 39, NULL, 10, 4, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(180, 12, 27, 39, NULL, 11, 3, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(181, 12, 27, 39, NULL, 12, 13, '2025-12-10 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(182, 12, 27, 40, NULL, 1, 6, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(183, 12, 27, 40, NULL, 7, 5, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(184, 12, 27, 40, NULL, 8, 4, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(185, 12, 27, 40, NULL, 9, 3, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(186, 12, 27, 40, NULL, 10, 13, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(187, 12, 27, 40, NULL, 11, 12, '2025-12-17 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(188, 12, 27, 41, NULL, 1, 5, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(189, 12, 27, 41, NULL, 6, 4, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(190, 12, 27, 41, NULL, 7, 3, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(191, 12, 27, 41, NULL, 8, 13, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(192, 12, 27, 41, NULL, 9, 12, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(193, 12, 27, 41, NULL, 10, 11, '2025-12-24 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(194, 12, 27, 42, NULL, 1, 4, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(195, 12, 27, 42, NULL, 5, 3, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(196, 12, 27, 42, NULL, 6, 13, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(197, 12, 27, 42, NULL, 7, 12, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(198, 12, 27, 42, NULL, 8, 11, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(199, 12, 27, 42, NULL, 9, 10, '2025-12-31 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(200, 12, 27, 43, NULL, 1, 3, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(201, 12, 27, 43, NULL, 4, 13, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(202, 12, 27, 43, NULL, 5, 12, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(203, 12, 27, 43, NULL, 6, 11, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(204, 12, 27, 43, NULL, 7, 10, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(205, 12, 27, 43, NULL, 8, 9, '2026-01-07 15:00:00', 1, 0, 0, NULL, NULL, NULL, NULL, '2025-10-29 23:01:21', '2025-10-29 23:01:21', NULL, NULL, 0, 0, NULL, 1),
+(206, 13, 28, NULL, NULL, 42, 40, '2025-10-30 17:12:00', 5, 1, 0, NULL, NULL, NULL, '', '2025-10-29 23:12:39', '2025-10-29 23:13:00', NULL, NULL, 0, 0, NULL, 1),
+(207, 13, 28, NULL, NULL, 39, 41, '2025-10-31 17:12:00', 5, 0, 1, NULL, NULL, NULL, '', '2025-10-29 23:12:39', '2025-10-29 23:13:12', NULL, NULL, 0, 0, NULL, 1),
+(208, 13, 29, NULL, NULL, 42, 41, '2025-11-12 17:12:00', 5, 1, 0, NULL, NULL, NULL, '', '2025-10-29 23:12:39', '2025-10-29 23:13:43', NULL, NULL, 0, 0, NULL, 1);
 
 --
 -- Triggers `partidos`
@@ -1185,13 +1063,11 @@ INSERT INTO `planteles_equipo` (`id`, `participante_id`, `nombre_plantel`, `esta
 (24, 13, 'Plantel Principal', 1, '2025-10-26 15:21:39'),
 (25, 15, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (26, 16, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
-(27, 17, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (28, 18, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (29, 19, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (30, 20, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (31, 21, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (32, 22, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
-(33, 23, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (34, 24, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (35, 25, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
 (36, 26, 'Plantel 2025', 1, '2025-10-27 01:06:42'),
@@ -1303,35 +1179,6 @@ CREATE TABLE `puntos_set` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `puntos_set`
---
-
-INSERT INTO `puntos_set` (`id`, `partido_id`, `set_numero`, `jugador_local_id`, `jugador_visitante_id`, `puntos_local`, `puntos_visitante`, `ganador_id`, `finalizado`, `created_at`, `updated_at`) VALUES
-(1, 116, 1, NULL, NULL, 8, 2, NULL, 1, '2025-10-27 22:27:11', '2025-10-27 22:27:38'),
-(2, 116, 5, NULL, NULL, 2, 1, NULL, 1, '2025-10-27 22:45:38', '2025-10-27 22:54:02'),
-(3, 119, 1, NULL, NULL, 3, 0, NULL, 1, '2025-10-27 23:36:07', '2025-10-27 23:36:22'),
-(4, 119, 2, NULL, NULL, 1, 3, NULL, 1, '2025-10-27 23:36:25', '2025-10-27 23:36:39'),
-(5, 119, 3, NULL, NULL, 1, 0, 119, 1, '2025-10-27 23:36:44', '2025-10-28 00:30:34'),
-(6, 120, 1, 115, 116, 2, 0, 115, 1, '2025-10-27 23:47:30', '2025-10-27 23:47:42'),
-(7, 120, 2, 115, 116, 0, 3, 116, 1, '2025-10-28 00:10:01', '2025-10-28 00:28:37'),
-(8, 120, 3, 115, 116, 3, 2, 115, 1, '2025-10-28 00:28:40', '2025-10-28 00:28:44'),
-(9, 120, 4, 115, 116, 1, 3, 116, 1, '2025-10-28 00:28:47', '2025-10-28 00:28:51'),
-(10, 120, 5, 115, 116, 8, 3, 115, 1, '2025-10-28 00:28:53', '2025-10-28 00:28:58'),
-(11, 119, 4, 119, 120, 0, 4, 120, 1, '2025-10-28 00:30:37', '2025-10-28 00:30:39'),
-(12, 119, 5, 119, 120, 5, 0, 119, 1, '2025-10-28 00:30:41', '2025-10-28 00:30:44'),
-(13, 117, 1, 123, 121, 1, 2, 121, 1, '2025-10-28 02:44:36', '2025-10-28 02:44:39'),
-(14, 117, 2, 123, 121, 3, 1, 123, 1, '2025-10-28 02:44:42', '2025-10-28 02:44:45'),
-(15, 117, 3, 123, 121, 1, 4, 121, 1, '2025-10-28 02:44:49', '2025-10-28 02:44:53'),
-(16, 117, 4, 123, 121, 1, 4, 121, 1, '2025-10-28 02:44:55', '2025-10-28 02:44:58'),
-(17, 117, 5, 123, 121, 3, 1, 123, 1, '2025-10-28 02:45:02', '2025-10-28 02:45:05'),
-(18, 121, 1, 119, 115, 1, 0, 119, 1, '2025-10-28 02:57:18', '2025-10-28 02:57:20'),
-(21, 118, 1, 120, 121, 2, 1, 120, 1, '2025-10-28 23:51:39', '2025-10-28 23:51:42'),
-(22, 118, 2, 120, 121, 11, 1, 120, 1, '2025-10-28 23:51:45', '2025-10-28 23:51:56'),
-(23, 118, 3, 120, 121, 0, 11, 121, 1, '2025-10-28 23:52:02', '2025-10-28 23:52:04'),
-(24, 118, 4, 120, 121, 10, 12, 121, 1, '2025-10-28 23:52:08', '2025-10-28 23:52:21'),
-(25, 118, 5, 120, 121, 7, 0, 120, 1, '2025-10-28 23:52:31', '2025-10-28 23:52:34');
 
 -- --------------------------------------------------------
 
@@ -1615,16 +1462,8 @@ CREATE TABLE `torneos` (
 --
 
 INSERT INTO `torneos` (`id`, `deporte_id`, `temporada_id`, `nombre`, `descripcion`, `fecha_inicio`, `fecha_fin`, `ida_y_vuelta`, `tipo_torneo`, `fase_actual`, `estado_id`, `max_participantes`, `creado_por`, `creado_en`, `actualizado_en`, `mvp_torneo_miembro_id`, `goleador_torneo_miembro_id`, `goles_goleador`) VALUES
-(1, 1, NULL, 'Copa Salesianda', 'Torneo internacional', '2025-10-17', '2025-10-16', 0, 'liga', 'liga', 3, 16, 1, '2025-10-24 20:53:44', '2025-10-28 07:48:12', NULL, NULL, 0),
-(2, 6, NULL, 'Liga Intercolegial Fútbol Sala 3v3', 'ggs', '2025-10-26', '2025-12-19', 0, 'bracket', 'semis', 5, 4, 1, '2025-10-27 01:04:49', '2025-10-29 03:34:03', 64, 60, 1),
-(3, 9, NULL, 'Torneo Relámpago Basketball 3v3', '', '2025-11-05', '2025-11-25', 0, 'bracket', 'semis', 5, 4, 1, '2025-10-27 01:04:49', '2025-10-29 00:03:04', NULL, NULL, 0),
-(4, 2, NULL, 'Copa Nacional de Voleibol', '', '2025-11-10', '2025-12-15', 0, 'liga', 'liga', 3, 8, 1, '2025-10-27 01:04:49', '2025-10-27 22:22:09', NULL, NULL, 0),
-(5, 4, NULL, 'Campeonato Individual de Ping Pong', '', '2025-11-15', '2025-12-05', 0, 'bracket', 'semis', 5, 16, 1, '2025-10-27 01:04:49', '2025-10-28 23:59:42', 120, 121, 52),
-(6, 5, NULL, 'Torneo Magistral de Ajedrez', '', '2025-11-20', '2025-12-10', 0, 'bracket', 'semis', 3, 16, 1, '2025-10-27 01:04:49', '2025-10-27 20:48:13', NULL, NULL, 0),
-(7, 4, 2, 'torneo prueba pingpong', 'pingopongo prueba', '2025-10-27', '2025-10-27', 0, 'bracket', 'cuartos', 3, 8, 1, '2025-10-27 22:59:22', '2025-10-28 23:32:32', NULL, NULL, 0),
-(8, 4, 2, 'pruebadel Ping Pong', 'OJALA QUE SI', '2025-10-27', '2025-10-27', 0, 'bracket', 'semis', 3, 4, 1, '2025-10-27 23:29:46', '2025-10-27 23:36:01', NULL, NULL, 0),
-(9, 5, 2, 'eldelAJEDREZ', 'AVER OJALA QUE SIRVA', '2025-10-27', '2025-10-27', 0, 'bracket', 'semis', 3, 4, 1, '2025-10-28 03:00:29', '2025-10-28 03:02:04', NULL, NULL, 0),
-(10, 4, 2, 'PINPONGPRUEBA2', '', '2025-10-27', '2025-10-27', 0, 'bracket', 'semis', 2, 4, 1, '2025-10-28 03:03:41', '2025-10-28 23:34:35', NULL, NULL, 0);
+(12, 1, 2, 'Copa Salesianda', 'EL TORNEO PRINCIPAL', '2025-10-29', '2025-12-31', 0, 'liga', 'liga', 3, 12, 1, '2025-10-29 23:00:57', '2025-10-29 23:02:44', NULL, NULL, 0),
+(13, 5, 2, 'Prueba de torneo ya finalizado', 'ojala', '2025-10-29', '2025-10-29', 0, 'bracket', 'semis', 5, 4, 1, '2025-10-29 23:12:14', '2025-10-29 23:14:03', 130, 128, 0);
 
 -- --------------------------------------------------------
 
@@ -1657,50 +1496,22 @@ CREATE TABLE `torneo_participantes` (
 --
 
 INSERT INTO `torneo_participantes` (`torneo_id`, `participante_id`, `semilla`, `inscrito_en`) VALUES
-(1, 1, NULL, '2025-10-26 17:56:36'),
-(1, 3, NULL, '2025-10-26 17:56:32'),
-(1, 4, NULL, '2025-10-26 17:56:53'),
-(1, 5, NULL, '2025-10-26 17:56:43'),
-(1, 6, NULL, '2025-10-26 17:56:40'),
-(1, 7, NULL, '2025-10-26 17:56:41'),
-(1, 8, NULL, '2025-10-26 17:56:51'),
-(1, 9, NULL, '2025-10-26 17:56:38'),
-(1, 10, NULL, '2025-10-26 17:56:50'),
-(1, 11, NULL, '2025-10-26 17:56:45'),
-(1, 12, NULL, '2025-10-26 17:56:55'),
-(1, 13, NULL, '2025-10-26 17:56:48'),
-(2, 15, NULL, '2025-10-27 04:24:13'),
-(2, 16, NULL, '2025-10-27 04:24:10'),
-(2, 17, NULL, '2025-10-27 04:20:05'),
-(2, 18, NULL, '2025-10-27 04:18:54'),
-(3, 19, NULL, '2025-10-27 01:06:08'),
-(3, 20, NULL, '2025-10-27 01:06:08'),
-(3, 21, NULL, '2025-10-27 01:06:08'),
-(3, 22, NULL, '2025-10-27 01:06:08'),
-(4, 23, NULL, '2025-10-27 01:06:08'),
-(4, 24, NULL, '2025-10-27 01:06:08'),
-(4, 25, NULL, '2025-10-27 01:06:08'),
-(4, 26, NULL, '2025-10-27 01:06:08'),
-(5, 27, NULL, '2025-10-27 01:08:03'),
-(5, 28, NULL, '2025-10-27 01:08:03'),
-(5, 29, NULL, '2025-10-27 01:08:03'),
-(5, 30, NULL, '2025-10-27 01:08:03'),
-(6, 31, NULL, '2025-10-27 01:08:03'),
-(6, 32, NULL, '2025-10-27 01:08:03'),
-(6, 33, NULL, '2025-10-27 01:08:03'),
-(6, 34, NULL, '2025-10-27 01:08:03'),
-(8, 29, NULL, '2025-10-27 23:35:32'),
-(8, 35, NULL, '2025-10-27 23:35:29'),
-(8, 36, NULL, '2025-10-27 23:35:36'),
-(8, 37, NULL, '2025-10-27 23:35:34'),
-(9, 39, NULL, '2025-10-28 03:01:43'),
-(9, 40, NULL, '2025-10-28 03:01:44'),
-(9, 41, NULL, '2025-10-28 03:01:46'),
-(9, 42, NULL, '2025-10-28 03:01:49'),
-(10, 35, NULL, '2025-10-28 03:03:54'),
-(10, 36, NULL, '2025-10-28 03:03:49'),
-(10, 37, NULL, '2025-10-28 03:03:47'),
-(10, 38, NULL, '2025-10-28 03:03:53');
+(12, 1, NULL, '2025-10-29 23:01:02'),
+(12, 3, NULL, '2025-10-29 23:01:00'),
+(12, 4, NULL, '2025-10-29 23:01:14'),
+(12, 5, NULL, '2025-10-29 23:01:07'),
+(12, 6, NULL, '2025-10-29 23:01:05'),
+(12, 7, NULL, '2025-10-29 23:01:06'),
+(12, 8, NULL, '2025-10-29 23:01:12'),
+(12, 9, NULL, '2025-10-29 23:01:03'),
+(12, 10, NULL, '2025-10-29 23:01:11'),
+(12, 11, NULL, '2025-10-29 23:01:08'),
+(12, 12, NULL, '2025-10-29 23:01:16'),
+(12, 13, NULL, '2025-10-29 23:01:10'),
+(13, 39, NULL, '2025-10-29 23:12:24'),
+(13, 40, NULL, '2025-10-29 23:12:26'),
+(13, 41, NULL, '2025-10-29 23:12:27'),
+(13, 42, NULL, '2025-10-29 23:12:29');
 
 -- --------------------------------------------------------
 
@@ -2125,7 +1936,7 @@ ALTER TABLE `usuario_roles`
 -- AUTO_INCREMENT for table `bracket_torneos`
 --
 ALTER TABLE `bracket_torneos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `configuracion_galeria`
@@ -2143,7 +1954,7 @@ ALTER TABLE `configuracion_noticias`
 -- AUTO_INCREMENT for table `cronometro_partido`
 --
 ALTER TABLE `cronometro_partido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `deportes`
@@ -2161,25 +1972,25 @@ ALTER TABLE `enlaces_bracket`
 -- AUTO_INCREMENT for table `eventos_partido`
 --
 ALTER TABLE `eventos_partido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT for table `fases`
 --
 ALTER TABLE `fases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `galeria_temporadas`
 --
 ALTER TABLE `galeria_temporadas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `jornadas`
 --
 ALTER TABLE `jornadas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `jugadores`
@@ -2191,19 +2002,19 @@ ALTER TABLE `jugadores`
 -- AUTO_INCREMENT for table `jugadores_destacados`
 --
 ALTER TABLE `jugadores_destacados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `miembros_plantel`
 --
 ALTER TABLE `miembros_plantel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
 -- AUTO_INCREMENT for table `noticias`
 --
 ALTER TABLE `noticias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `participantes`
@@ -2215,7 +2026,7 @@ ALTER TABLE `participantes`
 -- AUTO_INCREMENT for table `partidos`
 --
 ALTER TABLE `partidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=209;
 
 --
 -- AUTO_INCREMENT for table `partidos_seleccion`
@@ -2239,7 +2050,7 @@ ALTER TABLE `posiciones_deporte`
 -- AUTO_INCREMENT for table `puntos_set`
 --
 ALTER TABLE `puntos_set`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `reglas_puntuacion_deporte`
@@ -2281,7 +2092,7 @@ ALTER TABLE `temporadas`
 -- AUTO_INCREMENT for table `torneos`
 --
 ALTER TABLE `torneos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `torneo_grupos`
